@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { db } from "@/lib/db";
 import { ApplyModal } from "@/components/ApplyModal";
+import { ReportButton } from "@/components/ReportButton";
 import { getUserSession } from "@/lib/session";
 import {
   CHANNEL_LABEL,
@@ -140,6 +141,9 @@ export default async function CampaignDetail({
               defaultUrl={defaultUrl}
             />
           )}
+          <div className="border-t border-ink-100 pt-3 text-right">
+            <ReportButton campaignId={c.id} loggedIn={!!session} />
+          </div>
         </div>
       </aside>
     </div>

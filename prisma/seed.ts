@@ -33,6 +33,7 @@ async function main() {
   console.log("🌱 Seeding...");
 
   // 기존 데이터 정리
+  await db.report.deleteMany();
   await db.notification.deleteMany();
   await db.penalty.deleteMany();
   await db.review.deleteMany();
@@ -535,8 +536,26 @@ async function main() {
     ],
   });
 
+  // 신고 데모 시드
+  await db.report.createMany({
+    data: [
+      {
+        reporterUserId: users[0].id,
+        campaignId: created[2].id,
+        reason: "BAD_TREATMENT",
+        detail: "방문 시 광고와 다른 메뉴로 응대받았습니다. 사진 자료가 있습니다.",
+      },
+      {
+        reporterUserId: users[1].id,
+        campaignId: created[5].id,
+        reason: "FALSE_INFO",
+        detail: "제공 내역에 적힌 원두 200g이 실제로는 100g만 배송되었어요.",
+      },
+    ],
+  });
+
   console.log(
-    `✅ Done. users=${users.length + 1}, advertisers=3, campaigns=${created.length}`
+    `✅ Done. users=${users.length + 1}, advertisers=3, campaigns=${created.length}, reports=2`
   );
 }
 

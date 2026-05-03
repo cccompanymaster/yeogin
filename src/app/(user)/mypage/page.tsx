@@ -33,9 +33,14 @@ export default async function MyPage() {
             <div className="text-xl font-black">{me.nickname}님</div>
             <div className="mt-1 text-xs text-ink-500">{me.email}</div>
           </div>
-          <form action="/api/auth/logout" method="post">
-            <button className="btn-outline">로그아웃</button>
-          </form>
+          <div className="flex gap-2">
+            <Link href="/mypage/edit" className="btn-outline">
+              프로필 수정
+            </Link>
+            <form action="/api/auth/logout" method="post">
+              <button className="btn-outline">로그아웃</button>
+            </form>
+          </div>
         </div>
         <div className="mt-5 grid grid-cols-3 gap-2">
           <Stat label="신뢰등급" value={TRUST_LABEL[me.trustGrade]} />

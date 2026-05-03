@@ -25,6 +25,7 @@ model User {
   applications Application[]
   reviews      Review[]
   penalties    Penalty[]
+  reports      Report[]
 }
 
 // 광고주 회원
@@ -123,6 +124,21 @@ model Penalty {
   reason    String
   point     Int      // 차감 포인트
   createdAt DateTime @default(now())
+}
+
+// 신고 - 사용자가 캠페인/광고주 신고
+model Report {
+  id             String   @id @default(cuid())
+  reporterUserId String
+  reporter       User     @relation(fields: [reporterUserId], references: [id], onDelete: Cascade)
+  campaignId     String?
+  reason         String   // SPAM, FALSE_INFO, BAD_TREATMENT, OTHER
+  detail         String
+  status         String   @default("OPEN") // OPEN, RESOLVED, REJECTED
+  adminNote      String?
+  createdAt      DateTime @default(now())
+
+  @@index([status])
 }
 
 // 알림 - role + recipientId 폴리모픽 구조

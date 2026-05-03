@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { db } from "@/lib/db";
 import { getAdvertiserSession } from "@/lib/session";
 import { TYPE_LABEL, fmtDate } from "@/lib/format";
+import { BarChart, HBarChart } from "@/components/charts";
 
 export default async function AdvertiserDashboard() {
   const session = await getAdvertiserSession();
@@ -22,6 +23,60 @@ export default async function AdvertiserDashboard() {
     where: { status: "PENDING", campaign: { advertiserId: session.id } },
   });
 
+  // 최근 14일 일별 신청 건수
+  const since = new Date(Date.now() - 13 * 86400000);
+  since.setHours(0, 0, 0, 0);
+  const recentApps = await db.application.findMany({
+    where: {
+      campaign: { advertiserId: session.id },
+      createdAt: { gte: since },
+    },
+    select: { createdAt: true },
+  });
+  const dayBuckets: { label: string; value: number; key: string }[] = [];
+  for (let i = 13; i >= 0; i--) {
+    const d = new Date(Date.now() - i * 86400000);
+    const key = `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`;
+    const label = `${d.getMonth() + 1}/${d.getDate()}`;
+    dayBuckets.push({ label, value: 0, key });
+  }
+  for (const r of recentApps) {
+    const d = new Date(r.createdAt);
+    const key = `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`;
+    const b = dayBuckets.find((x) => x.key === key);
+    if (b) b.value += 1;
+  }
+
+  // 카테고리별 신청자 수
+  const catMap = new Map<string, number>();
+  for (const c of campaigns) {
+    catMap.set(c.category, (catMap.get(c.category) || 0) + c.appliedCount);
+  }
+  const catData = Array.from(catMap.entries())
+    .map(([label, value]) => ({ label, value }))
+    .sort((a, b) => b.value - a.value)
+    .slice(0, 6);
+
+  // 캠페인 타입별 분포
+  const typeMap = new Map<string, number>();
+  for (const c of campaigns) {
+    typeMap.set(c.type, (typeMap.get(c.type) || 0) + 1);
+  }
+  const typeData = Array.from(typeMap.entries()).map(([k, v]) => ({
+    label: TYPE_LABEL[k] || k,
+    value: v,
+  }));
+
+  // 캠페인별 신청률 (top 5)
+  const ratioData = campaigns
+    .filter((c) => c.capacity > 0)
+    .map((c) => ({
+      label: c.title.length > 14 ? c.title.slice(0, 14) + "…" : c.title,
+      value: Math.round((c.appliedCount / c.capacity) * 100),
+    }))
+    .sort((a, b) => b.value - a.value)
+    .slice(0, 5);
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -39,6 +94,44 @@ export default async function AdvertiserDashboard() {
         <Stat label="총 캠페인" value={`${campaigns.length}`} />
         <Stat label="총 신청자" value={`${totalApplied}`} />
         <Stat label="검수 대기 리뷰" value={`${pendingReviews}`} />
+      </div>
+
+      <div className="grid gap-4 lg:grid-cols-2">
+        <div className="card p-5">
+          <div className="mb-3 flex items-baseline justify-between">
+            <h2 className="text-base font-bold">최근 14일 일별 신청</h2>
+            <span className="text-xs text-ink-500">총 {recentApps.length}건</span>
+          </div>
+          <BarChart data={dayBuckets.map(({ label, value }) => ({ label, value }))} />
+        </div>
+        <div className="card p-5">
+          <h2 className="mb-3 text-base font-bold">카테고리별 신청자</h2>
+          {catData.length > 0 ? (
+            <HBarChart data={catData} />
+          ) : (
+            <div className="py-8 text-center text-sm text-ink-500">데이터 없음</div>
+          )}
+        </div>
+        <div className="card p-5">
+          <h2 className="mb-3 text-base font-bold">캠페인 타입 분포</h2>
+          {typeData.length > 0 ? (
+            <HBarChart data={typeData} color="#0ea5e9" />
+          ) : (
+            <div className="py-8 text-center text-sm text-ink-500">데이터 없음</div>
+          )}
+        </div>
+        <div className="card p-5">
+          <h2 className="mb-3 text-base font-bold">캠페인별 신청률 TOP 5</h2>
+          {ratioData.length > 0 ? (
+            <HBarChart
+              data={ratioData}
+              color="#10b981"
+              formatValue={(v) => `${v}%`}
+            />
+          ) : (
+            <div className="py-8 text-center text-sm text-ink-500">데이터 없음</div>
+          )}
+        </div>
       </div>
 
       <div>
