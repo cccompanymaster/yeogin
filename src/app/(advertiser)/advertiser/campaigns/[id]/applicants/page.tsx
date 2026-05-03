@@ -3,15 +3,19 @@ import { notFound, redirect } from "next/navigation";
 import { db } from "@/lib/db";
 import { getAdvertiserSession } from "@/lib/session";
 import { BulkApplicantList, type ApplicantItem } from "@/components/BulkSelectPanel";
+import { BroadcastForm } from "@/components/BroadcastForm";
 
 export default async function ApplicantsPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ id: string }>;
+  searchParams: Promise<{ sent?: string; error?: string }>;
 }) {
   const session = await getAdvertiserSession();
   if (!session) redirect("/advertiser/login");
   const { id } = await params;
+  const sp = await searchParams;
 
   const campaign = await db.campaign.findUnique({
     where: { id },
@@ -23,6 +27,7 @@ export default async function ApplicantsPage({
     },
   });
   if (!campaign || campaign.advertiserId !== session.id) notFound();
+  const selectedCount = campaign.applications.filter((a) => a.status === "SELECTED").length;
 
   const items: ApplicantItem[] = campaign.applications.map((a) => ({
     id: a.id,
@@ -46,10 +51,29 @@ export default async function ApplicantsPage({
         <Link href="/advertiser/campaigns" className="text-xs text-ink-500">
           ← 캠페인 목록
         </Link>
-        <h1 className="mt-1 text-2xl font-bold">{campaign.title}</h1>
-        <div className="mt-1 text-sm text-ink-500">
-          신청 {campaign.applications.length}명 / 모집 {campaign.capacity}명
+        <div className="mt-1 flex flex-wrap items-start justify-between gap-3">
+          <div>
+            <h1 className="text-2xl font-bold">{campaign.title}</h1>
+            <div className="mt-1 text-sm text-ink-500">
+              신청 {campaign.applications.length}명 / 모집 {campaign.capacity}명
+            </div>
+          </div>
+          <BroadcastForm
+            campaignId={campaign.id}
+            selectedCount={selectedCount}
+            totalCount={campaign.applications.length}
+          />
         </div>
+        {sp.sent && (
+          <div className="mt-3 rounded-md bg-emerald-50 px-3 py-2 text-sm text-emerald-700">
+            ✓ {sp.sent}명에게 메시지를 발송했습니다.
+          </div>
+        )}
+        {sp.error && (
+          <div className="mt-3 rounded-md bg-red-50 px-3 py-2 text-sm text-red-700">
+            {decodeURIComponent(sp.error)}
+          </div>
+        )}
       </div>
 
       {items.length === 0 ? (

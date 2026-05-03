@@ -69,7 +69,7 @@ export default async function AdminReportsPage({
         </p>
       </div>
 
-      <div className="flex gap-2">
+      <div className="flex flex-wrap gap-2">
         <Tab href="/admin?status=OPEN" active={status === "OPEN"} label={`접수 ${openCount}`} />
         <Tab
           href="/admin?status=RESOLVED"
@@ -81,6 +81,12 @@ export default async function AdminReportsPage({
           active={status === "REJECTED"}
           label={`기각 ${rejectedCount}`}
         />
+        <Link
+          href="/admin/sns"
+          className="ml-auto rounded-lg border border-ink-300 bg-white px-4 py-2 text-sm font-semibold text-ink-700 hover:bg-ink-100"
+        >
+          SNS 인증샷 검수 →
+        </Link>
       </div>
 
       {reports.length === 0 ? (

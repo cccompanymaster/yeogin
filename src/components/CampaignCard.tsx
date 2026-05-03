@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { CHANNEL_LABEL, TYPE_LABEL, dday, won } from "@/lib/format";
+import { FavoriteButton } from "@/components/FavoriteButton";
 
 type Props = {
   c: {
@@ -17,9 +18,11 @@ type Props = {
     applyEnd: Date | string;
     fastMatch: boolean;
   };
+  favorited?: boolean;
+  loggedIn?: boolean;
 };
 
-export function CampaignCard({ c }: Props) {
+export function CampaignCard({ c, favorited = false, loggedIn = false }: Props) {
   return (
     <Link
       href={`/campaigns/${c.id}`}
@@ -38,8 +41,14 @@ export function CampaignCard({ c }: Props) {
             <span className="badge bg-brand-500 text-white">⚡ 빠른선정</span>
           )}
         </div>
-        <div className="absolute right-2 top-2">
+        <div className="absolute right-2 top-2 flex items-center gap-1.5">
           <span className="badge bg-white/95 text-brand-600">{dday(c.applyEnd)}</span>
+          <FavoriteButton
+            campaignId={c.id}
+            initialFavorited={favorited}
+            loggedIn={loggedIn}
+            size="sm"
+          />
         </div>
       </div>
       <div className="space-y-1.5 p-3">

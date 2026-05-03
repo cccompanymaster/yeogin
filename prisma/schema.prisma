@@ -41,6 +41,8 @@ model User {
   reviews      Review[]
   penalties    Penalty[]
   reports      Report[]
+  snsVerifications SnsVerification[]
+  favorites    Favorite[]
 }
 
 // 광고주 회원
@@ -92,6 +94,7 @@ model Campaign {
 
   applications  Application[]
   reviews       Review[]
+  favorites     Favorite[]
 }
 
 // 신청 내역
@@ -154,6 +157,37 @@ model Report {
   createdAt      DateTime @default(now())
 
   @@index([status])
+}
+
+// SNS 인증샷 업로드
+model SnsVerification {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  channel   String   // blog, insta, youtube, tiktok
+  url       String
+  metric    Int      // 사용자가 주장한 수치
+  imageData String   // data URL (base64) - 인증샷
+  status    String   @default("PENDING") // PENDING, APPROVED, REJECTED
+  rejectReason String?
+  createdAt DateTime @default(now())
+  reviewedAt DateTime?
+
+  @@index([status])
+  @@index([userId, channel])
+}
+
+// 즐겨찾기 (관심 캠페인)
+model Favorite {
+  id         String   @id @default(cuid())
+  userId     String
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  campaignId String
+  campaign   Campaign @relation(fields: [campaignId], references: [id], onDelete: Cascade)
+  createdAt  DateTime @default(now())
+
+  @@unique([userId, campaignId])
+  @@index([userId])
 }
 
 // 알림 - role + recipientId 폴리모픽 구조

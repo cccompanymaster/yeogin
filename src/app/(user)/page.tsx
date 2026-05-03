@@ -3,8 +3,10 @@ import { db } from "@/lib/db";
 import { CampaignCard } from "@/components/CampaignCard";
 import { CATEGORIES } from "@/lib/format";
 import { HeroRollingBanner } from "@/components/HeroRollingBanner";
+import { getUserSession } from "@/lib/session";
 
 export default async function HomePage() {
+  const session = await getUserSession();
   const now = new Date();
   const [hot, ending, fast] = await Promise.all([
     db.campaign.findMany({
@@ -23,6 +25,24 @@ export default async function HomePage() {
       take: 4,
     }),
   ]);
+
+  const allIds = [...hot, ...ending, ...fast].map((c) => c.id);
+  let favSet = new Set<string>();
+  if (session && allIds.length > 0) {
+    const favs = await db.favorite.findMany({
+      where: { userId: session.id, campaignId: { in: allIds } },
+      select: { campaignId: true },
+    });
+    favSet = new Set(favs.map((f) => f.campaignId));
+  }
+  const card = (c: (typeof hot)[number]) => (
+    <CampaignCard
+      key={c.id}
+      c={c}
+      favorited={favSet.has(c.id)}
+      loggedIn={!!session}
+    />
+  );
 
   return (
     <div className="space-y-12">
@@ -55,7 +75,7 @@ export default async function HomePage() {
             <Link href="/campaigns?fast=1" className="text-xs text-ink-500">전체보기 →</Link>
           </div>
           <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
-            {fast.map((c) => <CampaignCard key={c.id} c={c} />)}
+            {fast.map(card)}
           </div>
         </section>
       )}
@@ -66,7 +86,7 @@ export default async function HomePage() {
           <Link href="/campaigns" className="text-xs text-ink-500">전체보기 →</Link>
         </div>
         <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
-          {hot.map((c) => <CampaignCard key={c.id} c={c} />)}
+          {hot.map(card)}
         </div>
       </section>
 
@@ -76,7 +96,7 @@ export default async function HomePage() {
           <Link href="/campaigns?sort=ending" className="text-xs text-ink-500">전체보기 →</Link>
         </div>
         <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
-          {ending.map((c) => <CampaignCard key={c.id} c={c} />)}
+          {ending.map(card)}
         </div>
       </section>
     </div>

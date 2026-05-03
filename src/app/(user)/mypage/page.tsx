@@ -25,7 +25,7 @@ export default async function MyPage({ searchParams }: { searchParams: SP }) {
   const sp = await searchParams;
   const tab = sp.tab === "done" ? "done" : "active";
 
-  const [apps, penalties, cancelCount, doneCount] = await Promise.all([
+  const [apps, penalties, cancelCount, doneCount, pendingVerifs] = await Promise.all([
     db.application.findMany({
       where: { userId: me.id },
       include: { campaign: true, review: true },
@@ -34,7 +34,12 @@ export default async function MyPage({ searchParams }: { searchParams: SP }) {
     db.penalty.findMany({ where: { userId: me.id }, orderBy: { createdAt: "desc" } }),
     db.application.count({ where: { userId: me.id, status: "CANCELED" } }),
     db.review.count({ where: { userId: me.id, status: "APPROVED" } }),
+    db.snsVerification.findMany({
+      where: { userId: me.id, status: "PENDING" },
+      select: { channel: true },
+    }),
   ]);
+  const pendingSet = new Set(pendingVerifs.map((p) => p.channel));
 
   const activeApps = apps.filter((a) => a.status !== "COMPLETED" && a.status !== "REJECTED");
   const doneApps = apps.filter((a) => a.status === "COMPLETED" || a.status === "REJECTED");
@@ -49,6 +54,7 @@ export default async function MyPage({ searchParams }: { searchParams: SP }) {
         <div className="space-y-1 text-sm">
           <div className="px-2 py-1 text-base font-black">마이페이지</div>
           <SideLink href="/mypage" label="📋 내 체험단" active />
+          <SideLink href="/mypage/favorites" label="❤️ 관심 캠페인" />
           <SideLink href="/notifications" label="🔔 알림함" />
           <div className="mt-3 border-t border-ink-100 pt-3 text-[11px] font-bold text-ink-400">
             내 정보 관리
@@ -124,24 +130,32 @@ export default async function MyPage({ searchParams }: { searchParams: SP }) {
               channel="blog"
               url={me.blogUrl}
               metric={me.blogVisitors}
+              verifiedAt={me.blogVerifiedAt}
+              pendingVerification={pendingSet.has("blog")}
               youtubeAutoEnabled={ytAuto}
             />
             <SnsCard
               channel="insta"
               url={me.instaUrl}
               metric={me.instaFollowers}
+              verifiedAt={me.instaVerifiedAt}
+              pendingVerification={pendingSet.has("insta")}
               youtubeAutoEnabled={ytAuto}
             />
             <SnsCard
               channel="youtube"
               url={me.youtubeUrl}
               metric={me.youtubeSubscribers}
+              verifiedAt={me.youtubeVerifiedAt}
+              pendingVerification={pendingSet.has("youtube")}
               youtubeAutoEnabled={ytAuto}
             />
             <SnsCard
               channel="tiktok"
               url={me.tiktokUrl}
               metric={me.tiktokFollowers}
+              verifiedAt={me.tiktokVerifiedAt}
+              pendingVerification={pendingSet.has("tiktok")}
               youtubeAutoEnabled={ytAuto}
             />
           </div>

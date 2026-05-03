@@ -60,6 +60,17 @@ export default async function CampaignListPage({
 
   const items = await db.campaign.findMany({ where, orderBy, take: 60 });
 
+  // 로그인 사용자의 즐겨찾기 세트
+  const sessionForFav = await getUserSession();
+  let favSet = new Set<string>();
+  if (sessionForFav && items.length > 0) {
+    const favs = await db.favorite.findMany({
+      where: { userId: sessionForFav.id, campaignId: { in: items.map((i) => i.id) } },
+      select: { campaignId: true },
+    });
+    favSet = new Set(favs.map((f) => f.campaignId));
+  }
+
   // 내 주변 지도용: 지역별 방문형 캠페인 카운트 집계
   let regionCounts: { region: string; count: number }[] = [];
   if (sp.nearby === "1") {
@@ -138,7 +149,12 @@ export default async function CampaignListPage({
       ) : (
         <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
           {items.map((c) => (
-            <CampaignCard key={c.id} c={c} />
+            <CampaignCard
+              key={c.id}
+              c={c}
+              favorited={favSet.has(c.id)}
+              loggedIn={!!sessionForFav}
+            />
           ))}
         </div>
       )}

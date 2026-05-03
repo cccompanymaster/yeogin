@@ -4,6 +4,7 @@ import { AdvertiserPopup } from "@/components/AdvertiserPopup";
 import { SearchBar } from "@/components/SearchBar";
 import { NotificationBell } from "@/components/NotificationBell";
 import { Logo } from "@/components/Logo";
+import { MobileNav } from "@/components/MobileNav";
 
 export default async function UserLayout({ children }: { children: React.ReactNode }) {
   const session = await getUserSession();
@@ -31,6 +32,7 @@ export default async function UserLayout({ children }: { children: React.ReactNo
             <Link href="/advertiser" target="_blank" className="hidden text-xs font-semibold text-ink-600 hover:text-brand-600 lg:block">
               내 매장 홍보 →
             </Link>
+            <MobileNav />
             {session ? (
               <>
                 <NotificationBell role="USER" recipientId={session.id} href="/notifications" />
