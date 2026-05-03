@@ -1,6 +1,14 @@
 import Link from "next/link";
+import { SocialLoginButtons } from "@/components/SocialLoginButtons";
+import { isOAuthEnabled } from "@/lib/oauth";
 
-export default function SignupPage() {
+export default async function SignupPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ error?: string }>;
+}) {
+  const sp = await searchParams;
+  const enabled = isOAuthEnabled();
   return (
     <div className="mx-auto max-w-md">
       <div className="card p-6">
@@ -8,7 +16,11 @@ export default function SignupPage() {
         <p className="mt-1 text-sm text-ink-500">
           무료로 가입하고 매일 새로 열리는 체험단에 신청하세요.
         </p>
-        <form action="/api/auth/signup" method="post" className="mt-5 space-y-3">
+        <SocialLoginButtons enabled={enabled} />
+        <div className="my-3 text-center text-[11px] font-semibold text-ink-500">
+          또는 이메일로 가입
+        </div>
+        <form action="/api/auth/signup" method="post" className="space-y-3">
           <div>
             <label className="label">이메일</label>
             <input className="input" name="email" type="email" required />
@@ -29,6 +41,9 @@ export default function SignupPage() {
             <label className="label">인스타 URL (선택)</label>
             <input className="input" name="instaUrl" placeholder="https://instagram.com/..." />
           </div>
+          {sp.error && (
+            <div className="text-xs text-red-500">{decodeURIComponent(sp.error)}</div>
+          )}
           <button className="btn-primary w-full py-2.5">가입하기</button>
         </form>
         <div className="mt-4 text-center text-xs text-ink-500">

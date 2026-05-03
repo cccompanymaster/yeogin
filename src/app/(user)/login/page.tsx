@@ -1,4 +1,6 @@
 import Link from "next/link";
+import { SocialLoginButtons } from "@/components/SocialLoginButtons";
+import { isOAuthEnabled } from "@/lib/oauth";
 
 export default async function LoginPage({
   searchParams,
@@ -6,10 +8,12 @@ export default async function LoginPage({
   searchParams: Promise<{ error?: string }>;
 }) {
   const sp = await searchParams;
+  const enabled = isOAuthEnabled();
   return (
     <div className="mx-auto max-w-md">
       <div className="card p-6">
         <h1 className="text-xl font-bold">로그인</h1>
+        <SocialLoginButtons enabled={enabled} />
         <form action="/api/auth/login" method="post" className="mt-5 space-y-3">
           <div>
             <label className="label">이메일</label>

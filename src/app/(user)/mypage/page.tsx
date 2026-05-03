@@ -3,151 +3,312 @@ import { redirect } from "next/navigation";
 import { db } from "@/lib/db";
 import { getUserSession } from "@/lib/session";
 import { ReviewModal } from "@/components/ReviewModal";
-import { CHANNEL_LABEL, STATUS_LABEL, REVIEW_STATUS_LABEL, TYPE_LABEL, TRUST_LABEL, fmtDate, won } from "@/lib/format";
+import { SnsCard } from "@/components/SnsCard";
+import { isYouTubeAutoEnabled } from "@/lib/sns";
+import {
+  CHANNEL_LABEL,
+  STATUS_LABEL,
+  REVIEW_STATUS_LABEL,
+  TYPE_LABEL,
+  TRUST_LABEL,
+  fmtDate,
+  won,
+} from "@/lib/format";
 
-export default async function MyPage() {
+type SP = Promise<{ tab?: string }>;
+
+export default async function MyPage({ searchParams }: { searchParams: SP }) {
   const session = await getUserSession();
   if (!session) redirect("/login");
-
   const me = await db.user.findUnique({ where: { id: session.id } });
   if (!me) redirect("/login");
+  const sp = await searchParams;
+  const tab = sp.tab === "done" ? "done" : "active";
 
-  const [apps, penalties] = await Promise.all([
+  const [apps, penalties, cancelCount, doneCount] = await Promise.all([
     db.application.findMany({
       where: { userId: me.id },
       include: { campaign: true, review: true },
       orderBy: { createdAt: "desc" },
     }),
-    db.penalty.findMany({
-      where: { userId: me.id },
-      orderBy: { createdAt: "desc" },
-    }),
+    db.penalty.findMany({ where: { userId: me.id }, orderBy: { createdAt: "desc" } }),
+    db.application.count({ where: { userId: me.id, status: "CANCELED" } }),
+    db.review.count({ where: { userId: me.id, status: "APPROVED" } }),
   ]);
 
+  const activeApps = apps.filter((a) => a.status !== "COMPLETED" && a.status !== "REJECTED");
+  const doneApps = apps.filter((a) => a.status === "COMPLETED" || a.status === "REJECTED");
+  const list = tab === "done" ? doneApps : activeApps;
+
+  const ytAuto = isYouTubeAutoEnabled();
+
   return (
-    <div className="space-y-6">
-      <div className="card p-6">
-        <div className="flex items-center justify-between">
-          <div>
-            <div className="text-xs text-ink-500">안녕하세요</div>
-            <div className="text-xl font-black">{me.nickname}님</div>
-            <div className="mt-1 text-xs text-ink-500">{me.email}</div>
+    <div className="grid gap-6 md:grid-cols-[180px_1fr]">
+      {/* 사이드바 */}
+      <aside className="space-y-4 md:sticky md:top-20 md:h-fit">
+        <div className="space-y-1 text-sm">
+          <div className="px-2 py-1 text-base font-black">마이페이지</div>
+          <SideLink href="/mypage" label="📋 내 체험단" active />
+          <SideLink href="/notifications" label="🔔 알림함" />
+          <div className="mt-3 border-t border-ink-100 pt-3 text-[11px] font-bold text-ink-400">
+            내 정보 관리
           </div>
-          <div className="flex gap-2">
-            <Link href="/mypage/edit" className="btn-outline">
-              프로필 수정
-            </Link>
-            <form action="/api/auth/logout" method="post">
-              <button className="btn-outline">로그아웃</button>
-            </form>
+          <SideLink href="/mypage/edit" label="프로필 수정" />
+          <SideLink href="/mypage" label="내 채널" />
+          <div className="mt-3 border-t border-ink-100 pt-3 text-[11px] font-bold text-ink-400">
+            커뮤니티
           </div>
+          <SideLink href="/community" label="커뮤니티" />
+          <div className="mt-3 border-t border-ink-100 pt-3 text-[11px] font-bold text-ink-400">
+            고객센터
+          </div>
+          <SideLink href="#" label="자주 묻는 질문" />
+          <SideLink href="#" label="문의내역" />
+          <SideLink href="#" label="이용가이드" />
         </div>
-        <div className="mt-5 grid grid-cols-3 gap-2">
-          <Stat label="신뢰등급" value={TRUST_LABEL[me.trustGrade]} />
-          <Stat label="포인트" value={`${me.point.toLocaleString()}P`} />
-          <Stat label="총 신청" value={`${apps.length}회`} />
-        </div>
-        <div className="mt-3 rounded-lg bg-ink-50 px-3 py-2 text-[11px] text-ink-600">
-          신뢰등급은 리뷰 승인 누적과 패널티에 따라 자동 조정됩니다. 등급이 높을수록 캠페인 선정 확률이 올라갑니다.
-        </div>
-      </div>
+        <form action="/api/auth/logout" method="post">
+          <button className="btn-outline w-full">로그아웃</button>
+        </form>
+      </aside>
 
-      {penalties.length > 0 && (
-        <div>
-          <h2 className="mb-3 text-lg font-bold">패널티 내역</h2>
-          <div className="card divide-y divide-ink-100">
-            {penalties.map((p) => (
-              <div key={p.id} className="flex items-center justify-between p-3">
-                <div>
-                  <div className="text-sm font-semibold text-red-600">{p.reason}</div>
-                  <div className="text-[11px] text-ink-500">{fmtDate(p.createdAt)}</div>
-                </div>
-                <span className="badge bg-red-500 text-white">-{p.point}P</span>
+      {/* 메인 */}
+      <div className="space-y-6">
+        {/* 프로필 헤더 */}
+        <div className="card p-5">
+          <div className="flex items-start justify-between">
+            <div className="flex items-center gap-3">
+              <div className="flex h-14 w-14 items-center justify-center rounded-full bg-ink-100 text-2xl">
+                👤
               </div>
-            ))}
+              <div>
+                <div className="flex items-center gap-2">
+                  <span className="text-lg font-black">{me.nickname}</span>
+                  <span className="badge bg-amber-100 text-amber-800">
+                    {TRUST_LABEL[me.trustGrade]}
+                  </span>
+                </div>
+                <div className="text-xs text-ink-500">{me.email}</div>
+                {me.bio && (
+                  <div className="mt-1 text-xs text-ink-600">{me.bio}</div>
+                )}
+              </div>
+            </div>
+            <Link href="/mypage/edit" className="text-ink-400 hover:text-ink-700">
+              ✏️
+            </Link>
+          </div>
+
+          {/* 통계 */}
+          <div className="mt-5 grid grid-cols-4 gap-2 text-center md:grid-cols-8">
+            <Stat label="신청수" value={`${apps.length}회`} />
+            <Stat label="활동지역" value={me.region ? me.region.split(" ").pop()! : "미설정"} />
+            <Stat label="취소횟수" value={`${cancelCount}회`} tone="danger" />
+            <Stat label="하트수" value={`${me.heartCount}개`} />
+            <Stat label="체험경력" value={`${doneCount}회`} />
+            <Stat label="활동주제" value="미등록" tone="muted" />
+            <Stat label="패널티" value={`${penalties.length}회`} tone="danger" />
+            <Stat label="포인트" value={`${me.point.toLocaleString()}P`} tone="brand" />
           </div>
         </div>
-      )}
 
-      <div>
-        <h2 className="mb-3 text-lg font-bold">신청 내역</h2>
-        {apps.length === 0 ? (
-          <div className="card p-10 text-center text-sm text-ink-500">
-            아직 신청한 캠페인이 없습니다.
-            <div className="mt-3">
-              <Link href="/campaigns" className="btn-primary">캠페인 둘러보기</Link>
+        {/* SNS 카드 */}
+        <div>
+          <div className="mb-3 flex items-baseline justify-between">
+            <h2 className="text-base font-bold">SNS 연결</h2>
+            <span className="text-[11px] text-ink-500">
+              연결된 채널이 많을수록 캠페인 선정 확률이 올라가요
+            </span>
+          </div>
+          <div className="grid grid-cols-2 gap-2 md:grid-cols-4">
+            <SnsCard
+              channel="blog"
+              url={me.blogUrl}
+              metric={me.blogVisitors}
+              youtubeAutoEnabled={ytAuto}
+            />
+            <SnsCard
+              channel="insta"
+              url={me.instaUrl}
+              metric={me.instaFollowers}
+              youtubeAutoEnabled={ytAuto}
+            />
+            <SnsCard
+              channel="youtube"
+              url={me.youtubeUrl}
+              metric={me.youtubeSubscribers}
+              youtubeAutoEnabled={ytAuto}
+            />
+            <SnsCard
+              channel="tiktok"
+              url={me.tiktokUrl}
+              metric={me.tiktokFollowers}
+              youtubeAutoEnabled={ytAuto}
+            />
+          </div>
+          <p className="mt-2 text-[11px] text-ink-500">
+            ✓ 유튜브는 URL만 입력하면 구독자 수가 {ytAuto ? "자동으로 가져와집니다." : "자동 가져오기 가능 (관리자 설정 필요)."}
+            <br />· 블로그·인스타·틱톡은 공식 자동 인증이 어려워 현재는 직접 입력 방식입니다.
+          </p>
+        </div>
+
+        {/* 패널티 */}
+        {penalties.length > 0 && (
+          <div>
+            <h2 className="mb-3 text-base font-bold">패널티 내역</h2>
+            <div className="card divide-y divide-ink-100">
+              {penalties.map((p) => (
+                <div key={p.id} className="flex items-center justify-between p-3">
+                  <div>
+                    <div className="text-sm font-semibold text-red-600">{p.reason}</div>
+                    <div className="text-[11px] text-ink-500">{fmtDate(p.createdAt)}</div>
+                  </div>
+                  <span className="badge bg-red-500 text-white">-{p.point}P</span>
+                </div>
+              ))}
             </div>
           </div>
-        ) : (
-          <div className="space-y-2">
-            {apps.map((a) => (
-              <div key={a.id} className="card space-y-2 p-3">
-              <div className="flex items-center gap-3">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={a.campaign.thumbnail}
-                  alt=""
-                  className="h-16 w-16 flex-shrink-0 rounded-lg object-cover"
-                />
-                <div className="min-w-0 flex-1">
-                  <div className="flex items-center gap-1.5 text-[11px] text-ink-500">
-                    <span>{TYPE_LABEL[a.campaign.type]}</span>
-                    <span>·</span>
-                    <span>{CHANNEL_LABEL[a.campaign.channel]}</span>
-                  </div>
-                  <Link
-                    href={`/campaigns/${a.campaign.id}`}
-                    className="line-clamp-1 text-sm font-bold hover:text-brand-600"
-                  >
-                    {a.campaign.title}
-                  </Link>
-                  <div className="text-[11px] text-ink-500">
-                    {won(a.campaign.offerValue)} 상당 · 신청일 {fmtDate(a.createdAt)}
-                  </div>
-                </div>
-                <div className="flex flex-col items-end gap-1">
-                  <StatusBadge status={a.status} />
-                  {a.status === "SELECTED" && !a.review && (
-                    <ReviewModal applicationId={a.id} />
-                  )}
-                  {a.review && (
-                    <span
-                      className={`badge ${
-                        a.review.status === "APPROVED"
-                          ? "bg-blue-100 text-blue-700"
-                          : a.review.status === "REJECTED"
-                            ? "bg-red-100 text-red-700"
-                            : "bg-emerald-100 text-emerald-700"
-                      }`}
-                    >
-                      리뷰 {REVIEW_STATUS_LABEL[a.review.status]}
-                    </span>
-                  )}
-                  {a.review?.status === "REJECTED" && (
-                    <ReviewModal applicationId={a.id} />
-                  )}
-                </div>
-              </div>
-              {a.review?.status === "REJECTED" && a.review.rejectReason && (
-                <div className="rounded-md bg-red-50 px-3 py-2 text-xs text-red-700">
-                  <b>반려 사유:</b> {a.review.rejectReason} · 위 버튼으로 재등록 가능합니다.
-                </div>
-              )}
-              </div>
-            ))}
-          </div>
         )}
+
+        {/* 캠페인 탭 */}
+        <div>
+          <div className="mb-3 flex gap-2 border-b border-ink-200">
+            <Tab href="/mypage" active={tab === "active"} label={`진행중 ${activeApps.length}`} />
+            <Tab href="/mypage?tab=done" active={tab === "done"} label={`완료/미선정 ${doneApps.length}`} />
+          </div>
+          {list.length === 0 ? (
+            <div className="card p-10 text-center text-sm text-ink-500">
+              {tab === "active" ? "진행중인 캠페인이 없습니다." : "완료된 내역이 없습니다."}
+              <div className="mt-3">
+                <Link href="/campaigns" className="btn-primary">
+                  캠페인 둘러보기
+                </Link>
+              </div>
+            </div>
+          ) : (
+            <div className="space-y-2">
+              {list.map((a) => (
+                <div key={a.id} className="card space-y-2 p-3">
+                  <div className="flex items-center gap-3">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={a.campaign.thumbnail}
+                      alt=""
+                      className="h-16 w-16 flex-shrink-0 rounded-lg object-cover"
+                    />
+                    <div className="min-w-0 flex-1">
+                      <div className="flex items-center gap-1.5 text-[11px] text-ink-500">
+                        <span>{TYPE_LABEL[a.campaign.type]}</span>
+                        <span>·</span>
+                        <span>{CHANNEL_LABEL[a.campaign.channel]}</span>
+                      </div>
+                      <Link
+                        href={`/campaigns/${a.campaign.id}`}
+                        className="line-clamp-1 text-sm font-bold hover:text-brand-600"
+                      >
+                        {a.campaign.title}
+                      </Link>
+                      <div className="text-[11px] text-ink-500">
+                        {won(a.campaign.offerValue)} 상당 · 신청일 {fmtDate(a.createdAt)}
+                      </div>
+                    </div>
+                    <div className="flex flex-col items-end gap-1">
+                      <StatusBadge status={a.status} />
+                      {a.status === "SELECTED" && !a.review && (
+                        <ReviewModal applicationId={a.id} />
+                      )}
+                      {a.review && (
+                        <span
+                          className={`badge ${
+                            a.review.status === "APPROVED"
+                              ? "bg-blue-100 text-blue-700"
+                              : a.review.status === "REJECTED"
+                                ? "bg-red-100 text-red-700"
+                                : "bg-emerald-100 text-emerald-700"
+                          }`}
+                        >
+                          리뷰 {REVIEW_STATUS_LABEL[a.review.status]}
+                        </span>
+                      )}
+                      {a.review?.status === "REJECTED" && (
+                        <ReviewModal applicationId={a.id} />
+                      )}
+                    </div>
+                  </div>
+                  {a.review?.status === "REJECTED" && a.review.rejectReason && (
+                    <div className="rounded-md bg-red-50 px-3 py-2 text-xs text-red-700">
+                      <b>반려 사유:</b> {a.review.rejectReason} · 위 버튼으로 재등록 가능합니다.
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );
 }
 
-function Stat({ label, value }: { label: string; value: string }) {
+function Stat({
+  label,
+  value,
+  tone = "default",
+}: {
+  label: string;
+  value: string;
+  tone?: "default" | "danger" | "brand" | "muted";
+}) {
+  const color =
+    tone === "danger"
+      ? "text-red-600"
+      : tone === "brand"
+        ? "text-brand-600"
+        : tone === "muted"
+          ? "text-ink-400"
+          : "text-ink-900";
   return (
-    <div className="rounded-lg bg-ink-50 p-3 text-center">
-      <div className="text-[11px] text-ink-500">{label}</div>
-      <div className="mt-0.5 text-base font-black text-ink-900">{value}</div>
+    <div className="rounded-lg bg-ink-50 px-2 py-2.5">
+      <div className="text-[10px] text-ink-500">{label}</div>
+      <div className={`mt-0.5 text-sm font-black ${color}`}>{value}</div>
     </div>
+  );
+}
+
+function SideLink({
+  href,
+  label,
+  active,
+}: {
+  href: string;
+  label: string;
+  active?: boolean;
+}) {
+  return (
+    <Link
+      href={href}
+      className={`block rounded-md px-2 py-1.5 ${
+        active
+          ? "bg-brand-50 font-bold text-brand-700"
+          : "text-ink-700 hover:bg-ink-50"
+      }`}
+    >
+      {label}
+    </Link>
+  );
+}
+
+function Tab({ href, active, label }: { href: string; active: boolean; label: string }) {
+  return (
+    <Link
+      href={href}
+      className={`-mb-px border-b-2 px-3 py-2 text-sm font-bold ${
+        active
+          ? "border-brand-500 text-brand-600"
+          : "border-transparent text-ink-500 hover:text-ink-700"
+      }`}
+    >
+      {label}
+    </Link>
   );
 }
 
