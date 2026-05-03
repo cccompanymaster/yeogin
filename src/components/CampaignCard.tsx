@@ -1,0 +1,70 @@
+import Link from "next/link";
+import { CHANNEL_LABEL, TYPE_LABEL, dday, won } from "@/lib/format";
+
+type Props = {
+  c: {
+    id: string;
+    title: string;
+    thumbnail: string;
+    type: string;
+    channel: string;
+    category: string;
+    region: string | null;
+    offer: string;
+    offerValue: number;
+    capacity: number;
+    appliedCount: number;
+    applyEnd: Date | string;
+    fastMatch: boolean;
+  };
+};
+
+export function CampaignCard({ c }: Props) {
+  return (
+    <Link
+      href={`/campaigns/${c.id}`}
+      className="card group overflow-hidden transition hover:-translate-y-0.5 hover:shadow-md"
+    >
+      <div className="relative aspect-[4/3] overflow-hidden bg-ink-100">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src={c.thumbnail}
+          alt={c.title}
+          className="h-full w-full object-cover transition group-hover:scale-105"
+        />
+        <div className="absolute left-2 top-2 flex gap-1">
+          <span className="badge bg-ink-900/80 text-white">{TYPE_LABEL[c.type]}</span>
+          {c.fastMatch && (
+            <span className="badge bg-brand-500 text-white">⚡ 빠른선정</span>
+          )}
+        </div>
+        <div className="absolute right-2 top-2">
+          <span className="badge bg-white/95 text-brand-600">{dday(c.applyEnd)}</span>
+        </div>
+      </div>
+      <div className="space-y-1.5 p-3">
+        <div className="flex items-center gap-1.5 text-[11px] text-ink-500">
+          <span>{c.category}</span>
+          <span>·</span>
+          <span>{CHANNEL_LABEL[c.channel]}</span>
+          {c.region && (
+            <>
+              <span>·</span>
+              <span>{c.region}</span>
+            </>
+          )}
+        </div>
+        <div className="line-clamp-2 text-sm font-bold leading-tight text-ink-900">
+          {c.title}
+        </div>
+        <div className="line-clamp-1 text-xs text-ink-600">{c.offer}</div>
+        <div className="flex items-center justify-between pt-1.5 text-[11px]">
+          <span className="font-semibold text-brand-600">{won(c.offerValue)} 상당</span>
+          <span className="text-ink-500">
+            {c.appliedCount}명 신청 / {c.capacity}명 모집
+          </span>
+        </div>
+      </div>
+    </Link>
+  );
+}
