@@ -1,6 +1,43 @@
+@import "leaflet/dist/leaflet.css";
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Nearby map custom pin */
+.ygn-pin-wrap { background: transparent !important; border: none !important; }
+.ygn-pin {
+  position: relative;
+  border-radius: 9999px;
+  background: #f97316;
+  color: #fff;
+  text-align: center;
+  font-weight: 800;
+  font-size: 13px;
+  box-shadow: 0 2px 8px rgba(249, 115, 22, 0.4), 0 0 0 3px #fff;
+  transition: transform 0.15s ease;
+  cursor: pointer;
+}
+.ygn-pin:hover { transform: scale(1.08); }
+.ygn-pin-active {
+  background: #c2410c;
+  box-shadow: 0 4px 12px rgba(194, 65, 12, 0.5), 0 0 0 3px #fff, 0 0 0 6px #fed7aa;
+}
+.ygn-pin-num { line-height: 1; padding-top: 8px; }
+.ygn-pin-label {
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  margin-top: 4px;
+  background: #fff;
+  color: #1e293b;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 10px;
+  font-weight: 700;
+  white-space: nowrap;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.15);
+}
 
 @layer base {
   html {

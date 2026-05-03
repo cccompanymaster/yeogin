@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { getAdvertiserSession } from "@/lib/session";
 import { NotificationBell } from "@/components/NotificationBell";
+import { Logo } from "@/components/Logo";
 
 export default async function AdvertiserLayout({ children }: { children: React.ReactNode }) {
   const session = await getAdvertiserSession();
@@ -10,8 +11,10 @@ export default async function AdvertiserLayout({ children }: { children: React.R
         <div className="mx-auto flex h-14 max-w-6xl items-center justify-between px-4">
           <div className="flex items-center gap-6">
             <Link href="/advertiser" className="flex items-center gap-2">
-              <span className="rounded bg-brand-500 px-1.5 py-0.5 text-[11px] font-bold">BIZ</span>
-              <span className="text-lg font-black tracking-tight">여긴 비즈센터</span>
+              <Logo size={24} variant="white" />
+              <span className="rounded bg-brand-500 px-1.5 py-0.5 text-[10px] font-bold">
+                BIZ
+              </span>
             </Link>
             {session && (
               <nav className="hidden gap-5 text-sm font-medium text-ink-200 md:flex">

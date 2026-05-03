@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Logo } from "@/components/Logo";
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -7,10 +8,10 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         <div className="mx-auto flex h-14 max-w-5xl items-center justify-between px-4">
           <div className="flex items-center gap-3">
             <Link href="/admin" className="flex items-center gap-2">
-              <span className="rounded bg-red-500 px-1.5 py-0.5 text-[11px] font-bold">
+              <Logo size={24} variant="white" />
+              <span className="rounded bg-red-500 px-1.5 py-0.5 text-[10px] font-bold">
                 ADMIN
               </span>
-              <span className="text-lg font-black tracking-tight">여긴 운영센터</span>
             </Link>
           </div>
           <div className="flex items-center gap-3 text-xs text-ink-300">
