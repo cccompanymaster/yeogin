@@ -1,19 +1,21 @@
 import Link from "next/link";
 import { getUserSession } from "@/lib/session";
 import { AdvertiserPopup } from "@/components/AdvertiserPopup";
+import { SearchBar } from "@/components/SearchBar";
+import { NotificationBell } from "@/components/NotificationBell";
 
 export default async function UserLayout({ children }: { children: React.ReactNode }) {
   const session = await getUserSession();
   return (
     <div className="min-h-screen bg-ink-50">
       <header className="sticky top-0 z-30 border-b border-ink-200 bg-white/90 backdrop-blur">
-        <div className="mx-auto flex h-14 max-w-6xl items-center justify-between px-4">
+        <div className="mx-auto flex h-14 max-w-6xl items-center justify-between gap-3 px-4">
           <div className="flex items-center gap-6">
             <Link href="/" className="flex items-center gap-1.5">
               <span className="text-xl font-black tracking-tight text-brand-500">여긴</span>
-              <span className="text-xs font-medium text-ink-500">YEOGIN</span>
+              <span className="hidden text-xs font-medium text-ink-500 sm:inline">YEOGIN</span>
             </Link>
-            <nav className="hidden gap-5 text-sm font-medium text-ink-700 md:flex">
+            <nav className="hidden gap-5 text-sm font-medium text-ink-700 lg:flex">
               <Link href="/campaigns?type=VISIT">방문형</Link>
               <Link href="/campaigns?type=DELIVERY">배송형</Link>
               <Link href="/campaigns?type=REPORTER">기자단</Link>
@@ -22,14 +24,20 @@ export default async function UserLayout({ children }: { children: React.ReactNo
               <Link href="/community">커뮤니티</Link>
             </nav>
           </div>
+          <div className="hidden max-w-sm flex-1 md:block">
+            <SearchBar />
+          </div>
           <div className="flex items-center gap-2">
-            <Link href="/advertiser" target="_blank" className="hidden text-xs font-semibold text-ink-600 hover:text-brand-600 md:block">
-              내 매장 홍보하기 →
+            <Link href="/advertiser" target="_blank" className="hidden text-xs font-semibold text-ink-600 hover:text-brand-600 lg:block">
+              내 매장 홍보 →
             </Link>
             {session ? (
-              <Link href="/mypage" className="btn-outline">
-                {session.name}님
-              </Link>
+              <>
+                <NotificationBell role="USER" recipientId={session.id} href="/notifications" />
+                <Link href="/mypage" className="btn-outline">
+                  {session.name}님
+                </Link>
+              </>
             ) : (
               <>
                 <Link href="/login" className="btn-ghost">로그인</Link>
@@ -37,6 +45,9 @@ export default async function UserLayout({ children }: { children: React.ReactNo
               </>
             )}
           </div>
+        </div>
+        <div className="border-t border-ink-100 px-4 py-2 md:hidden">
+          <SearchBar />
         </div>
       </header>
       <main className="mx-auto max-w-6xl px-4 py-6">{children}</main>

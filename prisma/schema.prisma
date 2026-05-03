@@ -108,6 +108,9 @@ model Review {
   url           String
   status        String   @default("PENDING") // PENDING, APPROVED, REJECTED
   rejectReason  String?
+  bodySnippet   String?  // 사용자가 붙여넣은 본문 발췌 (키워드 검수용)
+  keywordCheck  String?  // PASS | WARN | NONE
+  missingKeys   String?  // 누락 키워드 콤마 리스트
   createdAt     DateTime @default(now())
 }
 
@@ -120,4 +123,18 @@ model Penalty {
   reason    String
   point     Int      // 차감 포인트
   createdAt DateTime @default(now())
+}
+
+// 알림 - role + recipientId 폴리모픽 구조
+model Notification {
+  id          String   @id @default(cuid())
+  role        String   // USER | ADVERTISER
+  recipientId String
+  title       String
+  body        String
+  link        String?
+  read        Boolean  @default(false)
+  createdAt   DateTime @default(now())
+
+  @@index([role, recipientId, read])
 }

@@ -49,6 +49,16 @@ export default async function AdvertiserReviewsPage({
                   <div className="text-[11px] text-ink-500">
                     {r.user.nickname} · {fmtDate(r.createdAt)}
                   </div>
+                  {r.keywordCheck === "PASS" && (
+                    <span className="badge mt-1 bg-emerald-50 text-emerald-700">
+                      ✓ 키워드 자동검수 통과
+                    </span>
+                  )}
+                  {r.keywordCheck === "WARN" && (
+                    <span className="badge mt-1 bg-amber-50 text-amber-800">
+                      ⚠ 키워드 누락: {r.missingKeys}
+                    </span>
+                  )}
                 </div>
                 <div className="flex items-center gap-2">
                   <span

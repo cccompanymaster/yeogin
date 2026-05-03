@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { getAdvertiserSession } from "@/lib/session";
+import { notify } from "@/lib/notify";
+import { applyTrustGrade } from "@/lib/trust";
 
 export async function POST(
   req: NextRequest,
@@ -34,6 +36,14 @@ export async function POST(
         data: { point: { increment: 1000 } },
       }),
     ]);
+    const newGrade = await applyTrustGrade(review.userId);
+    await notify({
+      role: "USER",
+      recipientId: review.userId,
+      title: "리뷰가 승인되었어요 🎉",
+      body: `${review.campaign.title} 리뷰가 승인되어 1,000P가 적립되었습니다. 현재 신뢰등급: ${newGrade}`,
+      link: "/mypage",
+    });
   } else if (action === "reject") {
     if (!rejectReason) {
       const url = new URL("/advertiser/reviews", req.url);
@@ -43,6 +53,13 @@ export async function POST(
     await db.review.update({
       where: { id },
       data: { status: "REJECTED", rejectReason },
+    });
+    await notify({
+      role: "USER",
+      recipientId: review.userId,
+      title: "리뷰가 반려되었습니다",
+      body: `사유: ${rejectReason}. 마이페이지에서 수정 후 재등록할 수 있습니다.`,
+      link: "/mypage",
     });
   }
 

@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { getAdvertiserSession } from "@/lib/session";
+import { NotificationBell } from "@/components/NotificationBell";
 
 export default async function AdvertiserLayout({ children }: { children: React.ReactNode }) {
   const session = await getAdvertiserSession();
@@ -27,11 +28,18 @@ export default async function AdvertiserLayout({ children }: { children: React.R
               체험단으로 둘러보기 ↗
             </Link>
             {session ? (
-              <form action="/api/advertiser/logout" method="post">
-                <button className="btn-outline border-ink-700 bg-transparent text-ink-100 hover:bg-ink-800">
-                  로그아웃
-                </button>
-              </form>
+              <>
+                <NotificationBell
+                  role="ADVERTISER"
+                  recipientId={session.id}
+                  href="/advertiser/notifications"
+                />
+                <form action="/api/advertiser/logout" method="post">
+                  <button className="btn-outline border-ink-700 bg-transparent text-ink-100 hover:bg-ink-800">
+                    로그아웃
+                  </button>
+                </form>
+              </>
             ) : (
               <>
                 <Link href="/advertiser/login" className="text-sm text-ink-200">로그인</Link>

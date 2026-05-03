@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { getAdvertiserSession } from "@/lib/session";
+import { notify } from "@/lib/notify";
+import { applyTrustGrade } from "@/lib/trust";
 
 const TYPE_REASON: Record<string, { reason: string; point: number }> = {
   CANCEL_AFTER_SELECT: { reason: "선정 후 신청 취소", point: 500 },
@@ -43,6 +45,16 @@ export async function POST(
       data: { point: { decrement: cfg.point } },
     }),
   ]);
+
+  await applyTrustGrade(app.userId);
+
+  await notify({
+    role: "USER",
+    recipientId: app.userId,
+    title: "패널티가 부여되었습니다",
+    body: `${cfg.reason} 사유로 ${cfg.point}P가 차감되었습니다.`,
+    link: "/mypage",
+  });
 
   return NextResponse.redirect(
     new URL(`/advertiser/campaigns/${app.campaignId}/applicants`, req.url)

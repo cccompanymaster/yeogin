@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { getUserSession } from "@/lib/session";
+import { notify } from "@/lib/notify";
 
 export async function POST(
   req: NextRequest,
@@ -40,6 +41,14 @@ export async function POST(
       data: { appliedCount: { increment: 1 } },
     }),
   ]);
+
+  await notify({
+    role: "ADVERTISER",
+    recipientId: c.advertiserId,
+    title: "새 신청자가 도착했어요",
+    body: `${c.title} 캠페인에 새 신청이 접수되었습니다.`,
+    link: `/advertiser/campaigns/${id}/applicants`,
+  });
 
   return NextResponse.json({ ok: true });
 }

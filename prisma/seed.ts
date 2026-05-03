@@ -33,6 +33,8 @@ async function main() {
   console.log("🌱 Seeding...");
 
   // 기존 데이터 정리
+  await db.notification.deleteMany();
+  await db.penalty.deleteMany();
   await db.review.deleteMany();
   await db.application.deleteMany();
   await db.campaign.deleteMany();
@@ -504,6 +506,34 @@ async function main() {
       },
     });
   }
+
+  // 데모 알림 시드
+  await db.notification.createMany({
+    data: [
+      {
+        role: "USER",
+        recipientId: demoUser.id,
+        title: "🎉 캠페인에 선정되었어요!",
+        body: `${created[4].title} 캠페인에 선정되었습니다. 마이페이지에서 가이드를 확인하세요.`,
+        link: "/mypage",
+      },
+      {
+        role: "USER",
+        recipientId: demoUser.id,
+        title: "리뷰 검수 대기 중",
+        body: `${created[7].title} 리뷰 검수가 진행 중입니다.`,
+        link: "/mypage",
+      },
+      {
+        role: "ADVERTISER",
+        recipientId: adv1.id,
+        title: "새 신청자가 도착했어요",
+        body: `${created[0].title} 캠페인에 새 신청이 접수되었습니다.`,
+        link: `/advertiser/campaigns/${created[0].id}/applicants`,
+        read: false,
+      },
+    ],
+  });
 
   console.log(
     `✅ Done. users=${users.length + 1}, advertisers=3, campaigns=${created.length}`
