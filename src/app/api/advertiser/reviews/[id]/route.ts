@@ -12,6 +12,7 @@ export async function POST(
   const { id } = await params;
   const form = await req.formData();
   const action = String(form.get("action") || "");
+  const rejectReason = String(form.get("rejectReason") || "").trim();
 
   const review = await db.review.findUnique({
     where: { id },
@@ -23,7 +24,7 @@ export async function POST(
 
   if (action === "approve") {
     await db.$transaction([
-      db.review.update({ where: { id }, data: { status: "APPROVED" } }),
+      db.review.update({ where: { id }, data: { status: "APPROVED", rejectReason: null } }),
       db.application.update({
         where: { id: review.applicationId },
         data: { status: "COMPLETED" },
@@ -33,6 +34,16 @@ export async function POST(
         data: { point: { increment: 1000 } },
       }),
     ]);
+  } else if (action === "reject") {
+    if (!rejectReason) {
+      const url = new URL("/advertiser/reviews", req.url);
+      url.searchParams.set("error", "반려 사유를 입력해주세요.");
+      return NextResponse.redirect(url, 303);
+    }
+    await db.review.update({
+      where: { id },
+      data: { status: "REJECTED", rejectReason },
+    });
   }
 
   return NextResponse.redirect(new URL("/advertiser/reviews", req.url));

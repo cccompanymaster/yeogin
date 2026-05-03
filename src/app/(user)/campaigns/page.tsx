@@ -2,6 +2,7 @@ import Link from "next/link";
 import { db } from "@/lib/db";
 import { CampaignCard } from "@/components/CampaignCard";
 import { CATEGORIES, REGIONS, TYPE_LABEL, CHANNEL_LABEL } from "@/lib/format";
+import { getUserSession } from "@/lib/session";
 
 type SearchParams = Promise<{
   q?: string;
@@ -10,6 +11,7 @@ type SearchParams = Promise<{
   channel?: string;
   region?: string;
   fast?: string;
+  nearby?: string;
   sort?: string;
 }>;
 
@@ -26,6 +28,23 @@ export default async function CampaignListPage({
   if (sp.region) where.region = sp.region;
   if (sp.fast === "1") where.fastMatch = true;
   if (sp.q) where.title = { contains: sp.q };
+
+  // 내 주변: 로그인 사용자의 region 기반 자동 필터
+  let nearbyRegion: string | null = null;
+  let nearbyNoRegion = false;
+  if (sp.nearby === "1") {
+    const session = await getUserSession();
+    if (session) {
+      const me = await db.user.findUnique({ where: { id: session.id } });
+      if (me?.region) {
+        nearbyRegion = me.region;
+        where.region = me.region;
+        where.type = "VISIT";
+      } else {
+        nearbyNoRegion = true;
+      }
+    }
+  }
 
   const orderBy =
     sp.sort === "ending"
@@ -61,10 +80,19 @@ export default async function CampaignListPage({
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold">전체 캠페인</h1>
+        <h1 className="text-2xl font-bold">
+          {sp.nearby === "1"
+            ? `📍 내 주변 캠페인${nearbyRegion ? ` · ${nearbyRegion}` : ""}`
+            : "전체 캠페인"}
+        </h1>
         <div className="mt-1 text-sm text-ink-500">
           총 {items.length}개의 캠페인이 진행 중입니다
         </div>
+        {nearbyNoRegion && (
+          <div className="mt-3 card border-brand-200 bg-brand-50 p-3 text-sm text-brand-700">
+            아직 활동 지역이 등록되지 않았습니다. 마이페이지에서 지역을 설정하면 내 주변 방문형 캠페인이 자동으로 노출됩니다.
+          </div>
+        )}
       </div>
 
       <div className="card space-y-3 p-4">

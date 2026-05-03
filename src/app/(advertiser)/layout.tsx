@@ -18,6 +18,7 @@ export default async function AdvertiserLayout({ children }: { children: React.R
                 <Link href="/advertiser/campaigns">캠페인 관리</Link>
                 <Link href="/advertiser/campaigns/new">캠페인 등록</Link>
                 <Link href="/advertiser/reviews">리뷰 검수</Link>
+                <Link href="/advertiser/billing">정산</Link>
               </nav>
             )}
           </div>

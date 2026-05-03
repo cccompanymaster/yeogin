@@ -3,7 +3,7 @@ import { redirect } from "next/navigation";
 import { db } from "@/lib/db";
 import { getUserSession } from "@/lib/session";
 import { ReviewModal } from "@/components/ReviewModal";
-import { CHANNEL_LABEL, STATUS_LABEL, TYPE_LABEL, TRUST_LABEL, fmtDate, won } from "@/lib/format";
+import { CHANNEL_LABEL, STATUS_LABEL, REVIEW_STATUS_LABEL, TYPE_LABEL, TRUST_LABEL, fmtDate, won } from "@/lib/format";
 
 export default async function MyPage() {
   const session = await getUserSession();
@@ -12,11 +12,17 @@ export default async function MyPage() {
   const me = await db.user.findUnique({ where: { id: session.id } });
   if (!me) redirect("/login");
 
-  const apps = await db.application.findMany({
-    where: { userId: me.id },
-    include: { campaign: true, review: true },
-    orderBy: { createdAt: "desc" },
-  });
+  const [apps, penalties] = await Promise.all([
+    db.application.findMany({
+      where: { userId: me.id },
+      include: { campaign: true, review: true },
+      orderBy: { createdAt: "desc" },
+    }),
+    db.penalty.findMany({
+      where: { userId: me.id },
+      orderBy: { createdAt: "desc" },
+    }),
+  ]);
 
   return (
     <div className="space-y-6">
@@ -36,7 +42,27 @@ export default async function MyPage() {
           <Stat label="포인트" value={`${me.point.toLocaleString()}P`} />
           <Stat label="총 신청" value={`${apps.length}회`} />
         </div>
+        <div className="mt-3 rounded-lg bg-ink-50 px-3 py-2 text-[11px] text-ink-600">
+          신뢰등급은 리뷰 승인 누적과 패널티에 따라 자동 조정됩니다. 등급이 높을수록 캠페인 선정 확률이 올라갑니다.
+        </div>
       </div>
+
+      {penalties.length > 0 && (
+        <div>
+          <h2 className="mb-3 text-lg font-bold">패널티 내역</h2>
+          <div className="card divide-y divide-ink-100">
+            {penalties.map((p) => (
+              <div key={p.id} className="flex items-center justify-between p-3">
+                <div>
+                  <div className="text-sm font-semibold text-red-600">{p.reason}</div>
+                  <div className="text-[11px] text-ink-500">{fmtDate(p.createdAt)}</div>
+                </div>
+                <span className="badge bg-red-500 text-white">-{p.point}P</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       <div>
         <h2 className="mb-3 text-lg font-bold">신청 내역</h2>
@@ -50,7 +76,8 @@ export default async function MyPage() {
         ) : (
           <div className="space-y-2">
             {apps.map((a) => (
-              <div key={a.id} className="card flex items-center gap-3 p-3">
+              <div key={a.id} className="card space-y-2 p-3">
+              <div className="flex items-center gap-3">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   src={a.campaign.thumbnail}
@@ -79,11 +106,28 @@ export default async function MyPage() {
                     <ReviewModal applicationId={a.id} />
                   )}
                   {a.review && (
-                    <span className="badge bg-emerald-100 text-emerald-700">
-                      리뷰 {STATUS_LABEL[a.review.status]}
+                    <span
+                      className={`badge ${
+                        a.review.status === "APPROVED"
+                          ? "bg-blue-100 text-blue-700"
+                          : a.review.status === "REJECTED"
+                            ? "bg-red-100 text-red-700"
+                            : "bg-emerald-100 text-emerald-700"
+                      }`}
+                    >
+                      리뷰 {REVIEW_STATUS_LABEL[a.review.status]}
                     </span>
                   )}
+                  {a.review?.status === "REJECTED" && (
+                    <ReviewModal applicationId={a.id} />
+                  )}
                 </div>
+              </div>
+              {a.review?.status === "REJECTED" && a.review.rejectReason && (
+                <div className="rounded-md bg-red-50 px-3 py-2 text-xs text-red-700">
+                  <b>반려 사유:</b> {a.review.rejectReason} · 위 버튼으로 재등록 가능합니다.
+                </div>
+              )}
               </div>
             ))}
           </div>

@@ -40,6 +40,12 @@ export const STATUS_LABEL: Record<string, string> = {
   APPROVED: "승인",
 };
 
+export const REVIEW_STATUS_LABEL: Record<string, string> = {
+  PENDING: "검수대기",
+  APPROVED: "승인",
+  REJECTED: "반려",
+};
+
 export const TRUST_LABEL: Record<string, string> = {
   BRONZE: "Bronze",
   SILVER: "Silver",

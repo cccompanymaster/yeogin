@@ -41,13 +41,44 @@ export default async function AdvertiserCampaignsList() {
                   신청자 {c._count.applications}명 / 모집 {c.capacity}명
                 </div>
               </div>
-              <div className="flex gap-2">
-                <Link
-                  href={`/advertiser/campaigns/${c.id}/applicants`}
-                  className="btn-outline"
+              <div className="flex flex-col items-end gap-1">
+                <span
+                  className={`badge ${
+                    c.status === "OPEN"
+                      ? "bg-emerald-100 text-emerald-700"
+                      : "bg-ink-200 text-ink-600"
+                  }`}
                 >
-                  신청자
-                </Link>
+                  {c.status === "OPEN" ? "진행중" : c.status === "CLOSED" ? "종료" : "완료"}
+                </span>
+                <div className="flex gap-1">
+                  <Link
+                    href={`/advertiser/campaigns/${c.id}/applicants`}
+                    className="badge bg-ink-100 text-ink-700 hover:bg-ink-200"
+                  >
+                    신청자
+                  </Link>
+                  <Link
+                    href={`/advertiser/campaigns/${c.id}/edit`}
+                    className="badge bg-ink-100 text-ink-700 hover:bg-ink-200"
+                  >
+                    수정
+                  </Link>
+                  <form action={`/api/advertiser/campaigns/${c.id}`} method="post">
+                    <input type="hidden" name="action" value="duplicate" />
+                    <button className="badge bg-ink-100 text-ink-700 hover:bg-ink-200">
+                      복제
+                    </button>
+                  </form>
+                  {c.status === "OPEN" && (
+                    <form action={`/api/advertiser/campaigns/${c.id}`} method="post">
+                      <input type="hidden" name="action" value="close" />
+                      <button className="badge bg-red-50 text-red-700 hover:bg-red-100">
+                        종료
+                      </button>
+                    </form>
+                  )}
+                </div>
               </div>
             </div>
           ))}

@@ -3,6 +3,7 @@ import { notFound, redirect } from "next/navigation";
 import { db } from "@/lib/db";
 import { getAdvertiserSession } from "@/lib/session";
 import { STATUS_LABEL, TRUST_LABEL, fmtDate } from "@/lib/format";
+import { PenaltyMenu } from "@/components/PenaltyMenu";
 
 export default async function ApplicantsPage({
   params,
@@ -106,6 +107,9 @@ export default async function ApplicantsPage({
                       <button className="badge bg-blue-500 text-white">검수승인</button>
                     </form>
                   </div>
+                )}
+                {(a.status === "SELECTED" || a.status === "COMPLETED") && (
+                  <PenaltyMenu applicationId={a.id} />
                 )}
               </div>
             </div>
