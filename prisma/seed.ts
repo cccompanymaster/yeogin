@@ -33,9 +33,13 @@ async function main() {
   console.log("🌱 Seeding...");
 
   // 기존 데이터 정리
+  await db.advertiserPointHistory.deleteMany();
+  await db.pointHistory.deleteMany();
   await db.report.deleteMany();
   await db.notification.deleteMany();
   await db.penalty.deleteMany();
+  await db.snsVerification.deleteMany();
+  await db.favorite.deleteMany();
   await db.review.deleteMany();
   await db.application.deleteMany();
   await db.campaign.deleteMany();
@@ -86,6 +90,7 @@ async function main() {
       bizNumber: "123-45-67890",
       contactName: "김사장",
       phone: "010-1234-5678",
+      point: 200000,
     },
   });
   const adv2 = await db.advertiser.create({
@@ -96,6 +101,7 @@ async function main() {
       bizNumber: "234-56-78901",
       contactName: "박대표",
       phone: "010-2345-6789",
+      point: 80000,
     },
   });
   const adv3 = await db.advertiser.create({
@@ -106,7 +112,18 @@ async function main() {
       bizNumber: "345-67-89012",
       contactName: "이팀장",
       phone: "010-3456-7890",
+      point: 150000,
     },
+  });
+
+  // 광고주 충전 시드 내역
+  await db.advertiserPointHistory.createMany({
+    data: [
+      { advertiserId: adv1.id, delta: 100000, reason: "CHARGE", balance: 100000, note: "최초 충전" },
+      { advertiserId: adv1.id, delta: 100000, reason: "CHARGE", balance: 200000, note: "추가 충전" },
+      { advertiserId: adv2.id, delta: 80000, reason: "CHARGE", balance: 80000, note: "최초 충전" },
+      { advertiserId: adv3.id, delta: 150000, reason: "CHARGE", balance: 150000, note: "최초 충전" },
+    ],
   });
 
   // 캠페인 데이터

@@ -1,6 +1,8 @@
 import { redirect } from "next/navigation";
 import { getAdvertiserSession } from "@/lib/session";
 import { CATEGORIES, REGIONS } from "@/lib/format";
+import { db } from "@/lib/db";
+import { CampaignCostPreview } from "@/components/CampaignCostPreview";
 
 export default async function NewCampaignPage({
   searchParams,
@@ -10,6 +12,11 @@ export default async function NewCampaignPage({
   const session = await getAdvertiserSession();
   if (!session) redirect("/advertiser/login");
   const sp = await searchParams;
+  const adv = await db.advertiser.findUnique({
+    where: { id: session.id },
+    select: { point: true },
+  });
+  const balance = adv?.point ?? 0;
 
   const today = new Date();
   const fmt = (d: Date) => d.toISOString().slice(0, 10);
@@ -160,6 +167,7 @@ export default async function NewCampaignPage({
         </Section>
 
         {sp.error && <div className="text-xs text-red-500">{decodeURIComponent(sp.error)}</div>}
+        <CampaignCostPreview balance={balance} />
         <button className="btn-primary w-full py-3">캠페인 등록하기</button>
       </form>
     </div>

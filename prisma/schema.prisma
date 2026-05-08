@@ -55,9 +55,26 @@ model Advertiser {
   bizNumber    String
   contactName  String
   phone        String
+  point        Int      @default(0)  // 캠페인 등록용 포인트
   createdAt    DateTime @default(now())
 
   campaigns Campaign[]
+  pointHistory AdvertiserPointHistory[]
+}
+
+// 광고주 포인트 내역 (충전/차감)
+model AdvertiserPointHistory {
+  id           String   @id @default(cuid())
+  advertiserId String
+  advertiser   Advertiser @relation(fields: [advertiserId], references: [id], onDelete: Cascade)
+  delta        Int      // +충전 / -차감
+  reason       String   // CHARGE, CAMPAIGN_OPEN, REFUND
+  balance      Int      // 처리 후 잔액
+  note         String?
+  campaignId   String?
+  createdAt    DateTime @default(now())
+
+  @@index([advertiserId, createdAt])
 }
 
 // 캠페인

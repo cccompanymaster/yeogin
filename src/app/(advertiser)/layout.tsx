@@ -1,10 +1,17 @@
 import Link from "next/link";
 import { getAdvertiserSession } from "@/lib/session";
+import { db } from "@/lib/db";
 import { NotificationBell } from "@/components/NotificationBell";
 import { Logo } from "@/components/Logo";
 
 export default async function AdvertiserLayout({ children }: { children: React.ReactNode }) {
   const session = await getAdvertiserSession();
+  const adv = session
+    ? await db.advertiser.findUnique({
+        where: { id: session.id },
+        select: { point: true },
+      })
+    : null;
   return (
     <div className="min-h-screen bg-white">
       <header className="border-b border-ink-200 bg-ink-900 text-white">
@@ -23,6 +30,9 @@ export default async function AdvertiserLayout({ children }: { children: React.R
                 <Link href="/advertiser/campaigns/new">캠페인 등록</Link>
                 <Link href="/advertiser/reviews">리뷰 검수</Link>
                 <Link href="/advertiser/billing">정산</Link>
+                <Link href="/advertiser/billing/charge" className="text-amber-300">
+                  💰 {adv?.point.toLocaleString() ?? 0}P
+                </Link>
               </nav>
             )}
           </div>

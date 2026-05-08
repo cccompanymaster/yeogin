@@ -9,13 +9,20 @@ export default async function AdvertiserDashboard() {
   const session = await getAdvertiserSession();
   if (!session) redirect("/advertiser/login");
 
-  const campaigns = await db.campaign.findMany({
-    where: { advertiserId: session.id },
-    include: {
-      _count: { select: { applications: true, reviews: true } },
-    },
-    orderBy: { createdAt: "desc" },
-  });
+  const [campaigns, advRow] = await Promise.all([
+    db.campaign.findMany({
+      where: { advertiserId: session.id },
+      include: {
+        _count: { select: { applications: true, reviews: true } },
+      },
+      orderBy: { createdAt: "desc" },
+    }),
+    db.advertiser.findUnique({
+      where: { id: session.id },
+      select: { point: true },
+    }),
+  ]);
+  const balance = advRow?.point ?? 0;
 
   const totalApplied = campaigns.reduce((s, c) => s + c.appliedCount, 0);
   const openCount = campaigns.filter((c) => c.status === "OPEN").length;
@@ -79,15 +86,36 @@ export default async function AdvertiserDashboard() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <h1 className="text-2xl font-bold">대시보드</h1>
           <p className="mt-1 text-sm text-ink-500">{session.name}</p>
         </div>
-        <Link href="/advertiser/campaigns/new" className="btn-primary">
-          + 캠페인 등록
-        </Link>
+        <div className="flex items-center gap-2">
+          <Link
+            href="/advertiser/billing/charge"
+            className="card flex items-center gap-2 border-brand-200 bg-brand-50 px-4 py-2 hover:bg-brand-100"
+          >
+            <span className="text-xs text-brand-700">잔액</span>
+            <span className="text-base font-black text-brand-700">
+              {balance.toLocaleString()}P
+            </span>
+            <span className="text-xs text-brand-600">충전 →</span>
+          </Link>
+          <Link href="/advertiser/campaigns/new" className="btn-primary">
+            + 캠페인 등록
+          </Link>
+        </div>
       </div>
+      {balance < 15000 && (
+        <div className="card border-amber-200 bg-amber-50 p-3 text-sm text-amber-800">
+          ⚠️ 잔액이 부족할 수 있어요. 새 캠페인 등록 전{" "}
+          <Link href="/advertiser/billing/charge" className="font-bold underline">
+            충전
+          </Link>
+          을 권장합니다.
+        </div>
+      )}
 
       <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
         <Stat label="진행중 캠페인" value={`${openCount}`} />
