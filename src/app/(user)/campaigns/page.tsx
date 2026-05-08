@@ -1,5 +1,6 @@
 import { db } from "@/lib/db";
 import { CampaignCard } from "@/components/CampaignCard";
+import { matchScore, buildCategoryFrequency } from "@/lib/matching";
 
 export const metadata = {
   title: "전체 캠페인",
@@ -65,15 +66,30 @@ export default async function CampaignListPage({
 
   const items = await db.campaign.findMany({ where, orderBy, take: 60 });
 
-  // 로그인 사용자의 즐겨찾기 세트
+  // 로그인 사용자의 즐겨찾기 + 매칭 점수
   const sessionForFav = await getUserSession();
   let favSet = new Set<string>();
+  let scoreMap = new Map<string, number>();
   if (sessionForFav && items.length > 0) {
-    const favs = await db.favorite.findMany({
-      where: { userId: sessionForFav.id, campaignId: { in: items.map((i) => i.id) } },
-      select: { campaignId: true },
-    });
+    const [favs, me, history] = await Promise.all([
+      db.favorite.findMany({
+        where: { userId: sessionForFav.id, campaignId: { in: items.map((i) => i.id) } },
+        select: { campaignId: true },
+      }),
+      db.user.findUnique({ where: { id: sessionForFav.id } }),
+      db.application.findMany({
+        where: { userId: sessionForFav.id },
+        include: { campaign: { select: { category: true } } },
+        take: 50,
+      }),
+    ]);
     favSet = new Set(favs.map((f) => f.campaignId));
+    if (me) {
+      const freq = buildCategoryFrequency(history);
+      for (const c of items) {
+        scoreMap.set(c.id, matchScore(me, c, freq).score);
+      }
+    }
   }
 
   // 내 주변 지도용: 지역별 방문형 캠페인 카운트 집계
@@ -159,6 +175,7 @@ export default async function CampaignListPage({
               c={c}
               favorited={favSet.has(c.id)}
               loggedIn={!!sessionForFav}
+              matchScore={scoreMap.get(c.id)}
             />
           ))}
         </div>

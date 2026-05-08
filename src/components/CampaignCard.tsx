@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { CHANNEL_LABEL, TYPE_LABEL, dday, won } from "@/lib/format";
 import { FavoriteButton } from "@/components/FavoriteButton";
+import { scoreColor } from "@/lib/matching";
 
 type Props = {
   c: {
@@ -20,9 +21,15 @@ type Props = {
   };
   favorited?: boolean;
   loggedIn?: boolean;
+  matchScore?: number;
 };
 
-export function CampaignCard({ c, favorited = false, loggedIn = false }: Props) {
+export function CampaignCard({
+  c,
+  favorited = false,
+  loggedIn = false,
+  matchScore: ms,
+}: Props) {
   return (
     <Link
       href={`/campaigns/${c.id}`}
@@ -39,6 +46,11 @@ export function CampaignCard({ c, favorited = false, loggedIn = false }: Props) 
           <span className="badge bg-ink-900/80 text-white">{TYPE_LABEL[c.type]}</span>
           {c.fastMatch && (
             <span className="badge bg-brand-500 text-white">⚡ 빠른선정</span>
+          )}
+          {typeof ms === "number" && (
+            <span className={`badge ${scoreColor(ms)}`} title="나와의 매칭 점수">
+              ✦ {ms}
+            </span>
           )}
         </div>
         <div className="absolute right-2 top-2 flex items-center gap-1.5">

@@ -4,6 +4,7 @@ import { CampaignCard } from "@/components/CampaignCard";
 import { CATEGORIES } from "@/lib/format";
 import { HeroRollingBanner } from "@/components/HeroRollingBanner";
 import { getUserSession } from "@/lib/session";
+import { matchScore, buildCategoryFrequency } from "@/lib/matching";
 
 export default async function HomePage() {
   const session = await getUserSession();
@@ -26,14 +27,30 @@ export default async function HomePage() {
     }),
   ]);
 
-  const allIds = [...hot, ...ending, ...fast].map((c) => c.id);
+  const allCampaigns = [...hot, ...ending, ...fast];
+  const allIds = allCampaigns.map((c) => c.id);
   let favSet = new Set<string>();
+  let scoreMap = new Map<string, number>();
   if (session && allIds.length > 0) {
-    const favs = await db.favorite.findMany({
-      where: { userId: session.id, campaignId: { in: allIds } },
-      select: { campaignId: true },
-    });
+    const [favs, me, history] = await Promise.all([
+      db.favorite.findMany({
+        where: { userId: session.id, campaignId: { in: allIds } },
+        select: { campaignId: true },
+      }),
+      db.user.findUnique({ where: { id: session.id } }),
+      db.application.findMany({
+        where: { userId: session.id },
+        include: { campaign: { select: { category: true } } },
+        take: 50,
+      }),
+    ]);
     favSet = new Set(favs.map((f) => f.campaignId));
+    if (me) {
+      const freq = buildCategoryFrequency(history);
+      for (const c of allCampaigns) {
+        scoreMap.set(c.id, matchScore(me, c, freq).score);
+      }
+    }
   }
   const card = (c: (typeof hot)[number]) => (
     <CampaignCard
@@ -41,6 +58,7 @@ export default async function HomePage() {
       c={c}
       favorited={favSet.has(c.id)}
       loggedIn={!!session}
+      matchScore={scoreMap.get(c.id)}
     />
   );
 

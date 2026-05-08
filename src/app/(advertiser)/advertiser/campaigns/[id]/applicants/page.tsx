@@ -58,11 +58,19 @@ export default async function ApplicantsPage({
               신청 {campaign.applications.length}명 / 모집 {campaign.capacity}명
             </div>
           </div>
-          <BroadcastForm
-            campaignId={campaign.id}
-            selectedCount={selectedCount}
-            totalCount={campaign.applications.length}
-          />
+          <div className="flex flex-wrap gap-2">
+            <Link
+              href={`/advertiser/campaigns/${campaign.id}/report`}
+              className="btn-outline"
+            >
+              📊 ROI 리포트
+            </Link>
+            <BroadcastForm
+              campaignId={campaign.id}
+              selectedCount={selectedCount}
+              totalCount={campaign.applications.length}
+            />
+          </div>
         </div>
         {sp.sent && (
           <div className="mt-3 rounded-md bg-emerald-50 px-3 py-2 text-sm text-emerald-700">

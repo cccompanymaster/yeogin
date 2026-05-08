@@ -7,6 +7,7 @@ import { ReportButton } from "@/components/ReportButton";
 import { CampaignCard } from "@/components/CampaignCard";
 import { StarRating } from "@/components/StarRating";
 import { getUserSession } from "@/lib/session";
+import { matchScore, buildCategoryFrequency, scoreColor, scoreLabel } from "@/lib/matching";
 
 export async function generateMetadata({
   params,
@@ -58,6 +59,18 @@ export default async function CampaignDetail({
   const me = session
     ? await db.user.findUnique({ where: { id: session.id } })
     : null;
+
+  // 매칭 분석
+  let myMatch: { score: number; reason: string } | null = null;
+  if (me) {
+    const history = await db.application.findMany({
+      where: { userId: me.id },
+      include: { campaign: { select: { category: true } } },
+      take: 50,
+    });
+    const freq = buildCategoryFrequency(history);
+    myMatch = matchScore(me, c, freq);
+  }
 
   const defaultUrl =
     c.channel === "BLOG"
@@ -209,6 +222,24 @@ export default async function CampaignDetail({
       </div>
 
       <aside className="space-y-4 md:sticky md:top-20 md:h-fit">
+        {myMatch && (
+          <div className="card overflow-hidden">
+            <div
+              className={`flex items-center justify-between px-4 py-3 ${scoreColor(myMatch.score)}`}
+            >
+              <div>
+                <div className="text-[11px] font-bold opacity-90">나와의 매칭</div>
+                <div className="text-2xl font-black">{myMatch.score}점</div>
+              </div>
+              <div className="text-right">
+                <div className="text-xs opacity-90">{scoreLabel(myMatch.score)}</div>
+              </div>
+            </div>
+            <div className="p-3 text-[11px] text-ink-600">
+              {myMatch.reason || "프로필을 등록하면 매칭 점수가 높아져요"}
+            </div>
+          </div>
+        )}
         <div className="card space-y-4 p-5">
           <div>
             <div className="text-xs text-ink-500">신청 마감</div>
