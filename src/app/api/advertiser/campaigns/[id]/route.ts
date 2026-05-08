@@ -78,6 +78,7 @@ export async function POST(
         reviewEnd: date("reviewEnd"),
         guide: get("guide"),
         keywords: get("keywords"),
+        tags: get("tags"),
         fastMatch: f.get("fastMatch") === "1",
       },
     });

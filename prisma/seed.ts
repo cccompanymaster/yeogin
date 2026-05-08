@@ -638,8 +638,28 @@ async function main() {
     ],
   });
 
+  // 캠페인별 태그 후처리 (데모 추천/검색용)
+  const TAG_BY_CATEGORY: Record<string, string[]> = {
+    맛집: ["강남", "데이트", "분위기맛집", "신상", "회식"],
+    카페: ["감성카페", "디저트", "조용한", "포토존", "신상카페"],
+    뷰티: ["민감성", "수분", "비건", "저자극", "뷰티신상"],
+    패션: ["봄신상", "데일리룩", "오피스룩", "여성복"],
+    식품: ["건강간식", "다이어트", "선물세트", "가성비"],
+    생활: ["홈인테리어", "1인가구", "셀프인테리어"],
+    디지털: ["IT신상", "웨어러블", "가성비"],
+    여행: ["호캉스", "당일치기", "럭셔리"],
+    육아: ["베이비", "친환경육아", "유아용품"],
+  };
+  for (const c of created) {
+    const cat = TAG_BY_CATEGORY[c.category] ?? [];
+    const picked = cat.slice(0, 3 + Math.floor(Math.random() * 2)).join(",");
+    if (picked) {
+      await db.campaign.update({ where: { id: c.id }, data: { tags: picked } });
+    }
+  }
+
   console.log(
-    `✅ Done. users=${users.length + 1}, advertisers=3, campaigns=${created.length}, shop=7, ratings=4`
+    `✅ Done. users=${users.length + 1}, advertisers=3, campaigns=${created.length}, shop=7, ratings=4, tags applied`
   );
 }
 

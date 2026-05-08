@@ -145,6 +145,10 @@ export default async function EditCampaignPage({
             <label className="label">필수 키워드 *</label>
             <input className="input" name="keywords" required defaultValue={c.keywords} />
           </div>
+          <div>
+            <label className="label">검색·추천 태그</label>
+            <input className="input" name="tags" defaultValue={c.tags ?? ""} />
+          </div>
         </Section>
 
         {sp.error && <div className="text-xs text-red-500">{decodeURIComponent(sp.error)}</div>}

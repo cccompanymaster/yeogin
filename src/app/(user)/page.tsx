@@ -5,9 +5,11 @@ import { CATEGORIES } from "@/lib/format";
 import { HeroRollingBanner } from "@/components/HeroRollingBanner";
 import { getUserSession } from "@/lib/session";
 import { matchScore, buildCategoryFrequency } from "@/lib/matching";
+import { getRecommendedCampaigns } from "@/lib/recommend";
 
 export default async function HomePage() {
   const session = await getUserSession();
+  const recommended = session ? await getRecommendedCampaigns(session.id, 4) : [];
   const now = new Date();
   const [hot, ending, fast] = await Promise.all([
     db.campaign.findMany({
@@ -27,7 +29,7 @@ export default async function HomePage() {
     }),
   ]);
 
-  const allCampaigns = [...hot, ...ending, ...fast];
+  const allCampaigns = [...hot, ...ending, ...fast, ...recommended];
   const allIds = allCampaigns.map((c) => c.id);
   let favSet = new Set<string>();
   let scoreMap = new Map<string, number>();
@@ -82,6 +84,20 @@ export default async function HomePage() {
           ))}
         </div>
       </section>
+
+      {session && recommended.length > 0 && (
+        <section>
+          <div className="mb-3 flex items-center justify-between">
+            <h2 className="flex items-center gap-2 text-lg font-bold">
+              ✨ {session.name}님을 위한 추천
+              <span className="text-xs font-normal text-ink-500">관심사 + 활동 기반</span>
+            </h2>
+          </div>
+          <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
+            {recommended.map(card)}
+          </div>
+        </section>
+      )}
 
       {fast.length > 0 && (
         <section>

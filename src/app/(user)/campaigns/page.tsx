@@ -24,6 +24,7 @@ type SearchParams = Promise<{
   fast?: string;
   nearby?: string;
   sort?: string;
+  tag?: string;
 }>;
 
 export default async function CampaignListPage({
@@ -38,7 +39,14 @@ export default async function CampaignListPage({
   if (sp.channel) where.channel = sp.channel;
   if (sp.region) where.region = sp.region;
   if (sp.fast === "1") where.fastMatch = true;
-  if (sp.q) where.title = { contains: sp.q };
+  if (sp.tag) where.tags = { contains: sp.tag };
+  if (sp.q) {
+    where.OR = [
+      { title: { contains: sp.q } },
+      { tags: { contains: sp.q } },
+      { offer: { contains: sp.q } },
+    ];
+  }
 
   // 내 주변: 로그인 사용자의 region 기반 자동 필터
   let nearbyRegion: string | null = null;
@@ -125,9 +133,13 @@ export default async function CampaignListPage({
     <div className="space-y-5">
       <div>
         <h1 className="text-2xl font-bold">
-          {sp.nearby === "1"
-            ? `📍 내 주변 캠페인${nearbyRegion ? ` · ${nearbyRegion}` : ""}`
-            : "전체 캠페인"}
+          {sp.tag
+            ? `#${sp.tag}`
+            : sp.q
+              ? `"${sp.q}" 검색 결과`
+              : sp.nearby === "1"
+                ? `📍 내 주변 캠페인${nearbyRegion ? ` · ${nearbyRegion}` : ""}`
+                : "전체 캠페인"}
         </h1>
         <div className="mt-1 text-sm text-ink-500">
           총 {items.length}개의 캠페인이 진행 중입니다

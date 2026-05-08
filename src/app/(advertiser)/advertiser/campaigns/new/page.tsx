@@ -164,6 +164,18 @@ export default async function NewCampaignPage({
             <label className="label">필수 키워드 (콤마 구분) *</label>
             <input className="input" name="keywords" required defaultValue="강남맛집, 데이트코스, 분위기맛집" />
           </div>
+          <div>
+            <label className="label">검색·추천 태그 (콤마 구분, 선택)</label>
+            <input
+              className="input"
+              name="tags"
+              defaultValue="강남, 데이트, 분위기맛집, 신상"
+              placeholder="예: 강남, 데이트, 신상, 가성비"
+            />
+            <p className="mt-1 text-[11px] text-ink-500">
+              태그가 많을수록 검색·인기 태그·추천에 잘 노출됩니다.
+            </p>
+          </div>
         </Section>
 
         {sp.error && <div className="text-xs text-red-500">{decodeURIComponent(sp.error)}</div>}

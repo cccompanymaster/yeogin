@@ -119,6 +119,7 @@ model Campaign {
 
   guide         String     // 미션/가이드 텍스트
   keywords      String     // 필수 키워드 (콤마)
+  tags          String     @default("")  // 검색·추천용 태그 콤마 ("강남,데이트,분위기맛집")
   status        String     @default("OPEN") // OPEN, CLOSED, COMPLETED
   fastMatch     Boolean    @default(false)
 

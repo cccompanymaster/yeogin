@@ -12,6 +12,7 @@ const ITEMS = [
   { href: "/campaigns?type=REPORTER", label: "📰 기자단" },
   { href: "/campaigns?fast=1", label: "⚡ 빠른선정" },
   { href: "/campaigns?nearby=1", label: "📍 내 주변" },
+  { href: "/tags", label: "🏷️ 인기 태그" },
   { href: "/reviews", label: "📣 체험 후기" },
   { href: "/mypage/invite", label: "🎁 친구 초대" },
   { href: "/community", label: "💬 커뮤니티" },

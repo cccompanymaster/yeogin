@@ -235,6 +235,22 @@ export default async function CampaignDetail({
               </div>
             </div>
           )}
+          {c.tags && (
+            <div className="mt-3">
+              <div className="label">관련 태그</div>
+              <div className="flex flex-wrap gap-1">
+                {c.tags.split(",").map((t) => t.trim()).filter(Boolean).map((t) => (
+                  <Link
+                    key={t}
+                    href={`/campaigns?tag=${encodeURIComponent(t)}`}
+                    className="badge bg-brand-50 text-brand-700 hover:bg-brand-100"
+                  >
+                    #{t}
+                  </Link>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       </div>
 

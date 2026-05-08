@@ -22,6 +22,7 @@ export default async function UserLayout({ children }: { children: React.ReactNo
               <Link href="/campaigns?type=REPORTER">기자단</Link>
               <Link href="/campaigns?fast=1">빠른선정</Link>
               <Link href="/campaigns?nearby=1" className="text-brand-600">📍 내 주변</Link>
+              <Link href="/tags">🏷️ 태그</Link>
               <Link href="/reviews">후기</Link>
               <Link href="/community">커뮤니티</Link>
             </nav>
