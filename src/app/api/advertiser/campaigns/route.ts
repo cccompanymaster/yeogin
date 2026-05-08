@@ -18,7 +18,46 @@ export async function POST(req: NextRequest) {
   const type = get("type");
   const capacity = num("capacity");
   const fastMatch = f.get("fastMatch") === "1";
+  const action = String(f.get("action") || "open"); // draft | schedule | open
+  const publishRaw = get("publishAt");
   const cost = calcCampaignCost({ type, capacity, fastMatch });
+
+  // 임시저장은 잔액/필수값 체크 완화
+  if (action === "draft") {
+    try {
+      const c = await db.campaign.create({
+        data: {
+          advertiserId: session.id,
+          title: get("title") || "(제목 미입력)",
+          description: get("description"),
+          thumbnail: get("thumbnail"),
+          type,
+          channel: get("channel"),
+          category: get("category"),
+          region: get("region") || null,
+          address: get("address") || null,
+          offer: get("offer"),
+          offerValue: num("offerValue"),
+          capacity,
+          applyStart: date("applyStart"),
+          applyEnd: date("applyEnd"),
+          announceAt: date("announceAt"),
+          reviewStart: date("reviewStart"),
+          reviewEnd: date("reviewEnd"),
+          guide: get("guide"),
+          keywords: get("keywords"),
+          tags: get("tags"),
+          fastMatch,
+          status: "DRAFT",
+        },
+      });
+      return NextResponse.redirect(new URL(`/advertiser/campaigns/${c.id}/edit?saved=1`, req.url));
+    } catch {
+      const url = new URL("/advertiser/campaigns/new", req.url);
+      url.searchParams.set("error", "임시저장 실패");
+      return NextResponse.redirect(url, 303);
+    }
+  }
 
   // 잔액 확인
   const adv = await db.advertiser.findUnique({
@@ -30,6 +69,16 @@ export async function POST(req: NextRequest) {
     const url = new URL("/advertiser/billing/charge", req.url);
     url.searchParams.set("need", String(cost - adv.point));
     return NextResponse.redirect(url, 303);
+  }
+
+  let status = "OPEN";
+  let publishAt: Date | null = null;
+  if (action === "schedule" && publishRaw) {
+    const dt = new Date(publishRaw);
+    if (dt.getTime() > Date.now()) {
+      status = "SCHEDULED";
+      publishAt = dt;
+    }
   }
 
   try {
@@ -56,6 +105,8 @@ export async function POST(req: NextRequest) {
         keywords: get("keywords"),
         tags: get("tags"),
         fastMatch,
+        status,
+        publishAt,
       },
     });
     await recordAdvertiserPoint(session.id, -cost, "CAMPAIGN_OPEN", {
@@ -65,7 +116,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.redirect(new URL(`/advertiser/campaigns/${c.id}/applicants`, req.url));
   } catch {
     const url = new URL("/advertiser/campaigns/new", req.url);
-    url.searchParams.set("error", "등록에 실패했습니다. 입력값을 확인해주세요.");
+    url.searchParams.set("error", "등록에 실패했습니다.");
     return NextResponse.redirect(url, 303);
   }
 }

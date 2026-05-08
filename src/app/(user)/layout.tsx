@@ -17,14 +17,15 @@ export default async function UserLayout({ children }: { children: React.ReactNo
             <Link href="/" className="flex items-center">
               <Logo size={26} />
             </Link>
-            <nav className="hidden gap-5 text-sm font-medium text-ink-700 lg:flex">
+            <nav className="hidden gap-5 text-sm font-medium text-ink-700 dark:text-ink-200 lg:flex">
               <Link href="/campaigns?type=VISIT">방문형</Link>
               <Link href="/campaigns?type=DELIVERY">배송형</Link>
               <Link href="/campaigns?type=REPORTER">기자단</Link>
               <Link href="/campaigns?fast=1">빠른선정</Link>
               <Link href="/campaigns?nearby=1" className="text-brand-600">📍 내 주변</Link>
-              <Link href="/tags">🏷️ 태그</Link>
+              <Link href="/tags">태그</Link>
               <Link href="/reviews">후기</Link>
+              <Link href="/magazine">매거진</Link>
               <Link href="/community">커뮤니티</Link>
             </nav>
           </div>

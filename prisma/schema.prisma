@@ -74,6 +74,7 @@ model Advertiser {
   campaigns Campaign[]
   pointHistory AdvertiserPointHistory[]
   ratings   AdvertiserRating[]
+  members   AdvertiserMember[]
 }
 
 // 광고주 포인트 내역 (충전/차감)
@@ -119,9 +120,10 @@ model Campaign {
 
   guide         String     // 미션/가이드 텍스트
   keywords      String     // 필수 키워드 (콤마)
-  tags          String     @default("")  // 검색·추천용 태그 콤마 ("강남,데이트,분위기맛집")
-  status        String     @default("OPEN") // OPEN, CLOSED, COMPLETED
+  tags          String     @default("")
+  status        String     @default("OPEN") // DRAFT, SCHEDULED, OPEN, CLOSED, COMPLETED
   fastMatch     Boolean    @default(false)
+  publishAt     DateTime?  // 예약 발행 시간 (SCHEDULED일 때)
 
   createdAt     DateTime   @default(now())
 
@@ -129,6 +131,37 @@ model Campaign {
   reviews       Review[]
   favorites     Favorite[]
   ratings       AdvertiserRating[]
+}
+
+// 광고주 팀 멤버 (서브 계정 초대)
+model AdvertiserMember {
+  id           String   @id @default(cuid())
+  advertiserId String
+  advertiser   Advertiser @relation(fields: [advertiserId], references: [id], onDelete: Cascade)
+  email        String
+  role         String   @default("MEMBER") // OWNER, MANAGER, MEMBER
+  status       String   @default("INVITED") // INVITED, ACTIVE, REVOKED
+  invitedAt    DateTime @default(now())
+  joinedAt     DateTime?
+
+  @@unique([advertiserId, email])
+  @@index([advertiserId])
+}
+
+// 매거진 글 (관리자가 작성)
+model Article {
+  id           String   @id @default(cuid())
+  slug         String   @unique
+  title        String
+  excerpt      String
+  body         String   // 마크다운 가능
+  coverImage   String
+  authorName   String
+  category     String   @default("TIPS") // TIPS, NEWS, CASE
+  publishedAt  DateTime?
+  createdAt    DateTime @default(now())
+
+  @@index([publishedAt])
 }
 
 // 신청 내역

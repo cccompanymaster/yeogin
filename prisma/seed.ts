@@ -33,6 +33,8 @@ async function main() {
   console.log("🌱 Seeding...");
 
   // 기존 데이터 정리
+  await db.article.deleteMany();
+  await db.advertiserMember.deleteMany();
   await db.redeem.deleteMany();
   await db.redeemItem.deleteMany();
   await db.advertiserRating.deleteMany();
@@ -657,6 +659,77 @@ async function main() {
       await db.campaign.update({ where: { id: c.id }, data: { tags: picked } });
     }
   }
+
+  // 매거진 시드
+  await db.article.createMany({
+    data: [
+      {
+        slug: "first-campaign-tips",
+        title: "체험단 첫 도전, 선정 확률 200% 올리는 5가지 방법",
+        excerpt: "처음 체험단을 신청할 때 가장 많이 하는 실수와 선정자들의 공통 패턴을 분석했습니다.",
+        body: "체험단을 처음 시작하는 분들께 가장 많이 받는 질문이 \"왜 자꾸 떨어지나요?\"입니다.\n\n결론부터 말씀드리면, 광고주는 단 3가지를 봅니다.\n\n1. 채널 활성도 — 최근 1개월 내 게시물 수, 일관된 주제\n2. 글의 톤 — 사진 매수, 분량, 솔직한 묘사\n3. 신청 메시지 — 매장에 대한 관심도, 본인 강점\n\n특히 메시지가 \"잘 부탁드립니다\" 한 줄이면 90% 떨어집니다. 매장의 어떤 점이 마음에 들었는지, 어떤 콘텐츠를 만들 계획인지 구체적으로 적어주세요.",
+        coverImage: "https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?w=900&q=80",
+        authorName: "여긴 에디터",
+        category: "TIPS",
+        publishedAt: new Date(Date.now() - 1 * 86400000),
+      },
+      {
+        slug: "advertiser-roi-guide",
+        title: "광고주를 위한 체험단 ROI 측정 가이드",
+        excerpt: "도달, 참여율, 검색 노출까지 — 체험단 캠페인의 진짜 효과를 숫자로 증명하는 법.",
+        body: "광고주분들이 가장 답답해하시는 부분은 \"이 캠페인이 진짜 효과가 있나?\"입니다.\n\n여긴 ROI 리포트는 보유 채널 메트릭 × 도달률 가중치로 추정 도달을 계산합니다.\n\n블로그 35% / 인스타 18% / 유튜브 12%\n\n여기에 채널별 평균 참여율(4~8%)을 곱하면 좋아요·댓글·공유 추정치가 나옵니다.\n\n중요한 건 단가 효율입니다. \"리뷰 1건당 가치\"가 아니라 \"도달 1명당 비용\"으로 보세요.",
+        coverImage: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=900&q=80",
+        authorName: "비즈센터 PM",
+        category: "TIPS",
+        publishedAt: new Date(Date.now() - 3 * 86400000),
+      },
+      {
+        slug: "case-gangnam-pasta",
+        title: "오픈 한 달 만에 매출 3배 — 강남 파스타집 체험단 전략",
+        excerpt: "신규 매장이 첫 달부터 단골을 만든 비결을 공개합니다.",
+        body: "강남 파스타하우스는 오픈 직후 8건의 캠페인을 동시 진행했습니다.\n\n핵심은 '리뷰 다양성'이었습니다. 블로그(검색 노출), 인스타(분위기 사진), 유튜브 숏폼(전체 메뉴 소개)를 한꺼번에 가져갔죠.\n\n결과는?\n- 누적 53건의 후기\n- 네이버 \"강남 파스타\" 1페이지 점령\n- 매출 312% 상승",
+        coverImage: "https://images.unsplash.com/photo-1551183053-bf91a1d81141?w=900&q=80",
+        authorName: "여긴 에디터",
+        category: "CASE",
+        publishedAt: new Date(Date.now() - 5 * 86400000),
+      },
+      {
+        slug: "april-update-2026",
+        title: "[업데이트] 신기능 — ROI 리포트, 매칭 점수, 포인트샵",
+        excerpt: "이번 달 새로 추가된 기능을 한 번에 정리했습니다.",
+        body: "여긴이 이번 달 5가지 큰 업데이트를 진행했습니다.\n\n1. 광고주 ROI 리포트 — 캠페인별 추정 도달·참여 자동 계산\n2. 매칭 점수 — 사용자-캠페인 적합도 0~100점\n3. 포인트샵 — 기프티콘 7종 + 우선매칭권\n4. 친구 초대 — 양쪽 1,000P 즉시 적립\n5. 매거진 오픈 — 지금 보고 계신 이 페이지!",
+        coverImage: "https://images.unsplash.com/photo-1552664730-d307ca884978?w=900&q=80",
+        authorName: "여긴 운영팀",
+        category: "NEWS",
+        publishedAt: new Date(Date.now() - 7 * 86400000),
+      },
+    ],
+  });
+
+  // 임시저장 캠페인 시드 (광고주 화면 데모)
+  await db.campaign.create({
+    data: {
+      advertiserId: adv1.id,
+      title: "(임시저장) 5월 가정의 달 특별 이벤트",
+      description: "준비 중...",
+      thumbnail: "https://images.unsplash.com/photo-1490645935967-10de6ba17061?w=800&q=80",
+      type: "VISIT",
+      channel: "BLOG",
+      category: "맛집",
+      offer: "준비 중",
+      offerValue: 50000,
+      capacity: 5,
+      applyStart: new Date(Date.now() + 7 * 86400000),
+      applyEnd: new Date(Date.now() + 14 * 86400000),
+      announceAt: new Date(Date.now() + 15 * 86400000),
+      reviewStart: new Date(Date.now() + 16 * 86400000),
+      reviewEnd: new Date(Date.now() + 30 * 86400000),
+      guide: "준비 중",
+      keywords: "5월, 가정의달",
+      tags: "5월, 가정의달, 가족외식",
+      status: "DRAFT",
+    },
+  });
 
   console.log(
     `✅ Done. users=${users.length + 1}, advertisers=3, campaigns=${created.length}, shop=7, ratings=4, tags applied`

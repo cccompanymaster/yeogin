@@ -179,8 +179,45 @@ export default async function NewCampaignPage({
         </Section>
 
         {sp.error && <div className="text-xs text-red-500">{decodeURIComponent(sp.error)}</div>}
+
+        <Section title="발행 설정">
+          <div>
+            <label className="label">예약 발행 (선택, 비우면 즉시 발행)</label>
+            <input className="input" name="publishAt" type="datetime-local" />
+            <p className="mt-1 text-[11px] text-ink-500">
+              예약 시간에 자동으로 OPEN 상태로 전환됩니다 (배치 작업 필요).
+            </p>
+          </div>
+        </Section>
+
         <CampaignCostPreview balance={balance} />
-        <button className="btn-primary w-full py-3">캠페인 등록하기</button>
+        <div className="flex gap-2">
+          <button
+            type="submit"
+            name="action"
+            value="draft"
+            formNoValidate
+            className="btn-outline flex-1 py-3"
+          >
+            💾 임시저장
+          </button>
+          <button
+            type="submit"
+            name="action"
+            value="schedule"
+            className="btn-outline flex-1 py-3"
+          >
+            ⏰ 예약 발행
+          </button>
+          <button
+            type="submit"
+            name="action"
+            value="open"
+            className="btn-primary flex-[2] py-3"
+          >
+            즉시 발행
+          </button>
+        </div>
       </form>
     </div>
   );

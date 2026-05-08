@@ -26,9 +26,11 @@ export default async function AdvertiserLayout({ children }: { children: React.R
             {session && (
               <nav className="hidden gap-5 text-sm font-medium text-ink-200 md:flex">
                 <Link href="/advertiser/dashboard">대시보드</Link>
-                <Link href="/advertiser/campaigns">캠페인 관리</Link>
-                <Link href="/advertiser/campaigns/new">캠페인 등록</Link>
-                <Link href="/advertiser/reviews">리뷰 검수</Link>
+                <Link href="/advertiser/campaigns">캠페인</Link>
+                <Link href="/advertiser/campaigns/new">등록</Link>
+                <Link href="/advertiser/reviews">검수</Link>
+                <Link href="/advertiser/team">팀</Link>
+                <Link href="/advertiser/cases">사례</Link>
                 <Link href="/advertiser/billing">정산</Link>
                 <Link href="/advertiser/billing/charge" className="text-amber-300">
                   💰 {adv?.point.toLocaleString() ?? 0}P
