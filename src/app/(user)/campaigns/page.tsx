@@ -1,5 +1,10 @@
 import { db } from "@/lib/db";
 import { CampaignCard } from "@/components/CampaignCard";
+
+export const metadata = {
+  title: "전체 캠페인",
+  description: "여긴의 모든 진행중 캠페인. 카테고리·채널·지역·유형별로 검색하세요.",
+};
 import { CATEGORIES, REGIONS, TYPE_LABEL, CHANNEL_LABEL } from "@/lib/format";
 import { getUserSession } from "@/lib/session";
 import {

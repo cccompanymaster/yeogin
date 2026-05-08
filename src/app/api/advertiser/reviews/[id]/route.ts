@@ -3,6 +3,7 @@ import { db } from "@/lib/db";
 import { getAdvertiserSession } from "@/lib/session";
 import { notify } from "@/lib/notify";
 import { applyTrustGrade } from "@/lib/trust";
+import { recordPoint } from "@/lib/points";
 
 export async function POST(
   req: NextRequest,
@@ -31,11 +32,8 @@ export async function POST(
         where: { id: review.applicationId },
         data: { status: "COMPLETED" },
       }),
-      db.user.update({
-        where: { id: review.userId },
-        data: { point: { increment: 1000 } },
-      }),
     ]);
+    await recordPoint(review.userId, 1000, "REVIEW_APPROVED", review.campaign.title);
     const newGrade = await applyTrustGrade(review.userId);
     await notify({
       role: "USER",

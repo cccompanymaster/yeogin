@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 import { db } from "@/lib/db";
 import { setSessionCookie } from "@/lib/session";
+import { recordPoint } from "@/lib/points";
 
 export async function POST(req: NextRequest) {
   const form = await req.formData();
@@ -19,8 +20,9 @@ export async function POST(req: NextRequest) {
 
   const passwordHash = await bcrypt.hash(password, 10);
   const user = await db.user.create({
-    data: { email, nickname, passwordHash, blogUrl, instaUrl },
+    data: { email, nickname, passwordHash, blogUrl, instaUrl, point: 0 },
   });
+  await recordPoint(user.id, 5000, "SIGNUP_BONUS", "신규 가입 축하 적립");
   await setSessionCookie({ id: user.id, role: "user", email: user.email, name: user.nickname });
   return NextResponse.redirect(new URL("/", req.url));
 }

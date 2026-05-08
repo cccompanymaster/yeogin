@@ -43,6 +43,7 @@ model User {
   reports      Report[]
   snsVerifications SnsVerification[]
   favorites    Favorite[]
+  pointHistory PointHistory[]
 }
 
 // 광고주 회원
@@ -125,11 +126,13 @@ model Review {
   user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   url           String
+  rating        Int?     // 1~5점 (사용자 자체 평가)
+  highlight     String?  // 추천 한 줄 (후기 갤러리 노출)
   status        String   @default("PENDING") // PENDING, APPROVED, REJECTED
   rejectReason  String?
-  bodySnippet   String?  // 사용자가 붙여넣은 본문 발췌 (키워드 검수용)
-  keywordCheck  String?  // PASS | WARN | NONE
-  missingKeys   String?  // 누락 키워드 콤마 리스트
+  bodySnippet   String?
+  keywordCheck  String?
+  missingKeys   String?
   createdAt     DateTime @default(now())
 }
 
@@ -175,6 +178,20 @@ model SnsVerification {
 
   @@index([status])
   @@index([userId, channel])
+}
+
+// 포인트 내역
+model PointHistory {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  delta     Int      // +1000 또는 -500
+  reason    String   // REVIEW_APPROVED, PENALTY, SIGNUP_BONUS, MANUAL, REDEEM
+  balance   Int      // 적립 후 잔액
+  note      String?
+  createdAt DateTime @default(now())
+
+  @@index([userId, createdAt])
 }
 
 // 즐겨찾기 (관심 캠페인)

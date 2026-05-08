@@ -493,8 +493,42 @@ async function main() {
       campaignId: c3.id,
       userId: demoUser.id,
       url: "https://blog.naver.com/yeogin_demo/2025/01/mask-pack-review",
+      rating: 5,
+      highlight: "수분 보충 미쳤어요. 다음 캠페인도 무조건 신청!",
     },
   });
+
+  // 데모 승인 리뷰 (후기 갤러리 노출용)
+  for (let i = 0; i < users.length && i < created.length - 6; i++) {
+    const u = users[i];
+    const camp = created[i + 6];
+    const a = await db.application.create({
+      data: {
+        campaignId: camp.id,
+        userId: u.id,
+        channelUrl: u.blogUrl!,
+        status: "COMPLETED",
+      },
+    });
+    const samples = [
+      "정말 만족스러웠어요. 사장님도 친절하셨고 메뉴도 다 훌륭해요!",
+      "사진 찍기 좋은 분위기 + 가성비. 데이트 코스로 강추",
+      "기대 이상이었습니다. 다음에도 또 가고 싶은 곳",
+      "솔직히 광고인 줄 알았는데 진짜 맛있어서 깜짝 놀랐어요",
+      "포장도 깔끔하고 사용감 너무 좋아요. 재구매 의사 100%",
+    ];
+    await db.review.create({
+      data: {
+        applicationId: a.id,
+        campaignId: camp.id,
+        userId: u.id,
+        url: `${u.blogUrl}/review-${camp.id.slice(0, 6)}`,
+        rating: 4 + (i % 2),
+        highlight: samples[i % samples.length],
+        status: "APPROVED",
+      },
+    });
+  }
 
   // 다른 사용자들도 신청한 상태 시드 (광고주 화면용)
   for (const u of users) {

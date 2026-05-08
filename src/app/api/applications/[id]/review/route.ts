@@ -14,6 +14,8 @@ export async function POST(
   const body = await req.json().catch(() => ({}));
   const url = String(body.url || "").trim();
   const snippet = body.bodySnippet ? String(body.bodySnippet).trim() : "";
+  const rating = body.rating ? Math.min(5, Math.max(1, Number(body.rating))) : null;
+  const highlight = body.highlight ? String(body.highlight).trim().slice(0, 80) : null;
   if (!/^https?:\/\//.test(url)) {
     return NextResponse.json({ error: "올바른 URL을 입력해주세요." }, { status: 400 });
   }
@@ -48,6 +50,8 @@ export async function POST(
       campaignId: app.campaignId,
       userId: session.id,
       url,
+      rating,
+      highlight,
       bodySnippet: snippet || null,
       keywordCheck,
       missingKeys: missing.join(","),
@@ -56,6 +60,8 @@ export async function POST(
       url,
       status: "PENDING",
       rejectReason: null,
+      rating,
+      highlight,
       bodySnippet: snippet || null,
       keywordCheck,
       missingKeys: missing.join(","),

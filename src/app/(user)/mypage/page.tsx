@@ -55,6 +55,7 @@ export default async function MyPage({ searchParams }: { searchParams: SP }) {
           <div className="px-2 py-1 text-base font-black">마이페이지</div>
           <SideLink href="/mypage" label="📋 내 체험단" active />
           <SideLink href="/mypage/favorites" label="❤️ 관심 캠페인" />
+          <SideLink href="/mypage/points" label="💰 포인트 내역" />
           <SideLink href="/notifications" label="🔔 알림함" />
           <div className="mt-3 border-t border-ink-100 pt-3 text-[11px] font-bold text-ink-400">
             내 정보 관리

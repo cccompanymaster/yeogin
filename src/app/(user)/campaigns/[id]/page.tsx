@@ -1,9 +1,34 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { db } from "@/lib/db";
+import type { Metadata } from "next";
 import { ApplyModal } from "@/components/ApplyModal";
 import { ReportButton } from "@/components/ReportButton";
+import { CampaignCard } from "@/components/CampaignCard";
+import { StarRating } from "@/components/StarRating";
 import { getUserSession } from "@/lib/session";
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}): Promise<Metadata> {
+  const { id } = await params;
+  const c = await db.campaign.findUnique({
+    where: { id },
+    select: { title: true, offer: true, thumbnail: true, category: true },
+  });
+  if (!c) return { title: "캠페인" };
+  return {
+    title: c.title,
+    description: `${c.category} · ${c.offer}`,
+    openGraph: {
+      title: c.title,
+      description: c.offer,
+      images: [c.thumbnail],
+    },
+  };
+}
 import {
   CHANNEL_LABEL,
   TYPE_LABEL,
@@ -42,6 +67,48 @@ export default async function CampaignDetail({
         : me?.youtubeUrl;
 
   const ended = new Date(c.applyEnd) < new Date() || c.status !== "OPEN";
+
+  // 비슷한 캠페인 추천: 같은 카테고리 우선 → 같은 타입 보강
+  const similarRaw = await db.campaign.findMany({
+    where: {
+      id: { not: c.id },
+      status: "OPEN",
+      applyEnd: { gt: new Date() },
+      OR: [{ category: c.category }, { type: c.type }],
+    },
+    orderBy: [{ appliedCount: "desc" }, { createdAt: "desc" }],
+    take: 8,
+  });
+  const similar = similarRaw.slice(0, 4);
+
+  // 이 광고주의 다른 캠페인
+  const otherFromAdv = await db.campaign.findMany({
+    where: {
+      advertiserId: c.advertiserId,
+      id: { not: c.id },
+      status: "OPEN",
+    },
+    orderBy: { createdAt: "desc" },
+    take: 4,
+  });
+
+  // 이 캠페인 승인 후기 (있다면)
+  const recentReviews = await db.review.findMany({
+    where: { campaignId: c.id, status: "APPROVED" },
+    include: { user: true },
+    orderBy: [{ rating: "desc" }, { createdAt: "desc" }],
+    take: 3,
+  });
+
+  let favSet = new Set<string>();
+  if (session && (similar.length > 0 || otherFromAdv.length > 0)) {
+    const ids = [...similar, ...otherFromAdv].map((x) => x.id);
+    const favs = await db.favorite.findMany({
+      where: { userId: session.id, campaignId: { in: ids } },
+      select: { campaignId: true },
+    });
+    favSet = new Set(favs.map((f) => f.campaignId));
+  }
 
   return (
     <div className="grid gap-6 md:grid-cols-3">
@@ -85,6 +152,41 @@ export default async function CampaignDetail({
             {c.description}
           </p>
         </div>
+
+        {recentReviews.length > 0 && (
+          <div className="card p-5">
+            <h2 className="mb-3 flex items-center gap-2 text-base font-bold">
+              📣 이전 참여자 후기
+              <span className="text-xs font-normal text-ink-500">
+                평균{" "}
+                <b className="text-amber-500">
+                  {(recentReviews.reduce((s, r) => s + (r.rating || 0), 0) /
+                    recentReviews.length).toFixed(1)}
+                </b>
+                점
+              </span>
+            </h2>
+            <div className="space-y-2">
+              {recentReviews.map((r) => (
+                <a
+                  key={r.id}
+                  href={r.url}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="block rounded-lg border border-ink-100 p-3 hover:bg-ink-50"
+                >
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm font-bold">{r.user.nickname}</span>
+                    {r.rating && <StarRating rating={r.rating} size="sm" />}
+                  </div>
+                  {r.highlight && (
+                    <p className="mt-1 text-sm italic text-amber-900">"{r.highlight}"</p>
+                  )}
+                </a>
+              ))}
+            </div>
+          </div>
+        )}
 
         <div className="card p-5">
           <h2 className="mb-3 text-base font-bold">미션 가이드</h2>
@@ -146,6 +248,43 @@ export default async function CampaignDetail({
           </div>
         </div>
       </aside>
+
+      {(similar.length > 0 || otherFromAdv.length > 0) && (
+        <div className="md:col-span-3 space-y-8">
+          {similar.length > 0 && (
+            <section>
+              <h2 className="mb-3 text-lg font-bold">비슷한 캠페인 추천</h2>
+              <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
+                {similar.map((s) => (
+                  <CampaignCard
+                    key={s.id}
+                    c={s}
+                    favorited={favSet.has(s.id)}
+                    loggedIn={!!session}
+                  />
+                ))}
+              </div>
+            </section>
+          )}
+          {otherFromAdv.length > 0 && (
+            <section>
+              <h2 className="mb-3 text-lg font-bold">
+                {c.advertiser.companyName}의 다른 캠페인
+              </h2>
+              <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
+                {otherFromAdv.map((s) => (
+                  <CampaignCard
+                    key={s.id}
+                    c={s}
+                    favorited={favSet.has(s.id)}
+                    loggedIn={!!session}
+                  />
+                ))}
+              </div>
+            </section>
+          )}
+        </div>
+      )}
     </div>
   );
 }

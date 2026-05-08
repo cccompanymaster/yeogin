@@ -3,6 +3,7 @@ import { db } from "@/lib/db";
 import { getAdvertiserSession } from "@/lib/session";
 import { notify } from "@/lib/notify";
 import { applyTrustGrade } from "@/lib/trust";
+import { recordPoint } from "@/lib/points";
 
 const TYPE_REASON: Record<string, { reason: string; point: number }> = {
   CANCEL_AFTER_SELECT: { reason: "선정 후 신청 취소", point: 500 },
@@ -31,20 +32,15 @@ export async function POST(
     return NextResponse.redirect(new URL("/advertiser/dashboard", req.url));
   }
 
-  await db.$transaction([
-    db.penalty.create({
-      data: {
-        userId: app.userId,
-        type,
-        reason: cfg.reason,
-        point: cfg.point,
-      },
-    }),
-    db.user.update({
-      where: { id: app.userId },
-      data: { point: { decrement: cfg.point } },
-    }),
-  ]);
+  await db.penalty.create({
+    data: {
+      userId: app.userId,
+      type,
+      reason: cfg.reason,
+      point: cfg.point,
+    },
+  });
+  await recordPoint(app.userId, -cfg.point, "PENALTY", cfg.reason);
 
   await applyTrustGrade(app.userId);
 

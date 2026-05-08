@@ -22,6 +22,7 @@ export default async function UserLayout({ children }: { children: React.ReactNo
               <Link href="/campaigns?type=REPORTER">기자단</Link>
               <Link href="/campaigns?fast=1">빠른선정</Link>
               <Link href="/campaigns?nearby=1" className="text-brand-600">📍 내 주변</Link>
+              <Link href="/reviews">후기</Link>
               <Link href="/community">커뮤니티</Link>
             </nav>
           </div>
@@ -64,7 +65,13 @@ export default async function UserLayout({ children }: { children: React.ReactNo
               광고주 센터로 이동 →
             </Link>
           </div>
-          <div className="mt-6 text-[11px] text-ink-400">
+          <div className="mt-4 flex flex-wrap gap-x-4 gap-y-1 text-[11px]">
+            <Link href="/terms" className="text-ink-600 hover:text-ink-900">이용약관</Link>
+            <Link href="/privacy" className="text-ink-600 hover:text-ink-900 font-semibold">개인정보처리방침</Link>
+            <Link href="/reviews" className="text-ink-600 hover:text-ink-900">체험 후기</Link>
+            <Link href="/advertiser" target="_blank" className="text-ink-600 hover:text-ink-900">광고주센터</Link>
+          </div>
+          <div className="mt-3 text-[11px] text-ink-400">
             © 2026 Yeogin. 모든 캠페인은 데모 데이터입니다.
           </div>
         </div>

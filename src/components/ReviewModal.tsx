@@ -7,6 +7,8 @@ export function ReviewModal({ applicationId }: { applicationId: string }) {
   const [open, setOpen] = useState(false);
   const [url, setUrl] = useState("");
   const [bodySnippet, setBodySnippet] = useState("");
+  const [rating, setRating] = useState<number>(5);
+  const [highlight, setHighlight] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [warn, setWarn] = useState<string[] | null>(null);
@@ -20,7 +22,7 @@ export function ReviewModal({ applicationId }: { applicationId: string }) {
     const res = await fetch(`/api/applications/${applicationId}/review`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ url, bodySnippet }),
+      body: JSON.stringify({ url, bodySnippet, rating, highlight }),
     });
     const data = await res.json().catch(() => ({}));
     setLoading(false);
@@ -66,6 +68,34 @@ export function ReviewModal({ applicationId }: { applicationId: string }) {
                   placeholder="https://blog.naver.com/..."
                   value={url}
                   onChange={(e) => setUrl(e.target.value)}
+                />
+              </div>
+              <div>
+                <label className="label">평점 (1~5점)</label>
+                <div className="flex gap-1.5">
+                  {[1, 2, 3, 4, 5].map((n) => (
+                    <button
+                      key={n}
+                      type="button"
+                      onClick={() => setRating(n)}
+                      className={`flex h-10 w-10 items-center justify-center rounded-lg text-2xl transition ${
+                        rating >= n ? "scale-110 text-amber-400" : "text-ink-300 hover:text-ink-400"
+                      }`}
+                      aria-label={`${n}점`}
+                    >
+                      ★
+                    </button>
+                  ))}
+                </div>
+              </div>
+              <div>
+                <label className="label">한 줄 추천 (후기 갤러리 노출)</label>
+                <input
+                  className="input"
+                  maxLength={60}
+                  value={highlight}
+                  onChange={(e) => setHighlight(e.target.value)}
+                  placeholder="예: 데이트 코스로 강추! 분위기 끝내줘요"
                 />
               </div>
               <div>
