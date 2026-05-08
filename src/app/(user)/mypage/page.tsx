@@ -4,6 +4,7 @@ import { db } from "@/lib/db";
 import { getUserSession } from "@/lib/session";
 import { ReviewModal } from "@/components/ReviewModal";
 import { SnsCard } from "@/components/SnsCard";
+import { AttendanceCard } from "@/components/AttendanceCard";
 import { isYouTubeAutoEnabled } from "@/lib/sns";
 import {
   CHANNEL_LABEL,
@@ -56,6 +57,7 @@ export default async function MyPage({ searchParams }: { searchParams: SP }) {
           <SideLink href="/mypage" label="📋 내 체험단" active />
           <SideLink href="/mypage/favorites" label="❤️ 관심 캠페인" />
           <SideLink href="/mypage/points" label="💰 포인트 내역" />
+          <SideLink href="/mypage/invite" label="🎁 친구 초대" />
           <SideLink href="/notifications" label="🔔 알림함" />
           <div className="mt-3 border-t border-ink-100 pt-3 text-[11px] font-bold text-ink-400">
             내 정보 관리
@@ -80,6 +82,31 @@ export default async function MyPage({ searchParams }: { searchParams: SP }) {
 
       {/* 메인 */}
       <div className="space-y-6">
+        {/* 출석체크 + 초대 빠른 카드 */}
+        <div className="grid gap-3 md:grid-cols-2">
+          <AttendanceCard
+            streak={me.attendStreak}
+            doneToday={
+              !!me.lastAttendAt &&
+              new Date(me.lastAttendAt).toDateString() === new Date().toDateString()
+            }
+          />
+          <Link
+            href="/mypage/invite"
+            className="card flex items-center gap-4 overflow-hidden bg-gradient-to-br from-pink-500 to-purple-600 p-4 text-white transition hover:brightness-110"
+          >
+            <div className="text-3xl">🎁</div>
+            <div className="min-w-0 flex-1">
+              <div className="text-sm font-bold">친구 초대 이벤트</div>
+              <div className="text-xs opacity-90">
+                코드 공유 → 양쪽 +1,000P
+              </div>
+              <div className="mt-1 font-mono text-xs">{me.referralCode}</div>
+            </div>
+            <span className="text-sm">→</span>
+          </Link>
+        </div>
+
         {/* 프로필 헤더 */}
         <div className="card p-5">
           <div className="flex items-start justify-between">

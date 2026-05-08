@@ -19,10 +19,35 @@ export async function POST(req: NextRequest) {
   if (exists) return redirectWithError(req, "/signup", "이미 가입된 이메일입니다.");
 
   const passwordHash = await bcrypt.hash(password, 10);
+  const referralCode = String(form.get("referralCode") || "").trim() || null;
+
+  // 추천인 검증
+  let referredById: string | null = null;
+  if (referralCode) {
+    const referrer = await db.user.findUnique({
+      where: { referralCode },
+      select: { id: true },
+    });
+    if (referrer) referredById = referrer.id;
+  }
+
   const user = await db.user.create({
-    data: { email, nickname, passwordHash, blogUrl, instaUrl, point: 0 },
+    data: {
+      email,
+      nickname,
+      passwordHash,
+      blogUrl,
+      instaUrl,
+      point: 0,
+      referredById,
+    },
   });
   await recordPoint(user.id, 5000, "SIGNUP_BONUS", "신규 가입 축하 적립");
+  if (referredById) {
+    // 양쪽 보상
+    await recordPoint(user.id, 1000, "MANUAL", "친구 초대 보너스 (피추천)");
+    await recordPoint(referredById, 1000, "MANUAL", `친구 가입 보너스 (${nickname})`);
+  }
   await setSessionCookie({ id: user.id, role: "user", email: user.email, name: user.nickname });
   return NextResponse.redirect(new URL("/", req.url));
 }

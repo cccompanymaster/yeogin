@@ -57,6 +57,13 @@ async function main() {
       region: "서울 강남구",
       trustGrade: "GOLD",
       point: 24500,
+      blogVisitors: 8763,
+      blogVerifiedAt: new Date(),
+      instaFollowers: 95000,
+      instaVerifiedAt: new Date(),
+      attendStreak: 5,
+      lastAttendAt: new Date(Date.now() - 24 * 60 * 60 * 1000),
+      referralCode: "YEOGIN-DEMO",
     },
   });
 

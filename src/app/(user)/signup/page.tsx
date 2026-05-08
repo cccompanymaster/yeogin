@@ -5,10 +5,11 @@ import { isOAuthEnabled } from "@/lib/oauth";
 export default async function SignupPage({
   searchParams,
 }: {
-  searchParams: Promise<{ error?: string }>;
+  searchParams: Promise<{ error?: string; ref?: string }>;
 }) {
   const sp = await searchParams;
   const enabled = isOAuthEnabled();
+  const ref = sp.ref || "";
   return (
     <div className="mx-auto max-w-md">
       <div className="card p-6">
@@ -40,6 +41,20 @@ export default async function SignupPage({
           <div>
             <label className="label">인스타 URL (선택)</label>
             <input className="input" name="instaUrl" placeholder="https://instagram.com/..." />
+          </div>
+          <div>
+            <label className="label">친구 초대 코드 (선택, 양쪽 +1,000P)</label>
+            <input
+              className="input"
+              name="referralCode"
+              defaultValue={ref}
+              placeholder="추천인 코드"
+            />
+            {ref && (
+              <p className="mt-1 text-[11px] text-emerald-600">
+                ✓ 초대 코드가 자동 입력되었습니다.
+              </p>
+            )}
           </div>
           {sp.error && (
             <div className="text-xs text-red-500">{decodeURIComponent(sp.error)}</div>
