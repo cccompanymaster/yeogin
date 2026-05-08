@@ -5,6 +5,7 @@ import { getUserSession } from "@/lib/session";
 import { ReviewModal } from "@/components/ReviewModal";
 import { SnsCard } from "@/components/SnsCard";
 import { AttendanceCard } from "@/components/AttendanceCard";
+import { AdvertiserRatingModal } from "@/components/AdvertiserRatingModal";
 import { isYouTubeAutoEnabled } from "@/lib/sns";
 import {
   CHANNEL_LABEL,
@@ -26,21 +27,27 @@ export default async function MyPage({ searchParams }: { searchParams: SP }) {
   const sp = await searchParams;
   const tab = sp.tab === "done" ? "done" : "active";
 
-  const [apps, penalties, cancelCount, doneCount, pendingVerifs] = await Promise.all([
-    db.application.findMany({
-      where: { userId: me.id },
-      include: { campaign: true, review: true },
-      orderBy: { createdAt: "desc" },
-    }),
-    db.penalty.findMany({ where: { userId: me.id }, orderBy: { createdAt: "desc" } }),
-    db.application.count({ where: { userId: me.id, status: "CANCELED" } }),
-    db.review.count({ where: { userId: me.id, status: "APPROVED" } }),
-    db.snsVerification.findMany({
-      where: { userId: me.id, status: "PENDING" },
-      select: { channel: true },
-    }),
-  ]);
+  const [apps, penalties, cancelCount, doneCount, pendingVerifs, advRatings] =
+    await Promise.all([
+      db.application.findMany({
+        where: { userId: me.id },
+        include: { campaign: true, review: true },
+        orderBy: { createdAt: "desc" },
+      }),
+      db.penalty.findMany({ where: { userId: me.id }, orderBy: { createdAt: "desc" } }),
+      db.application.count({ where: { userId: me.id, status: "CANCELED" } }),
+      db.review.count({ where: { userId: me.id, status: "APPROVED" } }),
+      db.snsVerification.findMany({
+        where: { userId: me.id, status: "PENDING" },
+        select: { channel: true },
+      }),
+      db.advertiserRating.findMany({
+        where: { userId: me.id },
+        select: { campaignId: true, rating: true, comment: true },
+      }),
+    ]);
   const pendingSet = new Set(pendingVerifs.map((p) => p.channel));
+  const ratingMap = new Map(advRatings.map((r) => [r.campaignId, r]));
 
   const activeApps = apps.filter((a) => a.status !== "COMPLETED" && a.status !== "REJECTED");
   const doneApps = apps.filter((a) => a.status === "COMPLETED" || a.status === "REJECTED");
@@ -56,6 +63,7 @@ export default async function MyPage({ searchParams }: { searchParams: SP }) {
           <div className="px-2 py-1 text-base font-black">마이페이지</div>
           <SideLink href="/mypage" label="📋 내 체험단" active />
           <SideLink href="/mypage/favorites" label="❤️ 관심 캠페인" />
+          <SideLink href="/mypage/shop" label="🛍️ 포인트샵" />
           <SideLink href="/mypage/points" label="💰 포인트 내역" />
           <SideLink href="/mypage/invite" label="🎁 친구 초대" />
           <SideLink href="/notifications" label="🔔 알림함" />
@@ -273,6 +281,13 @@ export default async function MyPage({ searchParams }: { searchParams: SP }) {
                       )}
                       {a.review?.status === "REJECTED" && (
                         <ReviewModal applicationId={a.id} />
+                      )}
+                      {a.status === "COMPLETED" && (
+                        <AdvertiserRatingModal
+                          campaignId={a.campaignId}
+                          campaignTitle={a.campaign.title}
+                          existing={ratingMap.get(a.campaignId) ?? null}
+                        />
                       )}
                     </div>
                   </div>

@@ -9,7 +9,7 @@ export default async function AdvertiserDashboard() {
   const session = await getAdvertiserSession();
   if (!session) redirect("/advertiser/login");
 
-  const [campaigns, advRow] = await Promise.all([
+  const [campaigns, advRow, ratingAgg] = await Promise.all([
     db.campaign.findMany({
       where: { advertiserId: session.id },
       include: {
@@ -21,8 +21,15 @@ export default async function AdvertiserDashboard() {
       where: { id: session.id },
       select: { point: true },
     }),
+    db.advertiserRating.aggregate({
+      where: { advertiserId: session.id },
+      _avg: { rating: true },
+      _count: { _all: true },
+    }),
   ]);
   const balance = advRow?.point ?? 0;
+  const avgRating = ratingAgg._avg.rating || 0;
+  const ratingCount = ratingAgg._count._all;
 
   const totalApplied = campaigns.reduce((s, c) => s + c.appliedCount, 0);
   const openCount = campaigns.filter((c) => c.status === "OPEN").length;
@@ -117,11 +124,15 @@ export default async function AdvertiserDashboard() {
         </div>
       )}
 
-      <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
+      <div className="grid grid-cols-2 gap-3 md:grid-cols-5">
         <Stat label="진행중 캠페인" value={`${openCount}`} />
         <Stat label="총 캠페인" value={`${campaigns.length}`} />
         <Stat label="총 신청자" value={`${totalApplied}`} />
         <Stat label="검수 대기 리뷰" value={`${pendingReviews}`} />
+        <Stat
+          label="우리 매장 평점"
+          value={ratingCount > 0 ? `★ ${avgRating.toFixed(1)} (${ratingCount})` : "평가 대기"}
+        />
       </div>
 
       <div className="grid gap-4 lg:grid-cols-2">

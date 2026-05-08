@@ -94,16 +94,25 @@ export default async function CampaignDetail({
   });
   const similar = similarRaw.slice(0, 4);
 
-  // 이 광고주의 다른 캠페인
-  const otherFromAdv = await db.campaign.findMany({
-    where: {
-      advertiserId: c.advertiserId,
-      id: { not: c.id },
-      status: "OPEN",
-    },
-    orderBy: { createdAt: "desc" },
-    take: 4,
-  });
+  // 이 광고주의 다른 캠페인 + 평균 평점
+  const [otherFromAdv, advRatingAgg] = await Promise.all([
+    db.campaign.findMany({
+      where: {
+        advertiserId: c.advertiserId,
+        id: { not: c.id },
+        status: "OPEN",
+      },
+      orderBy: { createdAt: "desc" },
+      take: 4,
+    }),
+    db.advertiserRating.aggregate({
+      where: { advertiserId: c.advertiserId },
+      _avg: { rating: true },
+      _count: { _all: true },
+    }),
+  ]);
+  const advAvg = advRatingAgg._avg.rating || 0;
+  const advCount = advRatingAgg._count._all;
 
   // 이 캠페인 승인 후기 (있다면)
   const recentReviews = await db.review.findMany({
@@ -142,7 +151,15 @@ export default async function CampaignDetail({
               )}
             </div>
             <h1 className="text-2xl font-black leading-tight">{c.title}</h1>
-            <div className="text-sm text-ink-600">{c.advertiser.companyName}</div>
+            <div className="flex items-center gap-2 text-sm text-ink-600">
+              <span>{c.advertiser.companyName}</span>
+              {advCount > 0 && (
+                <span className="flex items-center gap-1 text-xs text-amber-600">
+                  ★ <b>{advAvg.toFixed(1)}</b>
+                  <span className="text-ink-400">({advCount})</span>
+                </span>
+              )}
+            </div>
             {c.address && (
               <div className="text-xs text-ink-500">📍 {c.address}</div>
             )}

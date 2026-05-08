@@ -33,6 +33,9 @@ async function main() {
   console.log("🌱 Seeding...");
 
   // 기존 데이터 정리
+  await db.redeem.deleteMany();
+  await db.redeemItem.deleteMany();
+  await db.advertiserRating.deleteMany();
   await db.advertiserPointHistory.deleteMany();
   await db.pointHistory.deleteMany();
   await db.report.deleteMany();
@@ -612,8 +615,31 @@ async function main() {
     ],
   });
 
+  // 포인트샵 상품
+  await db.redeemItem.createMany({
+    data: [
+      { name: "스타벅스 아메리카노 Tall", description: "스타벅스 Tall 1잔 기프티콘", imageUrl: "https://images.unsplash.com/photo-1509042239860-f550ce710b93?w=600&q=80", cost: 4500, stock: 50, category: "GIFTCARD" },
+      { name: "투썸 케이크 + 음료 세트", description: "투썸플레이스 조각케이크 + 음료", imageUrl: "https://images.unsplash.com/photo-1551024601-bec78aea704b?w=600&q=80", cost: 12000, stock: 30, category: "GIFTCARD" },
+      { name: "BBQ 황금올리브 치킨", description: "BBQ 황금올리브 후라이드 1마리", imageUrl: "https://images.unsplash.com/photo-1626082929543-5bab6f9c6d2a?w=600&q=80", cost: 22000, stock: 20, category: "GIFTCARD" },
+      { name: "GS25 1만원 모바일 상품권", description: "GS25 어디서든 사용 가능", imageUrl: "https://images.unsplash.com/photo-1559056199-641a0ac8b55e?w=600&q=80", cost: 10000, stock: 100, category: "GIFTCARD" },
+      { name: "방문형 캠페인 우선 매칭권", description: "원하는 방문형 캠페인 1건 24시간 내 우선 매칭", imageUrl: "https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=600&q=80", cost: 5000, stock: 999, category: "COUPON" },
+      { name: "프리미엄 30일 이용권", description: "30일간 프리미엄 캠페인 노출 + 빠른선정 우선권", imageUrl: "https://images.unsplash.com/photo-1521335629791-ce4aec67dd47?w=600&q=80", cost: 30000, stock: 999, category: "BADGE" },
+      { name: "Gold 등급 즉시 승급권", description: "신뢰등급 1단계 추가 승급 (1회)", imageUrl: "https://images.unsplash.com/photo-1610375461246-83df859d849d?w=600&q=80", cost: 50000, stock: 50, category: "BADGE" },
+    ],
+  });
+
+  // 광고주 평점 시드
+  await db.advertiserRating.createMany({
+    data: [
+      { advertiserId: adv1.id, campaignId: created[0].id, userId: users[1].id, rating: 5, comment: "응대도 친절하시고 가이드도 명확했어요!" },
+      { advertiserId: adv1.id, campaignId: created[1].id, userId: users[2].id, rating: 4, comment: "분위기 좋았는데 예약시간 살짝 지연" },
+      { advertiserId: adv2.id, campaignId: created[4].id, userId: users[0].id, rating: 5, comment: "디저트 진짜 맛있었어요" },
+      { advertiserId: adv3.id, campaignId: created[7].id, userId: users[3].id, rating: 5, comment: "마스크팩 양 진짜 푸짐해요" },
+    ],
+  });
+
   console.log(
-    `✅ Done. users=${users.length + 1}, advertisers=3, campaigns=${created.length}, reports=2`
+    `✅ Done. users=${users.length + 1}, advertisers=3, campaigns=${created.length}, shop=7, ratings=4`
   );
 }
 

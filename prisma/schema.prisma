@@ -55,6 +55,8 @@ model User {
   snsVerifications SnsVerification[]
   favorites    Favorite[]
   pointHistory PointHistory[]
+  redeems      Redeem[]
+  advRatings   AdvertiserRating[]
 }
 
 // 광고주 회원
@@ -71,6 +73,7 @@ model Advertiser {
 
   campaigns Campaign[]
   pointHistory AdvertiserPointHistory[]
+  ratings   AdvertiserRating[]
 }
 
 // 광고주 포인트 내역 (충전/차감)
@@ -124,6 +127,7 @@ model Campaign {
   applications  Application[]
   reviews       Review[]
   favorites     Favorite[]
+  ratings       AdvertiserRating[]
 }
 
 // 신청 내역
@@ -213,13 +217,60 @@ model PointHistory {
   id        String   @id @default(cuid())
   userId    String
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  delta     Int      // +1000 또는 -500
+  delta     Int
   reason    String   // REVIEW_APPROVED, PENALTY, SIGNUP_BONUS, MANUAL, REDEEM
-  balance   Int      // 적립 후 잔액
+  balance   Int
   note      String?
   createdAt DateTime @default(now())
 
   @@index([userId, createdAt])
+}
+
+// 포인트샵 - 교환 가능 상품
+model RedeemItem {
+  id          String   @id @default(cuid())
+  name        String
+  description String
+  imageUrl    String
+  cost        Int      // 필요 포인트
+  stock       Int      @default(100)
+  category    String   // GIFTCARD, COUPON, BADGE
+  active      Boolean  @default(true)
+  createdAt   DateTime @default(now())
+
+  redeems Redeem[]
+}
+
+// 포인트 교환 내역
+model Redeem {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  itemId    String
+  item      RedeemItem @relation(fields: [itemId], references: [id], onDelete: Cascade)
+  cost      Int
+  code      String   // 발급 코드 (mock 16자리)
+  status    String   @default("ISSUED") // ISSUED, USED, REFUNDED
+  createdAt DateTime @default(now())
+
+  @@index([userId, createdAt])
+}
+
+// 광고주 평점 (캠페인 완료자가 광고주 평가)
+model AdvertiserRating {
+  id           String   @id @default(cuid())
+  advertiserId String
+  advertiser   Advertiser @relation(fields: [advertiserId], references: [id], onDelete: Cascade)
+  campaignId   String
+  campaign     Campaign @relation(fields: [campaignId], references: [id], onDelete: Cascade)
+  userId       String
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  rating       Int      // 1~5
+  comment      String?
+  createdAt    DateTime @default(now())
+
+  @@unique([campaignId, userId])
+  @@index([advertiserId])
 }
 
 // 즐겨찾기 (관심 캠페인)
