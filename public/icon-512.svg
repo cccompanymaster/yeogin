@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <rect width="512" height="512" rx="100" fill="#f97316"/>
+  <path d="M256 80C196 80 148 127 148 184c0 71.5 88 149.7 99 158.7 4.5 4 12 4 16.5 0 11-9 99-87.2 99-158.7 0-57-48-104-106.5-104Z" fill="#fff"/>
+  <circle cx="256" cy="184" r="54" fill="#f97316"/>
+  <text x="256" y="450" text-anchor="middle" font-family="Pretendard, sans-serif" font-weight="900" font-size="80" fill="#fff">여긴</text>
+</svg>

@@ -1,0 +1,29 @@
+{
+  "name": "여긴 - 진짜 후기로 연결되는 체험단",
+  "short_name": "여긴",
+  "description": "맛집·카페·뷰티 등 매일 새로운 체험단 캠페인",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#fff7ed",
+  "theme_color": "#f97316",
+  "lang": "ko",
+  "icons": [
+    {
+      "src": "/icon-192.svg",
+      "sizes": "192x192",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icon-512.svg",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "shortcuts": [
+    { "name": "캠페인 보기", "url": "/campaigns" },
+    { "name": "내 주변", "url": "/campaigns?nearby=1" },
+    { "name": "마이페이지", "url": "/mypage" }
+  ]
+}
