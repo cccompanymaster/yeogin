@@ -35,7 +35,7 @@ export function CampaignCard({
       href={`/campaigns/${c.id}`}
       className="card group overflow-hidden transition hover:-translate-y-0.5 hover:shadow-md"
     >
-      <div className="relative aspect-[4/3] overflow-hidden bg-ink-100">
+      <div className="relative aspect-[4/3] overflow-hidden bg-ink-100 dark:bg-ink-700">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src={c.thumbnail}
@@ -64,7 +64,7 @@ export function CampaignCard({
         </div>
       </div>
       <div className="space-y-1.5 p-3">
-        <div className="flex items-center gap-1.5 text-[11px] text-ink-500">
+        <div className="flex items-center gap-1.5 text-[11px] text-ink-500 dark:text-ink-400">
           <span>{c.category}</span>
           <span>·</span>
           <span>{CHANNEL_LABEL[c.channel]}</span>
@@ -75,13 +75,13 @@ export function CampaignCard({
             </>
           )}
         </div>
-        <div className="line-clamp-2 text-sm font-bold leading-tight text-ink-900">
+        <div className="line-clamp-2 text-sm font-bold leading-tight text-ink-900 dark:text-ink-100">
           {c.title}
         </div>
-        <div className="line-clamp-1 text-xs text-ink-600">{c.offer}</div>
+        <div className="line-clamp-1 text-xs text-ink-600 dark:text-ink-300">{c.offer}</div>
         <div className="flex items-center justify-between pt-1.5 text-[11px]">
-          <span className="font-semibold text-brand-600">{won(c.offerValue)} 상당</span>
-          <span className="text-ink-500">
+          <span className="font-semibold text-brand-600 dark:text-brand-400">{won(c.offerValue)} 상당</span>
+          <span className="text-ink-500 dark:text-ink-400">
             {c.appliedCount}명 신청 / {c.capacity}명 모집
           </span>
         </div>

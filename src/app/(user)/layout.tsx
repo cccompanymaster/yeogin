@@ -57,25 +57,48 @@ export default async function UserLayout({ children }: { children: React.ReactNo
           <SearchBar />
         </div>
       </header>
-      <main className="mx-auto max-w-6xl px-4 py-6">{children}</main>
-      <footer className="mt-20 border-t border-ink-200 bg-white">
-        <div className="mx-auto max-w-6xl px-4 py-8 text-xs text-ink-500">
-          <div className="flex flex-wrap items-center justify-between gap-4">
-            <div>
+      <main className="mx-auto max-w-6xl px-4 py-6 text-ink-900 dark:text-ink-100">
+        {children}
+      </main>
+      <footer className="mt-20 border-t border-ink-200 bg-white dark:border-ink-700 dark:bg-ink-900">
+        <div className="mx-auto max-w-6xl px-4 py-10 text-xs text-ink-500 dark:text-ink-400">
+          <div className="grid gap-6 md:grid-cols-4">
+            <div className="md:col-span-2">
               <Logo size={22} />
-              <div className="mt-2">진짜 후기로 연결되는 무료 체험단 플랫폼</div>
+              <div className="mt-2 text-ink-600 dark:text-ink-300">
+                진짜 후기로 연결되는 무료 체험단 플랫폼
+              </div>
+              <div className="mt-3">
+                <Link
+                  href="/advertiser"
+                  target="_blank"
+                  className="btn-outline inline-flex"
+                >
+                  광고주 센터로 이동 →
+                </Link>
+              </div>
             </div>
-            <Link href="/advertiser" target="_blank" className="btn-outline">
-              광고주 센터로 이동 →
-            </Link>
+            <div>
+              <div className="mb-2 font-bold text-ink-700 dark:text-ink-200">서비스</div>
+              <ul className="space-y-1.5">
+                <li><Link href="/campaigns" className="hover:text-ink-900 dark:hover:text-white">캠페인</Link></li>
+                <li><Link href="/tags" className="hover:text-ink-900 dark:hover:text-white">인기 태그</Link></li>
+                <li><Link href="/reviews" className="hover:text-ink-900 dark:hover:text-white">체험 후기</Link></li>
+                <li><Link href="/magazine" className="hover:text-ink-900 dark:hover:text-white">매거진</Link></li>
+                <li><Link href="/community" className="hover:text-ink-900 dark:hover:text-white">커뮤니티</Link></li>
+              </ul>
+            </div>
+            <div>
+              <div className="mb-2 font-bold text-ink-700 dark:text-ink-200">고객지원</div>
+              <ul className="space-y-1.5">
+                <li><Link href="/terms" className="hover:text-ink-900 dark:hover:text-white">이용약관</Link></li>
+                <li><Link href="/privacy" className="font-semibold hover:text-ink-900 dark:hover:text-white">개인정보처리방침</Link></li>
+                <li><Link href="/mypage/shop" className="hover:text-ink-900 dark:hover:text-white">포인트샵</Link></li>
+                <li><Link href="/mypage/invite" className="hover:text-ink-900 dark:hover:text-white">친구 초대</Link></li>
+              </ul>
+            </div>
           </div>
-          <div className="mt-4 flex flex-wrap gap-x-4 gap-y-1 text-[11px]">
-            <Link href="/terms" className="text-ink-600 hover:text-ink-900">이용약관</Link>
-            <Link href="/privacy" className="text-ink-600 hover:text-ink-900 font-semibold">개인정보처리방침</Link>
-            <Link href="/reviews" className="text-ink-600 hover:text-ink-900">체험 후기</Link>
-            <Link href="/advertiser" target="_blank" className="text-ink-600 hover:text-ink-900">광고주센터</Link>
-          </div>
-          <div className="mt-3 text-[11px] text-ink-400">
+          <div className="mt-8 border-t border-ink-100 pt-4 text-[11px] text-ink-400 dark:border-ink-700">
             © 2026 Yeogin. 모든 캠페인은 데모 데이터입니다.
           </div>
         </div>

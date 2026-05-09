@@ -1,5 +1,6 @@
 import { db } from "@/lib/db";
 import { CampaignCard } from "@/components/CampaignCard";
+import { EmptyState } from "@/components/EmptyState";
 import { matchScore, buildCategoryFrequency } from "@/lib/matching";
 
 export const metadata = {
@@ -176,9 +177,21 @@ export default async function CampaignListPage({
       </div>
 
       {items.length === 0 ? (
-        <div className="card p-10 text-center text-sm text-ink-500">
-          조건에 맞는 캠페인이 없습니다.
-        </div>
+        <EmptyState
+          icon={sp.q ? "🔍" : "🌱"}
+          title={
+            sp.q
+              ? `"${sp.q}"에 해당하는 캠페인이 없어요`
+              : "조건에 맞는 캠페인이 없어요"
+          }
+          description={
+            sp.q
+              ? "검색어를 짧게 줄이거나, 다른 카테고리로 둘러보세요."
+              : "필터를 초기화하거나 인기 카테고리를 둘러보세요."
+          }
+          cta={{ href: "/campaigns", label: "전체 캠페인 보기" }}
+          secondary={{ href: "/tags", label: "인기 태그 보기" }}
+        />
       ) : (
         <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
           {items.map((c) => (
