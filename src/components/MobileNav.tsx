@@ -15,6 +15,8 @@ const ITEMS = [
   { href: "/tags", label: "🏷️ 인기 태그" },
   { href: "/reviews", label: "📣 체험 후기" },
   { href: "/magazine", label: "📚 매거진" },
+  { href: "/faq", label: "❓ 자주 묻는 질문" },
+  { href: "/trust-grade", label: "🏆 신뢰등급" },
   { href: "/mypage/invite", label: "🎁 친구 초대" },
   { href: "/community", label: "💬 커뮤니티" },
 ];

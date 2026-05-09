@@ -13,6 +13,7 @@ const ITEMS = [
   { href: "/advertiser/billing", label: "💰 정산" },
   { href: "/advertiser/billing/charge", label: "💳 포인트 충전" },
   { href: "/advertiser/cases", label: "🏆 성공 사례" },
+  { href: "/advertiser/profile", label: "⚙️ 프로필 수정" },
 ];
 
 export function AdvertiserMobileNav() {

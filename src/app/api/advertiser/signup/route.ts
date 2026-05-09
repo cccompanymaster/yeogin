@@ -17,6 +17,15 @@ export async function POST(req: NextRequest) {
     url.searchParams.set("error", "필수 정보를 입력해주세요.");
     return NextResponse.redirect(url, 303);
   }
+  if (
+    form.get("agreeTerms") !== "1" ||
+    form.get("agreePrivacy") !== "1" ||
+    form.get("agreeBiz") !== "1"
+  ) {
+    const url = new URL("/advertiser/signup", req.url);
+    url.searchParams.set("error", "필수 약관에 모두 동의해주세요.");
+    return NextResponse.redirect(url, 303);
+  }
 
   const exists = await db.advertiser.findUnique({ where: { email } });
   if (exists) {

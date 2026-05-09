@@ -60,6 +60,12 @@ export default async function AdvertiserLayout({ children }: { children: React.R
                   href="/advertiser/notifications"
                 />
                 <AdvertiserMobileNav />
+                <Link
+                  href="/advertiser/profile"
+                  className="hidden text-xs text-ink-200 hover:text-white md:inline-block"
+                >
+                  ⚙️
+                </Link>
                 <form action="/api/advertiser/logout" method="post">
                   <button className="hidden border border-ink-700 bg-transparent px-3 py-1.5 text-xs text-ink-100 hover:bg-ink-800 md:inline-flex">
                     로그아웃

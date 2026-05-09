@@ -43,6 +43,34 @@ export default async function AdvertiserSignup({
           {sp.error && (
             <div className="text-xs text-red-500">{decodeURIComponent(sp.error)}</div>
           )}
+          <div className="space-y-1.5 rounded-lg bg-ink-50 p-3 text-xs dark:bg-ink-900">
+            <label className="flex items-start gap-2">
+              <input type="checkbox" name="agreeTerms" value="1" required className="mt-0.5" />
+              <span>
+                <b>(필수)</b>{" "}
+                <Link href="/terms" target="_blank" className="text-brand-600 underline-offset-2 hover:underline">
+                  이용약관
+                </Link>
+                에 동의합니다.
+              </span>
+            </label>
+            <label className="flex items-start gap-2">
+              <input type="checkbox" name="agreePrivacy" value="1" required className="mt-0.5" />
+              <span>
+                <b>(필수)</b>{" "}
+                <Link href="/privacy" target="_blank" className="text-brand-600 underline-offset-2 hover:underline">
+                  개인정보처리방침
+                </Link>
+                에 동의합니다.
+              </span>
+            </label>
+            <label className="flex items-start gap-2">
+              <input type="checkbox" name="agreeBiz" value="1" required className="mt-0.5" />
+              <span>
+                <b>(필수)</b> 등록 정보가 사실과 다를 경우 이용 제한될 수 있음을 확인합니다.
+              </span>
+            </label>
+          </div>
           <button className="btn-primary w-full py-2.5">가입 완료</button>
         </form>
         <div className="mt-4 text-center text-xs text-ink-500">

@@ -91,6 +91,8 @@ export default async function UserLayout({ children }: { children: React.ReactNo
             <div>
               <div className="mb-2 font-bold text-ink-700 dark:text-ink-200">고객지원</div>
               <ul className="space-y-1.5">
+                <li><Link href="/faq" className="hover:text-ink-900 dark:hover:text-white">자주 묻는 질문</Link></li>
+                <li><Link href="/trust-grade" className="hover:text-ink-900 dark:hover:text-white">신뢰등급 안내</Link></li>
                 <li><Link href="/terms" className="hover:text-ink-900 dark:hover:text-white">이용약관</Link></li>
                 <li><Link href="/privacy" className="font-semibold hover:text-ink-900 dark:hover:text-white">개인정보처리방침</Link></li>
                 <li><Link href="/mypage/shop" className="hover:text-ink-900 dark:hover:text-white">포인트샵</Link></li>

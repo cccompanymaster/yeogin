@@ -67,21 +67,21 @@ export default async function MyPage({ searchParams }: { searchParams: SP }) {
           <SideLink href="/mypage/points" label="💰 포인트 내역" />
           <SideLink href="/mypage/invite" label="🎁 친구 초대" />
           <SideLink href="/notifications" label="🔔 알림함" />
-          <div className="mt-3 border-t border-ink-100 pt-3 text-[11px] font-bold text-ink-400">
+          <div className="mt-3 border-t border-ink-100 pt-3 text-[11px] font-bold text-ink-400 dark:border-ink-700">
             내 정보 관리
           </div>
           <SideLink href="/mypage/edit" label="프로필 수정" />
           <SideLink href="/mypage" label="내 채널" />
-          <div className="mt-3 border-t border-ink-100 pt-3 text-[11px] font-bold text-ink-400">
+          <div className="mt-3 border-t border-ink-100 pt-3 text-[11px] font-bold text-ink-400 dark:border-ink-700">
             커뮤니티
           </div>
           <SideLink href="/community" label="커뮤니티" />
-          <div className="mt-3 border-t border-ink-100 pt-3 text-[11px] font-bold text-ink-400">
+          <div className="mt-3 border-t border-ink-100 pt-3 text-[11px] font-bold text-ink-400 dark:border-ink-700">
             고객센터
           </div>
-          <SideLink href="#" label="자주 묻는 질문" />
-          <SideLink href="#" label="문의내역" />
-          <SideLink href="#" label="이용가이드" />
+          <SideLink href="/faq" label="자주 묻는 질문" />
+          <SideLink href="/trust-grade" label="🏆 신뢰등급 안내" />
+          <SideLink href="/community" label="문의 / 커뮤니티" />
         </div>
         <form action="/api/auth/logout" method="post">
           <button className="btn-outline w-full">로그아웃</button>
