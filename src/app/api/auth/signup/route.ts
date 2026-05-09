@@ -54,7 +54,7 @@ export async function POST(req: NextRequest) {
     await recordPoint(referredById, 1000, "MANUAL", `친구 가입 보너스 (${nickname})`);
   }
   await setSessionCookie({ id: user.id, role: "user", email: user.email, name: user.nickname });
-  return NextResponse.redirect(new URL("/", req.url));
+  return NextResponse.redirect(new URL("/welcome", req.url));
 }
 
 function redirectWithError(req: NextRequest, path: string, msg: string) {
