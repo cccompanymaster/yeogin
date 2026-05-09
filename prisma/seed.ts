@@ -731,6 +731,31 @@ async function main() {
     },
   });
 
+  // 데모 직접 초대 시드
+  await db.directInvite.createMany({
+    data: [
+      {
+        advertiserId: adv1.id,
+        userId: demoUser.id,
+        campaignId: created[0].id,
+        title: "강남 신상 파스타집에 모셔보고 싶어요!",
+        message:
+          "안녕하세요, 강남파스타하우스입니다. 후기 글을 정말 정성껏 써주셔서 인상깊었습니다. 저희 매장 분위기와 잘 맞을 것 같아 직접 모시고 싶어 연락드려요. 시그니처 코스를 준비해두겠습니다!",
+        offerSummary: "2인 코스 + 와인 1잔",
+        expiresAt: new Date(Date.now() + 7 * 86400000),
+      },
+      {
+        advertiserId: adv3.id,
+        userId: demoUser.id,
+        title: "신제품 비건 세럼 단독 체험 제안",
+        message:
+          "글로우뷰티에서 곧 출시 예정인 신제품 비건 세럼을 가장 먼저 사용해보실 인플루언서를 모집하고 있습니다. demo님의 솔직한 후기가 큰 도움이 될 것 같아 직접 연락드려요.",
+        offerSummary: "신제품 비건 세럼 + 토너 풀세트",
+        expiresAt: new Date(Date.now() + 7 * 86400000),
+      },
+    ],
+  });
+
   console.log(
     `✅ Done. users=${users.length + 1}, advertisers=3, campaigns=${created.length}, shop=7, ratings=4, tags applied`
   );

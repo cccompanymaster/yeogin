@@ -47,6 +47,9 @@ model User {
   referrer     User?    @relation("Referral", fields: [referredById], references: [id])
   referrals    User[]   @relation("Referral")
 
+  // 광고주 검색 노출 동의 (기본 ON, 마이페이지에서 OFF 가능)
+  publicProfile Boolean @default(true)
+
   createdAt    DateTime @default(now())
 
   applications Application[]
@@ -58,6 +61,7 @@ model User {
   pointHistory PointHistory[]
   redeems      Redeem[]
   advRatings   AdvertiserRating[]
+  receivedInvites DirectInvite[]
 }
 
 // 광고주 회원
@@ -76,6 +80,29 @@ model Advertiser {
   pointHistory AdvertiserPointHistory[]
   ratings   AdvertiserRating[]
   members   AdvertiserMember[]
+  sentInvites DirectInvite[]
+}
+
+// 직접 초대 (광고주 → 인플루언서)
+model DirectInvite {
+  id           String   @id @default(cuid())
+  advertiserId String
+  advertiser   Advertiser @relation(fields: [advertiserId], references: [id], onDelete: Cascade)
+  userId       String
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  campaignId   String?
+  campaign     Campaign? @relation(fields: [campaignId], references: [id], onDelete: SetNull)
+
+  title        String
+  message      String
+  offerSummary String?
+  status       String   @default("PENDING")
+  expiresAt    DateTime?
+  respondedAt  DateTime?
+  createdAt    DateTime @default(now())
+
+  @@index([userId, status])
+  @@index([advertiserId])
 }
 
 // 광고주 포인트 내역 (충전/차감)
@@ -132,6 +159,7 @@ model Campaign {
   reviews       Review[]
   favorites     Favorite[]
   ratings       AdvertiserRating[]
+  invites       DirectInvite[]
 }
 
 // 광고주 팀 멤버 (서브 계정 초대)

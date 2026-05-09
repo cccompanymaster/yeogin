@@ -24,6 +24,7 @@ export async function POST(req: NextRequest) {
       blogUrl: get("blogUrl") || null,
       instaUrl: get("instaUrl") || null,
       youtubeUrl: get("youtubeUrl") || null,
+      publicProfile: f.get("publicProfile") === "1",
     },
   });
 

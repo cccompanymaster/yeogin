@@ -93,6 +93,24 @@ export default async function ProfileEditPage({
               placeholder="https://youtube.com/@..."
             />
           </div>
+          <div className="rounded-lg border border-ink-200 bg-ink-50 p-3 dark:border-ink-700 dark:bg-ink-900">
+            <label className="flex items-start gap-2 text-sm">
+              <input
+                type="checkbox"
+                name="publicProfile"
+                value="1"
+                defaultChecked={me.publicProfile}
+                className="mt-0.5"
+              />
+              <span>
+                <b>광고주 검색 노출 허용</b>
+                <span className="block text-xs text-ink-500 dark:text-ink-400">
+                  광고주가 인플루언서 검색에서 내 프로필을 볼 수 있고, 직접 캠페인
+                  초대를 보낼 수 있습니다. 끄면 검색에 노출되지 않습니다.
+                </span>
+              </span>
+            </label>
+          </div>
           <button className="btn-primary w-full py-2.5">저장</button>
         </form>
       </div>
