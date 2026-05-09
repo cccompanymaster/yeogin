@@ -2,12 +2,13 @@ import { db } from "@/lib/db";
 import { CampaignCard } from "@/components/CampaignCard";
 import { EmptyState } from "@/components/EmptyState";
 import { matchScore, buildCategoryFrequency } from "@/lib/matching";
-
-export const metadata = {
-  title: "전체 캠페인",
-  description: "여긴의 모든 진행중 캠페인. 카테고리·채널·지역·유형별로 검색하세요.",
-};
-import { CATEGORIES, REGIONS, TYPE_LABEL, CHANNEL_LABEL } from "@/lib/format";
+import {
+  CATEGORIES,
+  REGION_QUICK,
+  TYPE_LABEL,
+  CHANNEL_LABEL,
+  SORT_OPTIONS,
+} from "@/lib/format";
 import { getUserSession } from "@/lib/session";
 import {
   FilterDropdown,
@@ -15,6 +16,12 @@ import {
   FilterClearAll,
 } from "@/components/FilterDropdown";
 import { NearbyMap } from "@/components/NearbyMap";
+import { RegionQuickPicker } from "@/components/RegionQuickPicker";
+
+export const metadata = {
+  title: "전체 캠페인",
+  description: "여긴의 모든 진행중 캠페인. 카테고리·채널·지역·유형별로 검색하세요.",
+};
 
 type SearchParams = Promise<{
   q?: string;
@@ -38,7 +45,18 @@ export default async function CampaignListPage({
   if (sp.category) where.category = sp.category;
   if (sp.type) where.type = sp.type;
   if (sp.channel) where.channel = sp.channel;
-  if (sp.region) where.region = sp.region;
+  if (sp.region) {
+    // 빠른 선택 칩(지역 그룹)은 contains, 상세 지역(서울 강남구)은 정확 매칭
+    const isQuick = REGION_QUICK.some((r) => r.key === sp.region);
+    if (isQuick) {
+      if (sp.region === "재택") where.type = "DELIVERY";
+      else if (sp.region === "기자단") where.type = "REPORTER";
+      else if (sp.region === "당일지급") where.type = "SAME_DAY";
+      else where.region = { contains: sp.region };
+    } else {
+      where.region = sp.region;
+    }
+  }
   if (sp.fast === "1") where.fastMatch = true;
   if (sp.tag) where.tags = { contains: sp.tag };
   if (sp.q) {
@@ -71,7 +89,9 @@ export default async function CampaignListPage({
       ? { applyEnd: "asc" as const }
       : sp.sort === "popular"
         ? { appliedCount: "desc" as const }
-        : { createdAt: "desc" as const };
+        : sp.sort === "point"
+          ? { offerValue: "desc" as const }
+          : { createdAt: "desc" as const };
 
   const items = await db.campaign.findMany({ where, orderBy, take: 60 });
 
@@ -123,12 +143,7 @@ export default async function CampaignListPage({
     value: v,
     label: l,
   }));
-  const regionOpts = REGIONS.map((r) => ({ value: r, label: r }));
-  const sortOpts = [
-    { value: "latest", label: "최신순" },
-    { value: "popular", label: "인기순" },
-    { value: "ending", label: "마감임박순" },
-  ];
+  const sortOpts = SORT_OPTIONS;
 
   return (
     <div className="space-y-5">
@@ -156,7 +171,9 @@ export default async function CampaignListPage({
         <NearbyMap counts={regionCounts} activeRegion={nearbyRegion} />
       )}
 
-      <div className="flex flex-wrap items-center gap-2">
+      <RegionQuickPicker />
+
+      <div className="flex flex-wrap items-center justify-end gap-2">
         <FilterDropdown
           label="카테고리"
           paramKey="category"
@@ -164,7 +181,6 @@ export default async function CampaignListPage({
         />
         <FilterDropdown label="채널" paramKey="channel" options={channelOpts} />
         <FilterDropdown label="유형" paramKey="type" options={typeOpts} />
-        <FilterDropdown label="지역" paramKey="region" options={regionOpts} />
         <FilterDropdown
           label="정렬"
           paramKey="sort"

@@ -80,6 +80,13 @@ export async function POST(
         keywords: get("keywords"),
         tags: get("tags"),
         fastMatch: f.get("fastMatch") === "1",
+        missionPhotos: num("missionPhotos") || 5,
+        missionWords: num("missionWords") || 500,
+        missionMap: f.get("missionMap") === "1",
+        missionVideo: f.get("missionVideo") === "1",
+        visitDays: get("visitDays") || null,
+        visitTime: get("visitTime") || null,
+        storeRequest: get("storeRequest") || null,
       },
     });
   } catch {

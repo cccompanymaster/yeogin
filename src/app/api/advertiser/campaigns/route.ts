@@ -18,9 +18,20 @@ export async function POST(req: NextRequest) {
   const type = get("type");
   const capacity = num("capacity");
   const fastMatch = f.get("fastMatch") === "1";
-  const action = String(f.get("action") || "open"); // draft | schedule | open
+  const action = String(f.get("action") || "open");
   const publishRaw = get("publishAt");
   const cost = calcCampaignCost({ type, capacity, fastMatch });
+
+  // 미션 + 방문 정보
+  const missionFields = {
+    missionPhotos: num("missionPhotos") || 5,
+    missionWords: num("missionWords") || 500,
+    missionMap: f.get("missionMap") === "1",
+    missionVideo: f.get("missionVideo") === "1",
+    visitDays: get("visitDays") || null,
+    visitTime: get("visitTime") || null,
+    storeRequest: get("storeRequest") || null,
+  };
 
   // 임시저장은 잔액/필수값 체크 완화
   if (action === "draft") {
@@ -49,6 +60,7 @@ export async function POST(req: NextRequest) {
           tags: get("tags"),
           fastMatch,
           status: "DRAFT",
+          ...missionFields,
         },
       });
       return NextResponse.redirect(new URL(`/advertiser/campaigns/${c.id}/edit?saved=1`, req.url));
@@ -107,6 +119,7 @@ export async function POST(req: NextRequest) {
         fastMatch,
         status,
         publishAt,
+        ...missionFields,
       },
     });
     await recordAdvertiserPoint(session.id, -cost, "CAMPAIGN_OPEN", {

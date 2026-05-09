@@ -28,7 +28,7 @@ export default async function MyPage({ searchParams }: { searchParams: SP }) {
   const sp = await searchParams;
   const tab = sp.tab === "done" ? "done" : "active";
 
-  const [apps, penalties, cancelCount, doneCount, pendingVerifs, advRatings, pendingInvites] =
+  const [apps, penalties, cancelCount, doneCount, pendingVerifs, advRatings] =
     await Promise.all([
       db.application.findMany({
         where: { userId: me.id },
@@ -45,9 +45,6 @@ export default async function MyPage({ searchParams }: { searchParams: SP }) {
       db.advertiserRating.findMany({
         where: { userId: me.id },
         select: { campaignId: true, rating: true, comment: true },
-      }),
-      db.directInvite.count({
-        where: { userId: me.id, status: "PENDING" },
       }),
     ]);
   const pendingSet = new Set(pendingVerifs.map((p) => p.channel));
@@ -66,7 +63,6 @@ export default async function MyPage({ searchParams }: { searchParams: SP }) {
         <div className="space-y-1 text-sm">
           <div className="px-2 py-1 text-base font-black">마이페이지</div>
           <SideLink href="/mypage" label="📋 내 체험단" active />
-          <SideLink href="/mypage/invites" label="📨 받은 제안" />
           <SideLink href="/mypage/favorites" label="❤️ 관심 캠페인" />
           <SideLink href="/mypage/shop" label="🛍️ 포인트샵" />
           <SideLink href="/mypage/points" label="💰 포인트 내역" />
@@ -95,25 +91,6 @@ export default async function MyPage({ searchParams }: { searchParams: SP }) {
 
       {/* 메인 */}
       <div className="space-y-6">
-        {/* 받은 제안 강조 (있을 때만) */}
-        {pendingInvites > 0 && (
-          <Link
-            href="/mypage/invites"
-            className="card flex items-center gap-4 overflow-hidden bg-gradient-to-r from-brand-500 to-pink-500 p-4 text-white transition hover:brightness-110"
-          >
-            <div className="text-3xl">📨</div>
-            <div className="min-w-0 flex-1">
-              <div className="text-base font-bold">
-                광고주에게 직접 초대를 받았어요!
-              </div>
-              <div className="text-xs opacity-90">
-                대기중 {pendingInvites}건 — 7일 내 답변 부탁드려요
-              </div>
-            </div>
-            <span className="text-sm">→</span>
-          </Link>
-        )}
-
         {/* 출석체크 + 친구 초대 빠른 카드 */}
         <div className="grid gap-3 md:grid-cols-2">
           <AttendanceCard

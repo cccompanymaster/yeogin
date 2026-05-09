@@ -6,7 +6,6 @@ import { usePathname } from "next/navigation";
 
 const ITEMS = [
   { href: "/advertiser/dashboard", label: "📊 대시보드" },
-  { href: "/advertiser/influencers", label: "🔍 인플루언서 찾기" },
   { href: "/advertiser/campaigns", label: "📋 캠페인 관리" },
   { href: "/advertiser/campaigns/new", label: "➕ 캠페인 등록" },
   { href: "/advertiser/reviews", label: "✅ 리뷰 검수" },

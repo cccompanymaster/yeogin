@@ -14,13 +14,21 @@ model User {
   passwordHash String
   nickname     String
   phone        String?
+  phoneVerifiedAt DateTime?  // 휴대폰 인증 완료 시각
   blogUrl      String?
   instaUrl     String?
   youtubeUrl   String?
   tiktokUrl    String?
   region       String?
-  bio          String?  // 한 줄 소개
-  avatarUrl    String?  // data URL (base64) 또는 외부 URL
+  bio          String?
+  avatarUrl    String?
+
+  // 활동 카테고리 (관심사) - 콤마 구분 (예: "맛집,카페,뷰티")
+  interests    String   @default("")
+
+  // 가입 상태
+  emailVerifiedAt DateTime?
+  signupStep   Int      @default(0)  // 0=완료, 1=프로필, 2=SNS, 3=관심사
 
   // SNS 지표
   blogVisitors       Int?
@@ -47,9 +55,6 @@ model User {
   referrer     User?    @relation("Referral", fields: [referredById], references: [id])
   referrals    User[]   @relation("Referral")
 
-  // 광고주 검색 노출 동의 (기본 ON, 마이페이지에서 OFF 가능)
-  publicProfile Boolean @default(true)
-
   createdAt    DateTime @default(now())
 
   applications Application[]
@@ -61,7 +66,7 @@ model User {
   pointHistory PointHistory[]
   redeems      Redeem[]
   advRatings   AdvertiserRating[]
-  receivedInvites DirectInvite[]
+  questions    Question[]
 }
 
 // 광고주 회원
@@ -73,36 +78,13 @@ model Advertiser {
   bizNumber    String
   contactName  String
   phone        String
-  point        Int      @default(0)  // 캠페인 등록용 포인트
+  point        Int      @default(0)
   createdAt    DateTime @default(now())
 
   campaigns Campaign[]
   pointHistory AdvertiserPointHistory[]
   ratings   AdvertiserRating[]
   members   AdvertiserMember[]
-  sentInvites DirectInvite[]
-}
-
-// 직접 초대 (광고주 → 인플루언서)
-model DirectInvite {
-  id           String   @id @default(cuid())
-  advertiserId String
-  advertiser   Advertiser @relation(fields: [advertiserId], references: [id], onDelete: Cascade)
-  userId       String
-  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  campaignId   String?
-  campaign     Campaign? @relation(fields: [campaignId], references: [id], onDelete: SetNull)
-
-  title        String
-  message      String
-  offerSummary String?
-  status       String   @default("PENDING")
-  expiresAt    DateTime?
-  respondedAt  DateTime?
-  createdAt    DateTime @default(now())
-
-  @@index([userId, status])
-  @@index([advertiserId])
 }
 
 // 광고주 포인트 내역 (충전/차감)
@@ -149,6 +131,18 @@ model Campaign {
   guide         String     // 미션/가이드 텍스트
   keywords      String     // 필수 키워드 (콤마)
   tags          String     @default("")
+
+  // 미션 사양 (체크박스 + 숫자) - 캠페인 상세 아이콘 그리드 노출용
+  missionPhotos Int        @default(5)      // 사진 매수
+  missionWords  Int        @default(500)    // 글자 수
+  missionMap    Boolean    @default(false)  // 지도 첨부 필수
+  missionVideo  Boolean    @default(false)  // 동영상/GIF 필수
+
+  // 방문형 추가 정보
+  visitDays     String?    // "월,화,수,목,금"
+  visitTime     String?    // "12:00~22:00"
+  storeRequest  String?    // 매장 요청 사항 (자유 텍스트)
+
   status        String     @default("OPEN") // DRAFT, SCHEDULED, OPEN, CLOSED, COMPLETED
   fastMatch     Boolean    @default(false)
   publishAt     DateTime?  // 예약 발행 시간 (SCHEDULED일 때)
@@ -159,7 +153,6 @@ model Campaign {
   reviews       Review[]
   favorites     Favorite[]
   ratings       AdvertiserRating[]
-  invites       DirectInvite[]
 }
 
 // 광고주 팀 멤버 (서브 계정 초대)
@@ -175,6 +168,24 @@ model AdvertiserMember {
 
   @@unique([advertiserId, email])
   @@index([advertiserId])
+}
+
+// 1:1 문의 (Q&A)
+model Question {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  category  String   // ACCOUNT, CAMPAIGN, REVIEW, POINT, ETC
+  title     String
+  body      String
+  isPublic  Boolean  @default(false) // 공개 답변(공통 FAQ로 노출 가능)
+  status    String   @default("OPEN") // OPEN, ANSWERED, CLOSED
+  answer    String?
+  answeredAt DateTime?
+  createdAt DateTime @default(now())
+
+  @@index([userId, createdAt])
+  @@index([status])
 }
 
 // 매거진 글 (관리자가 작성)

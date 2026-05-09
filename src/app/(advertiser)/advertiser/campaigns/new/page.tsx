@@ -1,8 +1,9 @@
 import { redirect } from "next/navigation";
 import { getAdvertiserSession } from "@/lib/session";
-import { CATEGORIES, REGIONS } from "@/lib/format";
+import { CATEGORIES, REGIONS, CHANNEL_LABEL, TYPE_LABEL } from "@/lib/format";
 import { db } from "@/lib/db";
 import { CampaignCostPreview } from "@/components/CampaignCostPreview";
+import { CampaignTemplatePicker } from "@/components/CampaignTemplatePicker";
 
 export default async function NewCampaignPage({
   searchParams,
@@ -23,13 +24,15 @@ export default async function NewCampaignPage({
   const plus = (n: number) => fmt(new Date(today.getTime() + n * 86400000));
 
   return (
-    <div className="mx-auto max-w-2xl">
+    <div className="mx-auto max-w-3xl">
       <h1 className="text-2xl font-bold">캠페인 등록</h1>
-      <p className="mt-1 text-sm text-ink-500">
-        가이드 템플릿이 자동 적용됩니다. 등록 즉시 노출됩니다.
+      <p className="mt-1 text-sm text-ink-500 dark:text-ink-400">
+        템플릿을 고르면 모든 항목이 자동으로 채워집니다. 필요한 부분만 수정해서 발행하세요.
       </p>
 
       <form action="/api/advertiser/campaigns" method="post" className="mt-6 space-y-5">
+        <CampaignTemplatePicker />
+
         <Section title="기본 정보">
           <div>
             <label className="label">캠페인 제목 *</label>
@@ -44,45 +47,42 @@ export default async function NewCampaignPage({
               defaultValue="https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=800&q=80"
             />
           </div>
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 gap-3 md:grid-cols-3">
             <div>
-              <label className="label">캠페인 타입 *</label>
-              <select className="input" name="type" required>
-                <option value="VISIT">방문형</option>
-                <option value="DELIVERY">배송형</option>
-                <option value="PURCHASE">구매형</option>
-                <option value="REPORTER">기자단</option>
+              <label className="label">유형 *</label>
+              <select className="input" name="type" required defaultValue="VISIT">
+                {Object.entries(TYPE_LABEL).map(([k, v]) => (
+                  <option key={k} value={k}>{v}</option>
+                ))}
               </select>
             </div>
             <div>
               <label className="label">채널 *</label>
-              <select className="input" name="channel" required>
-                <option value="BLOG">블로그</option>
-                <option value="INSTA">인스타</option>
-                <option value="YOUTUBE">유튜브</option>
-                <option value="SHORTS">숏폼</option>
-                <option value="CLIP">클립</option>
+              <select className="input" name="channel" required defaultValue="BLOG">
+                {Object.entries(CHANNEL_LABEL).map(([k, v]) => (
+                  <option key={k} value={k}>{v}</option>
+                ))}
+              </select>
+            </div>
+            <div>
+              <label className="label">카테고리 *</label>
+              <select className="input" name="category" required defaultValue="맛집">
+                {CATEGORIES.map((c) => <option key={c} value={c}>{c}</option>)}
               </select>
             </div>
           </div>
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="label">카테고리 *</label>
-              <select className="input" name="category" required>
-                {CATEGORIES.map((c) => <option key={c} value={c}>{c}</option>)}
-              </select>
-            </div>
-            <div>
-              <label className="label">지역 (방문형만)</label>
-              <select className="input" name="region">
-                <option value="">선택</option>
+              <label className="label">지역 (방문형)</label>
+              <select className="input" name="region" defaultValue="서울 성북구">
+                <option value="">선택 안 함</option>
                 {REGIONS.map((r) => <option key={r} value={r}>{r}</option>)}
               </select>
             </div>
-          </div>
-          <div>
-            <label className="label">매장 주소</label>
-            <input className="input" name="address" placeholder="서울 강남구 테헤란로 123" />
+            <div>
+              <label className="label">매장 주소</label>
+              <input className="input" name="address" placeholder="서울 성북구 ..." />
+            </div>
           </div>
         </Section>
 
@@ -108,7 +108,7 @@ export default async function NewCampaignPage({
               <label className="label">모집 인원 *</label>
               <input className="input" name="capacity" type="number" required defaultValue={5} min={1} />
             </div>
-            <div className="flex items-end gap-2">
+            <div className="flex items-end">
               <label className="inline-flex items-center gap-2 text-sm">
                 <input type="checkbox" name="fastMatch" value="1" />
                 ⚡ 빠른선정 (24시간 내 매칭)
@@ -139,6 +139,28 @@ export default async function NewCampaignPage({
               <input className="input" name="reviewEnd" type="date" required defaultValue={plus(23)} />
             </div>
           </div>
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <label className="label">방문 가능 요일 (방문형)</label>
+              <input className="input" name="visitDays" placeholder="월,화,수,목,금" />
+            </div>
+            <div>
+              <label className="label">방문 가능 시간</label>
+              <input className="input" name="visitTime" placeholder="12:00~21:00" />
+            </div>
+          </div>
+        </Section>
+
+        <Section title="체험단 미션 (체크박스만 선택하면 OK)">
+          <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
+            <NumberMission name="missionPhotos" label="📷 사진 매수" defaultValue={5} unit="장 이상" />
+            <NumberMission name="missionWords" label="✏️ 글자 수" defaultValue={500} unit="자 이상" />
+            <CheckMission name="missionMap" label="📍 지도 첨부" />
+            <CheckMission name="missionVideo" label="🎬 동영상/GIF" />
+          </div>
+          <p className="mt-2 text-[11px] text-ink-500 dark:text-ink-400">
+            이 항목들은 캠페인 상세 페이지에 아이콘 그리드로 자동 노출됩니다.
+          </p>
         </Section>
 
         <Section title="콘텐츠">
@@ -154,10 +176,18 @@ export default async function NewCampaignPage({
           <div>
             <label className="label">미션 가이드 *</label>
             <textarea
-              className="input min-h-32"
+              className="input min-h-24"
               name="guide"
               required
-              defaultValue={`1. 매장 외관/내부/메뉴 사진을 5장 이상 포함해주세요\n2. 글자 수 1000자 이상 작성\n3. 필수 키워드 모두 포함\n4. 부정적인 표현은 피해주세요`}
+              defaultValue={`체험 후 솔직한 후기를 작성해주세요. 매장의 분위기와 메뉴를 골고루 담아주시면 좋아요.`}
+            />
+          </div>
+          <div>
+            <label className="label">매장 요청 사항 (자유 메모)</label>
+            <textarea
+              className="input min-h-24"
+              name="storeRequest"
+              placeholder="✅ 실제 손님처럼 자연스럽게&#10;✅ 사진은 자연광이 좋은 시간대 추천&#10;✅ 마지막에 매장 위치/예약 방법 안내"
             />
           </div>
           <div>
@@ -170,11 +200,7 @@ export default async function NewCampaignPage({
               className="input"
               name="tags"
               defaultValue="강남, 데이트, 분위기맛집, 신상"
-              placeholder="예: 강남, 데이트, 신상, 가성비"
             />
-            <p className="mt-1 text-[11px] text-ink-500">
-              태그가 많을수록 검색·인기 태그·추천에 잘 노출됩니다.
-            </p>
           </div>
         </Section>
 
@@ -184,14 +210,11 @@ export default async function NewCampaignPage({
           <div>
             <label className="label">예약 발행 (선택, 비우면 즉시 발행)</label>
             <input className="input" name="publishAt" type="datetime-local" />
-            <p className="mt-1 text-[11px] text-ink-500">
-              예약 시간에 자동으로 OPEN 상태로 전환됩니다 (배치 작업 필요).
-            </p>
           </div>
         </Section>
 
         <CampaignCostPreview balance={balance} />
-        <div className="flex gap-2">
+        <div className="flex flex-wrap gap-2">
           <button
             type="submit"
             name="action"
@@ -226,8 +249,45 @@ export default async function NewCampaignPage({
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <div className="card space-y-3 p-5">
-      <div className="text-sm font-bold text-ink-800">{title}</div>
+      <div className="text-sm font-bold text-ink-800 dark:text-ink-100">{title}</div>
       {children}
     </div>
+  );
+}
+
+function NumberMission({
+  name,
+  label,
+  defaultValue,
+  unit,
+}: {
+  name: string;
+  label: string;
+  defaultValue: number;
+  unit: string;
+}) {
+  return (
+    <div className="rounded-lg border border-ink-200 p-3 dark:border-ink-700">
+      <div className="text-xs font-bold">{label}</div>
+      <div className="mt-2 flex items-center gap-1">
+        <input
+          name={name}
+          type="number"
+          min={0}
+          defaultValue={defaultValue}
+          className="input h-9 w-full"
+        />
+      </div>
+      <div className="mt-1 text-[10px] text-ink-500">{unit}</div>
+    </div>
+  );
+}
+
+function CheckMission({ name, label }: { name: string; label: string }) {
+  return (
+    <label className="flex cursor-pointer items-center gap-2 rounded-lg border border-ink-200 p-3 transition hover:border-brand-300 dark:border-ink-700">
+      <input type="checkbox" name={name} value="1" className="h-4 w-4" />
+      <span className="text-xs font-bold">{label}</span>
+    </label>
   );
 }

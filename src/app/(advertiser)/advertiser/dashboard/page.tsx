@@ -4,48 +4,10 @@ import { db } from "@/lib/db";
 import { getAdvertiserSession } from "@/lib/session";
 import { TYPE_LABEL, fmtDate } from "@/lib/format";
 import { BarChart, HBarChart } from "@/components/charts";
-import { InfluencerCard } from "@/components/InfluencerCard";
 
 export default async function AdvertiserDashboard() {
   const session = await getAdvertiserSession();
   if (!session) redirect("/advertiser/login");
-
-  // 추천 인플루언서 (신뢰등급 + 인증 채널 + 좋아요 수)
-  const recommendedInfluencers = await db.user.findMany({
-    where: {
-      publicProfile: true,
-      OR: [
-        { blogVerifiedAt: { not: null } },
-        { instaVerifiedAt: { not: null } },
-        { youtubeVerifiedAt: { not: null } },
-      ],
-    },
-    orderBy: [{ trustGrade: "asc" }, { heartCount: "desc" }],
-    take: 6,
-    select: {
-      id: true,
-      nickname: true,
-      avatarUrl: true,
-      bio: true,
-      region: true,
-      trustGrade: true,
-      heartCount: true,
-      blogVisitors: true,
-      blogVerifiedAt: true,
-      instaFollowers: true,
-      instaVerifiedAt: true,
-      youtubeSubscribers: true,
-      youtubeVerifiedAt: true,
-    },
-  });
-
-  // 발송 초대 현황
-  const inviteStats = await db.directInvite.groupBy({
-    by: ["status"],
-    where: { advertiserId: session.id },
-    _count: { _all: true },
-  });
-  const inviteCount = new Map(inviteStats.map((s) => [s.status, s._count._all]));
 
   const [campaigns, advRow, ratingAgg] = await Promise.all([
     db.campaign.findMany({
@@ -147,8 +109,8 @@ export default async function AdvertiserDashboard() {
             </span>
             <span className="text-xs text-brand-600 dark:text-brand-400">충전 →</span>
           </Link>
-          <Link href="/advertiser/influencers" className="btn-outline">
-            🔍 인플루언서 찾기
+          <Link href="/advertiser/campaigns" className="btn-outline">
+            📋 캠페인 관리
           </Link>
           <Link href="/advertiser/campaigns/new" className="btn-primary">
             + 캠페인 등록
@@ -178,56 +140,41 @@ export default async function AdvertiserDashboard() {
 
       <div className="grid gap-3 md:grid-cols-3">
         <Link
-          href="/advertiser/influencers"
-          className="card group flex items-center gap-4 overflow-hidden bg-gradient-to-br from-brand-500 to-brand-700 p-5 text-white transition hover:brightness-110"
-        >
-          <div className="text-3xl">🔍</div>
-          <div className="min-w-0 flex-1">
-            <div className="text-base font-bold">인플루언서 직접 찾기</div>
-            <div className="text-xs opacity-90">신뢰등급·SNS 채널로 검색 후 직접 초대</div>
-          </div>
-          <span className="text-sm">→</span>
-        </Link>
-        <div className="card flex items-center gap-4 p-5">
-          <div className="text-3xl">📨</div>
-          <div className="min-w-0 flex-1">
-            <div className="text-base font-bold">발송 초대</div>
-            <div className="text-xs text-ink-500 dark:text-ink-400">
-              대기 {inviteCount.get("PENDING") ?? 0}건 ·
-              수락 {inviteCount.get("ACCEPTED") ?? 0}건 ·
-              거절 {inviteCount.get("REJECTED") ?? 0}건
-            </div>
-          </div>
-        </div>
-        <Link
           href="/advertiser/campaigns/new"
-          className="card flex items-center gap-4 p-5 hover:shadow-md"
+          className="card group flex items-center gap-4 overflow-hidden bg-gradient-to-br from-brand-500 to-brand-700 p-5 text-white transition hover:brightness-110"
         >
           <div className="text-3xl">📋</div>
           <div className="min-w-0 flex-1">
             <div className="text-base font-bold">새 캠페인 등록</div>
+            <div className="text-xs opacity-90">모집 인원당 3,000P부터 즉시 모집 시작</div>
+          </div>
+          <span className="text-sm">→</span>
+        </Link>
+        <Link
+          href="/advertiser/reviews"
+          className="card flex items-center gap-4 p-5 hover:shadow-md"
+        >
+          <div className="text-3xl">✅</div>
+          <div className="min-w-0 flex-1">
+            <div className="text-base font-bold">리뷰 검수</div>
             <div className="text-xs text-ink-500 dark:text-ink-400">
-              모집 인원당 3,000P부터
+              검수 대기 {pendingReviews}건
+            </div>
+          </div>
+        </Link>
+        <Link
+          href="/advertiser/cases"
+          className="card flex items-center gap-4 p-5 hover:shadow-md"
+        >
+          <div className="text-3xl">🏆</div>
+          <div className="min-w-0 flex-1">
+            <div className="text-base font-bold">광고주 성공 사례</div>
+            <div className="text-xs text-ink-500 dark:text-ink-400">
+              실제 광고주 ROI 데이터 보기
             </div>
           </div>
         </Link>
       </div>
-
-      {recommendedInfluencers.length > 0 && (
-        <section>
-          <div className="mb-3 flex items-baseline justify-between">
-            <h2 className="text-base font-bold">✨ 우리 캠페인에 어울리는 인플루언서</h2>
-            <Link href="/advertiser/influencers" className="text-xs text-brand-600 hover:underline">
-              더 보기 →
-            </Link>
-          </div>
-          <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
-            {recommendedInfluencers.map((u) => (
-              <InfluencerCard key={u.id} u={u} />
-            ))}
-          </div>
-        </section>
-      )}
 
       <div className="grid gap-4 lg:grid-cols-2">
         <div className="card p-5">

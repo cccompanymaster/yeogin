@@ -3,6 +3,64 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Skeleton shimmer */
+@keyframes ygn-shimmer-anim {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+.ygn-shimmer {
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.45) 50%,
+    transparent 100%
+  );
+  animation: ygn-shimmer-anim 1.4s infinite;
+}
+.dark .ygn-shimmer {
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.08) 50%,
+    transparent 100%
+  );
+}
+
+/* Loading bouncer */
+@keyframes ygn-bounce {
+  0%, 80%, 100% { transform: translateY(0); }
+  40% { transform: translateY(-12px); }
+}
+.ygn-bouncer {
+  display: inline-flex;
+  gap: 8px;
+  font-size: 32px;
+}
+.ygn-bouncer span {
+  display: inline-block;
+  animation: ygn-bounce 1s infinite ease-in-out;
+}
+.ygn-bouncer span:nth-child(1) { animation-delay: 0s; }
+.ygn-bouncer span:nth-child(2) { animation-delay: 0.12s; }
+.ygn-bouncer span:nth-child(3) { animation-delay: 0.24s; }
+.ygn-bouncer span:nth-child(4) { animation-delay: 0.36s; }
+
+/* Top progress bar */
+@keyframes ygn-topbar-anim {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+.ygn-topbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, #f97316, transparent);
+  z-index: 100;
+  animation: ygn-topbar-anim 1.2s infinite;
+}
+
 /* Nearby map custom pin */
 .ygn-pin-wrap { background: transparent !important; border: none !important; }
 .ygn-pin {
