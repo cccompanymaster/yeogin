@@ -2,8 +2,9 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { db } from "@/lib/db";
 import { getUserSession } from "@/lib/session";
-import { fmtDate } from "@/lib/format";
 import { REASON_LABEL } from "@/lib/points";
+import { relativeTime } from "@/lib/relative";
+import { EmptyState } from "@/components/EmptyState";
 
 export const metadata = { title: "포인트 내역 - 여긴" };
 
@@ -38,11 +39,14 @@ export default async function PointsPage() {
       </div>
 
       {items.length === 0 ? (
-        <div className="card p-10 text-center text-sm text-ink-500">
-          아직 포인트 내역이 없습니다.
-        </div>
+        <EmptyState
+          icon="💰"
+          title="아직 포인트 내역이 없습니다"
+          description="가입 시 5,000P부터 시작! 캠페인 참여하고 포인트를 모아보세요."
+          cta={{ href: "/campaigns", label: "캠페인 보기" }}
+        />
       ) : (
-        <div className="card divide-y divide-ink-100">
+        <div className="card divide-y divide-ink-100 dark:divide-ink-700">
           {items.map((p) => (
             <div key={p.id} className="flex items-center justify-between p-3">
               <div className="min-w-0">
@@ -52,7 +56,7 @@ export default async function PointsPage() {
                 {p.note && (
                   <div className="line-clamp-1 text-[11px] text-ink-500">{p.note}</div>
                 )}
-                <div className="text-[11px] text-ink-400">{fmtDate(p.createdAt)}</div>
+                <div className="text-[11px] text-ink-400">{relativeTime(p.createdAt)}</div>
               </div>
               <div className="flex flex-col items-end">
                 <span

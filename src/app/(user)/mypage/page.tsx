@@ -6,6 +6,7 @@ import { ReviewModal } from "@/components/ReviewModal";
 import { SnsCard } from "@/components/SnsCard";
 import { AttendanceCard } from "@/components/AttendanceCard";
 import { AdvertiserRatingModal } from "@/components/AdvertiserRatingModal";
+import { AvatarUpload } from "@/components/AvatarUpload";
 import { isYouTubeAutoEnabled } from "@/lib/sns";
 import {
   CHANNEL_LABEL,
@@ -117,21 +118,19 @@ export default async function MyPage({ searchParams }: { searchParams: SP }) {
 
         {/* 프로필 헤더 */}
         <div className="card p-5">
-          <div className="flex items-start justify-between">
+          <div className="flex items-start justify-between gap-3">
             <div className="flex items-center gap-3">
-              <div className="flex h-14 w-14 items-center justify-center rounded-full bg-ink-100 text-2xl">
-                👤
-              </div>
+              <AvatarUpload initialUrl={me.avatarUrl} nickname={me.nickname} />
               <div>
                 <div className="flex items-center gap-2">
                   <span className="text-lg font-black">{me.nickname}</span>
-                  <span className="badge bg-amber-100 text-amber-800">
+                  <span className="badge bg-amber-100 text-amber-800 dark:bg-amber-900/40 dark:text-amber-300">
                     {TRUST_LABEL[me.trustGrade]}
                   </span>
                 </div>
-                <div className="text-xs text-ink-500">{me.email}</div>
+                <div className="text-xs text-ink-500 dark:text-ink-400">{me.email}</div>
                 {me.bio && (
-                  <div className="mt-1 text-xs text-ink-600">{me.bio}</div>
+                  <div className="mt-1 text-xs text-ink-600 dark:text-ink-300">{me.bio}</div>
                 )}
               </div>
             </div>
@@ -292,7 +291,7 @@ export default async function MyPage({ searchParams }: { searchParams: SP }) {
                     </div>
                   </div>
                   {a.review?.status === "REJECTED" && a.review.rejectReason && (
-                    <div className="rounded-md bg-red-50 px-3 py-2 text-xs text-red-700">
+                    <div className="rounded-md bg-red-50 px-3 py-2 text-xs text-red-700 dark:bg-red-900/30 dark:text-red-300">
                       <b>반려 사유:</b> {a.review.rejectReason} · 위 버튼으로 재등록 가능합니다.
                     </div>
                   )}
@@ -324,9 +323,9 @@ function Stat({
           ? "text-ink-400"
           : "text-ink-900";
   return (
-    <div className="rounded-lg bg-ink-50 px-2 py-2.5">
-      <div className="text-[10px] text-ink-500">{label}</div>
-      <div className={`mt-0.5 text-sm font-black ${color}`}>{value}</div>
+    <div className="rounded-lg bg-ink-50 px-2 py-2.5 dark:bg-ink-900">
+      <div className="text-[10px] text-ink-500 dark:text-ink-400">{label}</div>
+      <div className={`mt-0.5 text-sm font-black ${color} dark:opacity-95`}>{value}</div>
     </div>
   );
 }
@@ -345,8 +344,8 @@ function SideLink({
       href={href}
       className={`block rounded-md px-2 py-1.5 ${
         active
-          ? "bg-brand-50 font-bold text-brand-700"
-          : "text-ink-700 hover:bg-ink-50"
+          ? "bg-brand-50 font-bold text-brand-700 dark:bg-brand-900/30 dark:text-brand-300"
+          : "text-ink-700 hover:bg-ink-50 dark:text-ink-200 dark:hover:bg-ink-800"
       }`}
     >
       {label}

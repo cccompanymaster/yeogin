@@ -20,6 +20,7 @@ model User {
   tiktokUrl    String?
   region       String?
   bio          String?  // 한 줄 소개
+  avatarUrl    String?  // data URL (base64) 또는 외부 URL
 
   // SNS 지표
   blogVisitors       Int?

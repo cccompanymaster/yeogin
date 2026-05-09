@@ -1,7 +1,10 @@
 import Link from "next/link";
 import { db } from "@/lib/db";
 import { StarRating } from "@/components/StarRating";
-import { CHANNEL_LABEL, TYPE_LABEL, fmtDate } from "@/lib/format";
+import { ReviewHeartButton } from "@/components/ReviewHeartButton";
+import { CHANNEL_LABEL, TYPE_LABEL } from "@/lib/format";
+import { relativeTime } from "@/lib/relative";
+import { getUserSession } from "@/lib/session";
 
 export const metadata = {
   title: "체험 후기 - 여긴",
@@ -22,12 +25,15 @@ export default async function ReviewsGalleryPage({
       ? [{ rating: "desc" as const }, { createdAt: "desc" as const }]
       : { createdAt: "desc" as const };
 
-  const reviews = await db.review.findMany({
-    where,
-    include: { campaign: true, user: true },
-    orderBy,
-    take: 60,
-  });
+  const [reviews, session] = await Promise.all([
+    db.review.findMany({
+      where,
+      include: { campaign: true, user: { select: { nickname: true, heartCount: true } } },
+      orderBy,
+      take: 60,
+    }),
+    getUserSession(),
+  ]);
 
   const cats = ["맛집", "카페", "뷰티", "패션", "식품", "생활", "디지털", "여행", "육아"];
   const avg =
@@ -126,9 +132,9 @@ export default async function ReviewsGalleryPage({
                     “{r.highlight}”
                   </p>
                 )}
-                <div className="mt-1.5 flex items-center justify-between text-[11px] text-ink-500">
-                  <span>{r.user.nickname}</span>
-                  <span>{fmtDate(r.createdAt)}</span>
+                <div className="mt-1.5 flex items-center justify-between text-[11px] text-ink-500 dark:text-ink-400">
+                  <span>{r.user.nickname} · {relativeTime(r.createdAt)}</span>
+                  <ReviewHeartButton reviewId={r.id} loggedIn={!!session} />
                 </div>
               </div>
             </a>
