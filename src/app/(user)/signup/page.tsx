@@ -56,6 +56,32 @@ export default async function SignupPage({
               </p>
             )}
           </div>
+          <div className="space-y-1.5 rounded-lg bg-ink-50 p-3 dark:bg-ink-900">
+            <label className="flex items-start gap-2 text-xs">
+              <input type="checkbox" name="agreeTerms" value="1" required className="mt-0.5" />
+              <span>
+                <b>(필수)</b>{" "}
+                <Link href="/terms" target="_blank" className="text-brand-600 underline-offset-2 hover:underline">
+                  이용약관
+                </Link>
+                에 동의합니다.
+              </span>
+            </label>
+            <label className="flex items-start gap-2 text-xs">
+              <input type="checkbox" name="agreePrivacy" value="1" required className="mt-0.5" />
+              <span>
+                <b>(필수)</b>{" "}
+                <Link href="/privacy" target="_blank" className="text-brand-600 underline-offset-2 hover:underline">
+                  개인정보처리방침
+                </Link>
+                에 동의합니다.
+              </span>
+            </label>
+            <label className="flex items-start gap-2 text-xs">
+              <input type="checkbox" name="agreeMarketing" value="1" className="mt-0.5" />
+              <span>(선택) 마케팅 정보 수신 (쿠폰·이벤트 알림)</span>
+            </label>
+          </div>
           {sp.error && (
             <div className="text-xs text-red-500">{decodeURIComponent(sp.error)}</div>
           )}

@@ -11,9 +11,14 @@ export async function POST(req: NextRequest) {
   const password = String(form.get("password") || "");
   const blogUrl = String(form.get("blogUrl") || "") || null;
   const instaUrl = String(form.get("instaUrl") || "") || null;
+  const agreeTerms = form.get("agreeTerms") === "1";
+  const agreePrivacy = form.get("agreePrivacy") === "1";
 
   if (!email || !password || password.length < 6 || !nickname) {
     return redirectWithError(req, "/signup", "필수 정보를 입력해주세요.");
+  }
+  if (!agreeTerms || !agreePrivacy) {
+    return redirectWithError(req, "/signup", "필수 약관에 동의해주세요.");
   }
   const exists = await db.user.findUnique({ where: { email } });
   if (exists) return redirectWithError(req, "/signup", "이미 가입된 이메일입니다.");

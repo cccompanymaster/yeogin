@@ -6,8 +6,10 @@ import { HeroRollingBanner } from "@/components/HeroRollingBanner";
 import { getUserSession } from "@/lib/session";
 import { matchScore, buildCategoryFrequency } from "@/lib/matching";
 import { getRecommendedCampaigns } from "@/lib/recommend";
+import { promoteScheduledCampaigns } from "@/lib/campaign-publish";
 
 export default async function HomePage() {
+  await promoteScheduledCampaigns();
   const session = await getUserSession();
   const recommended = session ? await getRecommendedCampaigns(session.id, 4) : [];
   const now = new Date();
