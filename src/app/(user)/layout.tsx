@@ -85,6 +85,7 @@ export default async function UserLayout({ children }: { children: React.ReactNo
                 <li><Link href="/tags" className="hover:text-ink-900 dark:hover:text-white">인기 태그</Link></li>
                 <li><Link href="/reviews" className="hover:text-ink-900 dark:hover:text-white">체험 후기</Link></li>
                 <li><Link href="/magazine" className="hover:text-ink-900 dark:hover:text-white">매거진</Link></li>
+                <li><Link href="/services/grow" className="hover:text-ink-900 dark:hover:text-white">🤝 이웃 늘리기</Link></li>
                 <li><Link href="/community" className="hover:text-ink-900 dark:hover:text-white">커뮤니티</Link></li>
               </ul>
             </div>

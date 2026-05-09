@@ -45,6 +45,16 @@ const SLIDES: Slide[] = [
     bgTo: "#06b6d4",
     emoji: "✨",
   },
+  {
+    eyebrow: "🤝 채널 체급 키우기",
+    title: "찐 이웃·진성 팔로워\n늘리는 4단계 전략",
+    desc: "유령 이웃 말고 진짜 소통하는 이웃을 늘리는 핵심 비법 공개",
+    ctaLabel: "전략 보러가기 →",
+    href: "/services/grow",
+    bgFrom: "#10b981",
+    bgTo: "#047857",
+    emoji: "🌱",
+  },
 ];
 
 export function HeroRollingBanner() {
