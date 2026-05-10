@@ -61,6 +61,169 @@
   animation: ygn-topbar-anim 1.2s infinite;
 }
 
+/* ===== 풀스크린 임팩트 로더 ===== */
+@keyframes ygn-pin-pulse {
+  0%, 100% { transform: scale(1); filter: drop-shadow(0 0 0 rgba(249, 115, 22, 0)); }
+  50% { transform: scale(1.08); filter: drop-shadow(0 0 24px rgba(249, 115, 22, 0.6)); }
+}
+@keyframes ygn-pin-rotate {
+  0% { transform: rotateY(0deg); }
+  100% { transform: rotateY(360deg); }
+}
+@keyframes ygn-fade-up {
+  0% { opacity: 0; transform: translateY(8px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+@keyframes ygn-orbit {
+  0% { transform: rotate(0deg) translateX(60px) rotate(0deg); }
+  100% { transform: rotate(360deg) translateX(60px) rotate(-360deg); }
+}
+@keyframes ygn-bg-shift {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+.ygn-loader-screen {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #fff7ed 0%, #ffedd5 50%, #fed7aa 100%);
+  background-size: 200% 200%;
+  animation: ygn-bg-shift 8s ease infinite;
+  z-index: 9999;
+}
+.dark .ygn-loader-screen {
+  background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #312e81 100%);
+  background-size: 200% 200%;
+  animation: ygn-bg-shift 8s ease infinite;
+}
+.ygn-loader-pin {
+  animation: ygn-pin-pulse 1.6s ease-in-out infinite;
+  perspective: 600px;
+  transform-style: preserve-3d;
+}
+.ygn-loader-pin svg {
+  animation: ygn-pin-rotate 3s linear infinite;
+  transform-style: preserve-3d;
+}
+.ygn-loader-text {
+  animation: ygn-fade-up 0.6s ease-out;
+}
+.ygn-orbit {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #f97316;
+  animation: ygn-orbit 3s linear infinite;
+}
+.ygn-orbit:nth-child(2) { animation-delay: -1s; background: #fb923c; }
+.ygn-orbit:nth-child(3) { animation-delay: -2s; background: #fdba74; }
+
+/* ===== 3D 카드 효과 ===== */
+.tilt-3d {
+  perspective: 800px;
+  transform-style: preserve-3d;
+  transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.tilt-3d:hover {
+  transform: translateY(-4px) rotateX(2deg) rotateY(-2deg);
+  box-shadow: 0 16px 32px -10px rgba(0, 0, 0, 0.18),
+              0 8px 16px -8px rgba(249, 115, 22, 0.25);
+}
+.dark .tilt-3d:hover {
+  box-shadow: 0 16px 32px -10px rgba(0, 0, 0, 0.6),
+              0 8px 16px -8px rgba(249, 115, 22, 0.35);
+}
+.tilt-3d > * {
+  transform: translateZ(0);
+}
+.tilt-3d .tilt-pop {
+  transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.tilt-3d:hover .tilt-pop {
+  transform: translateZ(20px);
+}
+
+/* 부유감 (둥둥) */
+@keyframes ygn-float {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(-6px) rotate(1deg); }
+}
+.float-3d {
+  animation: ygn-float 4s ease-in-out infinite;
+}
+
+/* 빠른 메뉴 아이콘 3D */
+.quick-icon-3d {
+  perspective: 500px;
+  transform-style: preserve-3d;
+  transition: transform 0.3s ease;
+}
+.quick-icon-3d:hover {
+  transform: translateY(-6px) rotateX(8deg);
+}
+.quick-icon-3d:hover .quick-icon-bg {
+  box-shadow: 0 12px 24px -6px currentColor;
+  transform: translateZ(8px);
+}
+.quick-icon-bg {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* 매칭 점수 배지 회전 */
+@keyframes ygn-spin-slow {
+  0% { transform: rotateY(0); }
+  50% { transform: rotateY(180deg); }
+  100% { transform: rotateY(360deg); }
+}
+.score-badge-3d {
+  animation: ygn-spin-slow 5s ease-in-out infinite;
+  transform-style: preserve-3d;
+}
+
+/* Hero 배너 깊이감 */
+.hero-3d {
+  perspective: 1200px;
+  transform-style: preserve-3d;
+}
+.hero-3d-emoji {
+  transition: transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
+  transform-style: preserve-3d;
+  filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.2));
+}
+.hero-3d:hover .hero-3d-emoji {
+  transform: translateZ(40px) rotateY(-12deg) scale(1.1);
+}
+
+/* ===== 반응형 보강 ===== */
+@media (max-width: 640px) {
+  .ygn-bouncer { font-size: 24px; }
+  .tilt-3d:hover { transform: translateY(-2px); }
+}
+/* 모바일에서는 3D 회전을 줄여 멀미 방지 */
+@media (max-width: 768px) {
+  .tilt-3d:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 16px -6px rgba(0, 0, 0, 0.12);
+  }
+  .quick-icon-3d:hover {
+    transform: translateY(-3px);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ygn-shimmer, .ygn-bouncer span, .ygn-topbar,
+  .ygn-loader-pin, .ygn-loader-pin svg, .float-3d,
+  .score-badge-3d, .ygn-loader-screen, .ygn-orbit {
+    animation: none !important;
+  }
+  .tilt-3d, .quick-icon-3d, .hero-3d-emoji {
+    transition: none !important;
+  }
+}
+
 /* Nearby map custom pin */
 .ygn-pin-wrap { background: transparent !important; border: none !important; }
 .ygn-pin {

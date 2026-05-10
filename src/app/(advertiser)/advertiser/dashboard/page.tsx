@@ -273,7 +273,7 @@ export default async function AdvertiserDashboard() {
       </div>
 
       {/* KPI 6개 */}
-      <div className="grid grid-cols-2 gap-3 md:grid-cols-3 lg:grid-cols-6">
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
         <Stat label="진행중 캠페인" value={`${openCount}`} sub={`총 ${campaigns.length}개`} />
         <Stat label="총 신청자" value={`${totalApplied}`} sub={`선정 ${selectedTotal}명`} />
         <Stat label="검수 대기" value={`${pendingReviews}`} tone={pendingReviews > 5 ? "warn" : "default"} />

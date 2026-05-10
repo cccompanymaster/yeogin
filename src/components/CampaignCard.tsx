@@ -33,7 +33,7 @@ export function CampaignCard({
   return (
     <Link
       href={`/campaigns/${c.id}`}
-      className="card group overflow-hidden transition hover:-translate-y-0.5 hover:shadow-md"
+      className="card tilt-3d group overflow-hidden"
     >
       <div className="relative aspect-[4/3] overflow-hidden bg-ink-100 dark:bg-ink-700">
         {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -48,7 +48,10 @@ export function CampaignCard({
             <span className="badge bg-brand-500 text-white">⚡ 빠른선정</span>
           )}
           {typeof ms === "number" && (
-            <span className={`badge ${scoreColor(ms)}`} title="나와의 매칭 점수">
+            <span
+              className={`badge tilt-pop ${scoreColor(ms)}`}
+              title="나와의 매칭 점수"
+            >
               ✦ {ms}
             </span>
           )}

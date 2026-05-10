@@ -490,7 +490,7 @@ export default async function CampaignDetail({
           {similar.length > 0 && (
             <section>
               <h2 className="mb-3 text-lg font-bold">비슷한 캠페인 추천</h2>
-              <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
+              <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
                 {similar.map((s) => (
                   <CampaignCard
                     key={s.id}
@@ -507,7 +507,7 @@ export default async function CampaignDetail({
               <h2 className="mb-3 text-lg font-bold">
                 {c.advertiser.companyName}의 다른 캠페인
               </h2>
-              <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
+              <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
                 {otherFromAdv.map((s) => (
                   <CampaignCard
                     key={s.id}

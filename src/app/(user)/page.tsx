@@ -83,14 +83,16 @@ export default async function HomePage() {
       <HeroRollingBanner />
 
       {/* 빠른 메뉴 4개 (리뷰노트 형태) */}
-      <section className="flex flex-wrap items-center justify-center gap-4 sm:gap-10">
+      <section className="flex flex-wrap items-center justify-center gap-6 sm:gap-12">
         {QUICK_MENUS.map((m) => (
           <Link
             key={m.href}
             href={m.href}
-            className="flex flex-col items-center justify-center"
+            className="quick-icon-3d flex flex-col items-center justify-center"
           >
-            <div className={`relative flex h-16 w-16 items-center justify-center rounded-full text-3xl transition sm:h-20 sm:w-20 ${m.bg} ${m.hover}`}>
+            <div
+              className={`quick-icon-bg relative flex h-16 w-16 items-center justify-center rounded-full text-3xl sm:h-20 sm:w-20 ${m.bg} ${m.hover}`}
+            >
               {m.emoji}
               {m.badge && (
                 <span className="absolute -right-1 -top-1 flex h-6 w-6 items-center justify-center rounded-full bg-red-500 text-[11px] font-bold text-white">
@@ -98,7 +100,7 @@ export default async function HomePage() {
                 </span>
               )}
             </div>
-            <div className="mt-2 text-sm font-semibold text-ink-700 dark:text-ink-200">
+            <div className="mt-2 text-xs font-semibold text-ink-700 dark:text-ink-200 sm:text-sm">
               {m.label}
             </div>
           </Link>
@@ -135,7 +137,7 @@ export default async function HomePage() {
               <span className="text-xs font-normal text-ink-500">관심사 + 활동 기반</span>
             </h2>
           </div>
-          <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
+          <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
             {recommended.map(card)}
           </div>
         </section>
@@ -153,7 +155,7 @@ export default async function HomePage() {
               더보기 →
             </Link>
           </div>
-          <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
+          <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
             {premium.map(card)}
           </div>
         </section>
@@ -167,7 +169,7 @@ export default async function HomePage() {
             더보기 →
           </Link>
         </div>
-        <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
           {hot.map(card)}
         </div>
       </section>
@@ -180,7 +182,7 @@ export default async function HomePage() {
             더보기 →
           </Link>
         </div>
-        <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
           {ending.map(card)}
         </div>
       </section>
@@ -193,7 +195,7 @@ export default async function HomePage() {
             더보기 →
           </Link>
         </div>
-        <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
           {fresh.map(card)}
         </div>
       </section>

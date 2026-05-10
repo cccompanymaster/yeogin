@@ -209,7 +209,7 @@ export default async function CampaignListPage({
           secondary={{ href: "/tags", label: "인기 태그 보기" }}
         />
       ) : (
-        <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
           {items.map((c) => (
             <CampaignCard
               key={c.id}

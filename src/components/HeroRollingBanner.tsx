@@ -76,7 +76,7 @@ export function HeroRollingBanner() {
 
   return (
     <section
-      className="card relative overflow-hidden"
+      className="card hero-3d relative overflow-hidden"
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
     >
@@ -104,7 +104,7 @@ export function HeroRollingBanner() {
                   {s.ctaLabel}
                 </div>
               </div>
-              <div className="hidden text-[120px] leading-none opacity-30 md:block">
+              <div className="hero-3d-emoji hidden text-[120px] leading-none opacity-40 md:block">
                 {s.emoji}
               </div>
             </div>
