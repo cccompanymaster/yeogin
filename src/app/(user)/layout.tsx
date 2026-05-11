@@ -6,11 +6,14 @@ import { NotificationBell } from "@/components/NotificationBell";
 import { Logo } from "@/components/Logo";
 import { MobileNav } from "@/components/MobileNav";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import { NoticeBar } from "@/components/NoticeBar";
+import { BottomTabBar } from "@/components/BottomTabBar";
 
 export default async function UserLayout({ children }: { children: React.ReactNode }) {
   const session = await getUserSession();
   return (
     <div className="min-h-screen bg-ink-50 dark:bg-ink-900">
+      <NoticeBar />
       <header className="sticky top-0 z-30 border-b border-ink-200 bg-white/90 backdrop-blur dark:border-ink-700 dark:bg-ink-900/90">
         <div className="mx-auto flex h-14 max-w-6xl items-center justify-between gap-3 px-4">
           <div className="flex items-center gap-6">
@@ -107,6 +110,7 @@ export default async function UserLayout({ children }: { children: React.ReactNo
         </div>
       </footer>
       <AdvertiserPopup />
+      <BottomTabBar />
     </div>
   );
 }

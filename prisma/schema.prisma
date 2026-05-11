@@ -188,6 +188,21 @@ model Question {
   @@index([status])
 }
 
+// 사이트 공지사항
+model Notice {
+  id        String   @id @default(cuid())
+  title     String
+  body      String
+  level     String   @default("INFO") // INFO, WARN, EVENT
+  pinned    Boolean  @default(false)
+  startsAt  DateTime?
+  endsAt    DateTime?
+  link      String?
+  createdAt DateTime @default(now())
+
+  @@index([pinned, createdAt])
+}
+
 // 매거진 글 (관리자가 작성)
 model Article {
   id           String   @id @default(cuid())

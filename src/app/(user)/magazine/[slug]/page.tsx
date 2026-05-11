@@ -38,8 +38,28 @@ export default async function ArticlePage({
     take: 3,
   });
 
+  const ldJson = {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    headline: a.title,
+    description: a.excerpt,
+    image: [a.coverImage],
+    datePublished: a.publishedAt?.toISOString(),
+    dateModified: a.publishedAt?.toISOString(),
+    author: { "@type": "Person", name: a.authorName },
+    publisher: {
+      "@type": "Organization",
+      name: "여긴",
+      logo: { "@type": "ImageObject", url: "https://yeogin.vercel.app/icon-512.svg" },
+    },
+  };
+
   return (
     <article className="mx-auto max-w-3xl space-y-6">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(ldJson) }}
+      />
       <Link href="/magazine" className="text-xs text-ink-500">
         ← 매거진
       </Link>

@@ -16,8 +16,11 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             </Link>
             <nav className="ml-3 hidden gap-4 text-xs text-ink-300 md:flex">
               <Link href="/admin">신고</Link>
+              <Link href="/admin/stats">통계</Link>
               <Link href="/admin/sns">SNS 인증</Link>
+              <Link href="/admin/questions">Q&amp;A</Link>
               <Link href="/admin/articles">매거진</Link>
+              <Link href="/admin/notices">공지</Link>
             </nav>
           </div>
           <div className="flex items-center gap-3 text-xs text-ink-300">

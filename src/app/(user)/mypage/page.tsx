@@ -67,6 +67,7 @@ export default async function MyPage({ searchParams }: { searchParams: SP }) {
           <SideLink href="/mypage/favorites" label="❤️ 관심 캠페인" />
           <SideLink href="/mypage/shop" label="🛍️ 포인트샵" />
           <SideLink href="/mypage/points" label="💰 포인트 내역" />
+          <SideLink href="/mypage/timeline" label="📜 활동 타임라인" />
           <SideLink href="/mypage/invite" label="🎁 친구 초대" />
           <SideLink href="/notifications" label="🔔 알림함" />
           <div className="mt-3 border-t border-ink-100 pt-3 text-[11px] font-bold text-ink-400 dark:border-ink-700">

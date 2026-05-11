@@ -177,8 +177,44 @@ export default async function CampaignDetail({
   };
   const steps = STEP_TEXT[c.type] || STEP_TEXT.VISIT;
 
+  // JSON-LD: Offer/Event 구조화 데이터
+  const ldJson = {
+    "@context": "https://schema.org",
+    "@type": "Event",
+    name: c.title,
+    description: c.description,
+    image: [c.thumbnail],
+    startDate: c.applyStart.toISOString(),
+    endDate: c.applyEnd.toISOString(),
+    eventStatus: "https://schema.org/EventScheduled",
+    location: c.address
+      ? { "@type": "Place", name: c.region || "온라인", address: c.address }
+      : { "@type": "VirtualLocation" },
+    organizer: { "@type": "Organization", name: c.advertiser.companyName },
+    offers: {
+      "@type": "Offer",
+      price: c.offerValue,
+      priceCurrency: "KRW",
+      description: c.offer,
+      availability:
+        c.appliedCount >= c.capacity ? "https://schema.org/SoldOut" : "https://schema.org/InStock",
+    },
+    aggregateRating:
+      advCount > 0
+        ? {
+            "@type": "AggregateRating",
+            ratingValue: advAvg.toFixed(1),
+            reviewCount: advCount,
+          }
+        : undefined,
+  };
+
   return (
     <div className="grid gap-6 md:grid-cols-3">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(ldJson) }}
+      />
       <div className="md:col-span-2 space-y-6">
         {/* 헤더 */}
         <div className="card p-5">
@@ -207,7 +243,12 @@ export default async function CampaignDetail({
             )}
           </div>
           <div className="mt-2 flex items-center gap-2 text-xs text-ink-500 dark:text-ink-400">
-            <span>{c.advertiser.companyName}</span>
+            <Link
+              href={`/store/${c.advertiserId}`}
+              className="font-semibold text-ink-700 hover:text-brand-600 dark:text-ink-200"
+            >
+              {c.advertiser.companyName} →
+            </Link>
             {advCount > 0 && (
               <span className="flex items-center gap-1 text-amber-600">
                 ★ <b>{advAvg.toFixed(1)}</b>
