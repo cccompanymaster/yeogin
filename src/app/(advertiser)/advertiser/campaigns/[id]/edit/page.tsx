@@ -132,6 +132,73 @@ export default async function EditCampaignPage({
           </div>
         </Section>
 
+        <Section title="체험단 미션">
+          <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
+            <div className="rounded-lg border border-ink-200 p-3 dark:border-ink-700">
+              <div className="text-xs font-bold">📷 사진 매수</div>
+              <input
+                className="input mt-2 h-9"
+                name="missionPhotos"
+                type="number"
+                min={0}
+                defaultValue={c.missionPhotos ?? 5}
+              />
+              <div className="mt-1 text-[10px] text-ink-500">장 이상</div>
+            </div>
+            <div className="rounded-lg border border-ink-200 p-3 dark:border-ink-700">
+              <div className="text-xs font-bold">✏️ 글자 수</div>
+              <input
+                className="input mt-2 h-9"
+                name="missionWords"
+                type="number"
+                min={0}
+                defaultValue={c.missionWords ?? 500}
+              />
+              <div className="mt-1 text-[10px] text-ink-500">자 이상</div>
+            </div>
+            <label className="flex cursor-pointer items-center gap-2 rounded-lg border border-ink-200 p-3 dark:border-ink-700">
+              <input
+                type="checkbox"
+                name="missionMap"
+                value="1"
+                defaultChecked={c.missionMap}
+                className="h-4 w-4"
+              />
+              <span className="text-xs font-bold">📍 지도 첨부</span>
+            </label>
+            <label className="flex cursor-pointer items-center gap-2 rounded-lg border border-ink-200 p-3 dark:border-ink-700">
+              <input
+                type="checkbox"
+                name="missionVideo"
+                value="1"
+                defaultChecked={c.missionVideo}
+                className="h-4 w-4"
+              />
+              <span className="text-xs font-bold">🎬 동영상/GIF</span>
+            </label>
+          </div>
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <label className="label">방문 가능 요일</label>
+              <input
+                className="input"
+                name="visitDays"
+                defaultValue={c.visitDays ?? ""}
+                placeholder="월,화,수,목,금"
+              />
+            </div>
+            <div>
+              <label className="label">방문 가능 시간</label>
+              <input
+                className="input"
+                name="visitTime"
+                defaultValue={c.visitTime ?? ""}
+                placeholder="12:00~21:00"
+              />
+            </div>
+          </div>
+        </Section>
+
         <Section title="콘텐츠">
           <div>
             <label className="label">캠페인 소개 *</label>
@@ -139,7 +206,16 @@ export default async function EditCampaignPage({
           </div>
           <div>
             <label className="label">미션 가이드 *</label>
-            <textarea className="input min-h-32" name="guide" required defaultValue={c.guide} />
+            <textarea className="input min-h-24" name="guide" required defaultValue={c.guide} />
+          </div>
+          <div>
+            <label className="label">매장 요청 사항</label>
+            <textarea
+              className="input min-h-24"
+              name="storeRequest"
+              defaultValue={c.storeRequest ?? ""}
+              placeholder="✅ 자연스럽게 촬영&#10;✅ 마지막에 매장 위치 안내"
+            />
           </div>
           <div>
             <label className="label">필수 키워드 *</label>

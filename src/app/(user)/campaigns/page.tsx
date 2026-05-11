@@ -33,7 +33,10 @@ type SearchParams = Promise<{
   nearby?: string;
   sort?: string;
   tag?: string;
+  page?: string;
 }>;
+
+const PER_PAGE = 24;
 
 export default async function CampaignListPage({
   searchParams,
@@ -93,7 +96,22 @@ export default async function CampaignListPage({
           ? { offerValue: "desc" as const }
           : { createdAt: "desc" as const };
 
-  const items = await db.campaign.findMany({ where, orderBy, take: 60 });
+  const page = Math.max(1, parseInt(sp.page || "1", 10));
+  const [items, totalCount] = await Promise.all([
+    db.campaign.findMany({
+      where,
+      orderBy,
+      take: PER_PAGE,
+      skip: (page - 1) * PER_PAGE,
+    }),
+    db.campaign.count({ where }),
+  ]);
+  const hasMore = page * PER_PAGE < totalCount;
+  const nextParams = new URLSearchParams();
+  Object.entries(sp).forEach(([k, v]) => {
+    if (k !== "page" && v) nextParams.set(k, v);
+  });
+  nextParams.set("page", String(page + 1));
 
   // 로그인 사용자의 즐겨찾기 + 매칭 점수
   const sessionForFav = await getUserSession();
@@ -158,7 +176,9 @@ export default async function CampaignListPage({
                 : "전체 캠페인"}
         </h1>
         <div className="mt-1 text-sm text-ink-500">
-          총 {items.length}개의 캠페인이 진행 중입니다
+          총 <b className="text-ink-900 dark:text-ink-100">{totalCount.toLocaleString()}</b>개 ·
+          {page > 1 && <span> {((page - 1) * PER_PAGE + 1).toLocaleString()}~</span>}
+          {Math.min(page * PER_PAGE, totalCount).toLocaleString()}번째 표시
         </div>
         {nearbyNoRegion && (
           <div className="card mt-3 border-brand-200 bg-brand-50 p-3 text-sm text-brand-700">
@@ -209,17 +229,29 @@ export default async function CampaignListPage({
           secondary={{ href: "/tags", label: "인기 태그 보기" }}
         />
       ) : (
-        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
-          {items.map((c) => (
-            <CampaignCard
-              key={c.id}
-              c={c}
-              favorited={favSet.has(c.id)}
-              loggedIn={!!sessionForFav}
-              matchScore={scoreMap.get(c.id)}
-            />
-          ))}
-        </div>
+        <>
+          <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
+            {items.map((c) => (
+              <CampaignCard
+                key={c.id}
+                c={c}
+                favorited={favSet.has(c.id)}
+                loggedIn={!!sessionForFav}
+                matchScore={scoreMap.get(c.id)}
+              />
+            ))}
+          </div>
+          {hasMore && (
+            <div className="flex justify-center pt-3">
+              <a
+                href={`/campaigns?${nextParams.toString()}`}
+                className="rounded-full border border-ink-300 bg-white px-6 py-3 text-sm font-bold text-ink-700 hover:bg-ink-50 dark:border-ink-700 dark:bg-ink-800 dark:text-ink-200 dark:hover:bg-ink-700"
+              >
+                더 보기 ({(totalCount - page * PER_PAGE).toLocaleString()}개 남음) ↓
+              </a>
+            </div>
+          )}
+        </>
       )}
     </div>
   );
