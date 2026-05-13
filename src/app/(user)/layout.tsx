@@ -21,12 +21,10 @@ export default async function UserLayout({ children }: { children: React.ReactNo
               <Logo size={26} />
             </Link>
             <nav className="hidden gap-5 text-sm font-medium text-ink-700 dark:text-ink-200 lg:flex">
-              <Link href="/campaigns?type=VISIT">방문형</Link>
-              <Link href="/campaigns?type=DELIVERY">배송형</Link>
-              <Link href="/campaigns?type=REPORTER">기자단</Link>
-              <Link href="/campaigns?fast=1">빠른선정</Link>
+              <Link href="/campaigns">캠페인</Link>
+              <Link href="/ranking">🏆 랭킹</Link>
+              <Link href="/calendar">📅 캘린더</Link>
               <Link href="/campaigns?nearby=1" className="text-brand-600">📍 내 주변</Link>
-              <Link href="/tags">태그</Link>
               <Link href="/reviews">후기</Link>
               <Link href="/magazine">매거진</Link>
               <Link href="/community">커뮤니티</Link>
@@ -85,6 +83,8 @@ export default async function UserLayout({ children }: { children: React.ReactNo
               <div className="mb-2 font-bold text-ink-700 dark:text-ink-200">서비스</div>
               <ul className="space-y-1.5">
                 <li><Link href="/campaigns" className="hover:text-ink-900 dark:hover:text-white">캠페인</Link></li>
+                <li><Link href="/ranking" className="hover:text-ink-900 dark:hover:text-white">🏆 실시간 랭킹</Link></li>
+                <li><Link href="/calendar" className="hover:text-ink-900 dark:hover:text-white">📅 캠페인 캘린더</Link></li>
                 <li><Link href="/tags" className="hover:text-ink-900 dark:hover:text-white">인기 태그</Link></li>
                 <li><Link href="/reviews" className="hover:text-ink-900 dark:hover:text-white">체험 후기</Link></li>
                 <li><Link href="/magazine" className="hover:text-ink-900 dark:hover:text-white">매거진</Link></li>
@@ -96,6 +96,7 @@ export default async function UserLayout({ children }: { children: React.ReactNo
               <div className="mb-2 font-bold text-ink-700 dark:text-ink-200">고객지원</div>
               <ul className="space-y-1.5">
                 <li><Link href="/faq" className="hover:text-ink-900 dark:hover:text-white">자주 묻는 질문</Link></li>
+                <li><Link href="/notices" className="hover:text-ink-900 dark:hover:text-white">공지사항</Link></li>
                 <li><Link href="/trust-grade" className="hover:text-ink-900 dark:hover:text-white">신뢰등급 안내</Link></li>
                 <li><Link href="/terms" className="hover:text-ink-900 dark:hover:text-white">이용약관</Link></li>
                 <li><Link href="/privacy" className="font-semibold hover:text-ink-900 dark:hover:text-white">개인정보처리방침</Link></li>

@@ -34,7 +34,7 @@ export function SearchBar() {
     const v = term.trim();
     setOpen(false);
     if (!v) {
-      router.push("/campaigns");
+      router.push("/search");
       return;
     }
     try {
@@ -43,7 +43,7 @@ export function SearchBar() {
       setRecent(next);
     } catch {}
     setQ(v);
-    router.push(`/campaigns?q=${encodeURIComponent(v)}`);
+    router.push(`/search?q=${encodeURIComponent(v)}`);
   };
 
   const clearRecent = () => {

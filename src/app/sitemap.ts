@@ -7,10 +7,18 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const staticUrls: MetadataRoute.Sitemap = [
     "",
     "/campaigns",
+    "/ranking",
+    "/calendar",
     "/reviews",
     "/magazine",
     "/tags",
     "/community",
+    "/notices",
+    "/services/grow",
+    "/optimized-blog",
+    "/guides/apply",
+    "/trust-grade",
+    "/faq",
     "/login",
     "/signup",
     "/terms",
@@ -44,9 +52,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   let campaignUrls: MetadataRoute.Sitemap = [];
   try {
     const list = await db.campaign.findMany({
-      where: { status: "OPEN" },
+      where: { status: { in: ["OPEN", "CLOSED"] } },
       select: { id: true, createdAt: true },
-      take: 1000,
+      take: 2000,
     });
     campaignUrls = list.map((c) => ({
       url: `${SITE}/campaigns/${c.id}`,
@@ -58,5 +66,20 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     // DB 미준비 시 무시
   }
 
-  return [...staticUrls, ...campaignUrls, ...articleUrls];
+  // 매장 공개 프로필
+  let storeUrls: MetadataRoute.Sitemap = [];
+  try {
+    const list = await db.advertiser.findMany({
+      select: { id: true, createdAt: true },
+      take: 1000,
+    });
+    storeUrls = list.map((a) => ({
+      url: `${SITE}/store/${a.id}`,
+      lastModified: a.createdAt,
+      changeFrequency: "weekly" as const,
+      priority: 0.5,
+    }));
+  } catch {}
+
+  return [...staticUrls, ...campaignUrls, ...articleUrls, ...storeUrls];
 }
