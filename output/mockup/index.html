@@ -48,7 +48,7 @@ img{max-width:100%;display:block}
 .fw-wrap{max-width:var(--maxw);margin:0 auto;padding:0 24px}
 /* 폰트 확대 요청 반영: 본문 최소 16px */
 .fw-eyebrow{color:var(--cyan);font-size:12.5px;font-weight:600;letter-spacing:.24em;text-transform:uppercase;margin-bottom:14px;opacity:.95}
-h2.fw-h2{font-size:clamp(30px,4.4vw,46px);font-weight:750;line-height:1.22;letter-spacing:-.035em}
+h2.fw-h2{font-size:clamp(30px,4.4vw,46px);font-weight:690;line-height:1.24;letter-spacing:-.03em}
 .fw-lead{color:var(--muted);font-size:clamp(16px,1.7vw,18.5px);font-weight:380;letter-spacing:-.008em;line-height:1.85;margin-top:18px;max-width:660px}
 .fw-btn{display:inline-flex;align-items:center;gap:8px;padding:15px 30px;border-radius:999px;
   font-weight:700;font-size:16px;transition:transform .2s,box-shadow .2s,background .2s}
@@ -89,7 +89,7 @@ h2.fw-h2{font-size:clamp(30px,4.4vw,46px);font-weight:750;line-height:1.22;lette
 .fw-hero__logo{font-style:italic;font-weight:870;font-size:clamp(44px,6.5vw,84px);letter-spacing:.015em;line-height:1.05}
 .fw-hero__tag{color:#c6d5ea;font-size:clamp(15px,1.8vw,20px);font-weight:280;letter-spacing:.34em;text-transform:uppercase;margin-top:16px;
   padding-top:16px;border-top:1px solid rgba(255,255,255,.18);display:inline-block}
-.fw-hero__copy{margin-top:36px;font-size:clamp(22px,2.7vw,31px);font-weight:680;letter-spacing:-.03em;line-height:1.38}
+.fw-hero__copy{margin-top:36px;font-size:clamp(22px,2.7vw,31px);font-weight:590;letter-spacing:-.025em;line-height:1.42}
 .fw-hero__copy small{display:block;font-size:clamp(15px,1.6vw,17.5px);font-weight:360;letter-spacing:-.005em;color:var(--muted);margin-top:10px}
 .fw-hero__cta{display:flex;gap:14px;margin-top:36px;flex-wrap:wrap}
 /* ── 3D 장비 연출: 퍼스펙티브 틸트 + 플로팅 + 글로우 + 리플렉션 ──
@@ -110,11 +110,12 @@ h2.fw-h2{font-size:clamp(30px,4.4vw,46px);font-weight:750;line-height:1.22;lette
   mask:radial-gradient(72% 78% at 50% 50%,#000 46%,transparent 86%);
   filter:drop-shadow(0 34px 50px rgba(0,0,0,.55))}
 /* 바닥 리플렉션 */
-.fw-3d__reflect{
+.fw-3d img.fw-3d__reflect{   /* .fw-3d img 의 radial 마스크보다 높은 특이도로 오버라이드 */
   position:absolute;top:99%;left:0;width:100%;transform:scaleY(-1);
   opacity:.11;filter:blur(4px);pointer-events:none;
-  -webkit-mask:linear-gradient(0deg,transparent 62%,rgba(0,0,0,.85) 100%);
-  mask:linear-gradient(0deg,transparent 62%,rgba(0,0,0,.85) 100%)}
+  /* scaleY(-1)로 마스크도 뒤집힘: 언플립 기준 하단(=시각적 상단, 장비 인접부)만 보이고 페이드 */
+  -webkit-mask:linear-gradient(0deg,rgba(0,0,0,.85) 0%,transparent 42%);
+  mask:linear-gradient(0deg,rgba(0,0,0,.85) 0%,transparent 42%)}
 /* 하단 앰비언트 글로우 */
 .fw-hero__device::after{
   content:"";position:absolute;left:50%;bottom:-8%;transform:translateX(-50%);
@@ -124,7 +125,7 @@ h2.fw-h2{font-size:clamp(30px,4.4vw,46px);font-weight:750;line-height:1.22;lette
 @keyframes fw-glow-pulse{0%,100%{opacity:.55}50%{opacity:1}}
 
 /* ═══════ 2.45GHz: 새 웨이브 배경(T2) + 장비 확대 + 큰 폰트 ═══════ */
-.fw-sec{padding:clamp(80px,10vw,130px) 0}
+.fw-sec{padding:clamp(100px,12vw,165px) 0}
 .fw-sec--wave{isolation:isolate;overflow:hidden;background:linear-gradient(180deg,var(--bg-1),var(--bg-0))}
 .fw-secwaves{position:absolute;inset:0;z-index:0;opacity:.55;will-change:transform;animation:fw-flow 34s linear infinite}
 @keyframes fw-flow{0%{transform:translateX(0)}100%{transform:translateX(-16%)}}
@@ -198,9 +199,46 @@ h2.fw-h2{font-size:clamp(30px,4.4vw,46px);font-weight:750;line-height:1.22;lette
 .fw-float__top{opacity:0;transform:translateY(10px) scale(.9);pointer-events:none}
 .fw-float__top.is-visible{opacity:1;transform:translateY(0) scale(1);pointer-events:auto}
 
-/* ═══════ 서서히 등장 (T8) ═══════ */
-.fw-reveal{opacity:0;transform:translateY(22px);transition:opacity .8s cubic-bezier(.22,.61,.36,1),transform .8s cubic-bezier(.22,.61,.36,1)}
+/* ═══════ 서서히 등장 (T8 · sherean 감도: 느리고 우아하게) ═══════ */
+.fw-reveal{opacity:0;transform:translateY(30px);
+  transition:opacity 1.15s cubic-bezier(.16,.68,.32,.98),transform 1.15s cubic-bezier(.16,.68,.32,.98);
+  transition-delay:var(--fw-d,0s)}
 .fw-reveal.is-in{opacity:1;transform:none}
+/* 같은 그룹 형제 자동 시차 */
+.fw-reveal:nth-child(2){--fw-d:.12s}
+.fw-reveal:nth-child(3){--fw-d:.24s}
+.fw-reveal:nth-child(4){--fw-d:.36s}
+.fw-reveal:nth-child(n+5){--fw-d:.48s}
+/* 이미지 리빌: 은은한 스케일-인 */
+.fw-reveal img{transform:scale(1.045);transition:transform 1.5s cubic-bezier(.16,.68,.32,.98)}
+.fw-reveal.is-in img{transform:scale(1)}
+
+/* 히어로 로드 시퀀스 (스크롤 아닌 최초 로드: 로고→태그라인→카피→CTA) */
+.fw-load{opacity:0;transform:translateY(26px);
+  animation:fw-load-in 1.2s cubic-bezier(.16,.68,.32,.98) forwards;
+  animation-delay:var(--fw-d,0s)}
+@keyframes fw-load-in{to{opacity:1;transform:none}}
+
+/* 스크롤 인디케이터 */
+.fw-scrollhint{position:absolute;left:50%;bottom:34px;transform:translateX(-50%);z-index:2;
+  display:flex;flex-direction:column;align-items:center;gap:10px;color:#8ea3c0;
+  font-size:10.5px;letter-spacing:.3em;text-transform:uppercase}
+.fw-scrollhint::after{content:"";width:1px;height:44px;
+  background:linear-gradient(180deg,rgba(255,255,255,.55),transparent);
+  animation:fw-hint 2.2s ease-in-out infinite;transform-origin:top}
+@keyframes fw-hint{0%{transform:scaleY(0)}45%{transform:scaleY(1)}100%{transform:scaleY(1);opacity:0}}
+
+/* 섹션 넘버 라벨 (에디토리얼) */
+.fw-secno{display:flex;align-items:center;gap:14px;color:#7a90b0;font-size:12px;
+  letter-spacing:.3em;font-weight:500;margin-bottom:22px}
+.fw-secno::after{content:"";flex:0 0 52px;height:1px;background:linear-gradient(90deg,rgba(37,211,230,.6),transparent)}
+
+/* 브랜드 스테이트먼트 밴드 */
+.fw-statement{padding:clamp(110px,14vw,180px) 0;text-align:center;
+  background:linear-gradient(180deg,var(--bg-0),#081120 50%,var(--bg-0))}
+.fw-statement p{font-size:clamp(24px,3.4vw,40px);font-weight:330;line-height:1.6;letter-spacing:-.01em;color:#dbe6f4}
+.fw-statement b{font-weight:650;color:#fff}
+.fw-statement small{display:block;margin-top:26px;color:var(--cyan);font-size:12px;letter-spacing:.3em;text-transform:uppercase;font-weight:600}
 
 /* ═══════ 반응형 ═══════ */
 @media (max-width:900px){
@@ -219,9 +257,11 @@ h2.fw-h2{font-size:clamp(30px,4.4vw,46px);font-weight:750;line-height:1.22;lette
 }
 @media (prefers-reduced-motion: reduce){
   html{scroll-behavior:auto}
-  .fw-hero__waves,.fw-secwaves,.fw-beam__on,.fw-3d,.fw-hero__device::after{animation:none!important}
+  .fw-hero__waves,.fw-secwaves,.fw-beam__on,.fw-3d,.fw-hero__device::after,
+  .fw-load,.fw-scrollhint::after{animation:none!important}
   .fw-beam__on{opacity:.35}
-  .fw-reveal{opacity:1;transform:none;transition:none}
+  .fw-reveal,.fw-load{opacity:1;transform:none;transition:none}
+  .fw-reveal img{transform:none;transition:none}
   .fw-3d{transform:none!important}
 }
 </style>
@@ -269,16 +309,16 @@ h2.fw-h2{font-size:clamp(30px,4.4vw,46px);font-weight:750;line-height:1.22;lette
   <div class="fw-wrap">
     <div class="fw-hero__grid">
       <div>
-        <div class="fw-hero__logo fw-reveal">FINE<span style="color:var(--cyan)">WAVE</span></div>
-        <div class="fw-hero__tag fw-reveal">Go Fine. Get Defined.</div>
-        <p class="fw-hero__copy fw-reveal">Rubbing의 한계를 넘어서다.
+        <div class="fw-hero__logo fw-load" style="--fw-d:.15s">FINE<span style="color:var(--cyan)">WAVE</span></div>
+        <div class="fw-hero__tag fw-load" style="--fw-d:.4s">Go Fine. Get Defined.</div>
+        <p class="fw-hero__copy fw-load" style="--fw-d:.65s">Rubbing의 한계를 넘어서다.
           <small>방식을 바꾸면 결과가 달라집니다.</small></p>
-        <div class="fw-hero__cta fw-reveal">
+        <div class="fw-hero__cta fw-load" style="--fw-d:.9s">
           <a class="fw-btn fw-btn--primary" href="#contact">도입 문의하기</a>
           <a class="fw-btn fw-btn--ghost" href="#tech">기술 살펴보기</a>
         </div>
       </div>
-      <div class="fw-hero__device fw-reveal">
+      <div class="fw-hero__device fw-load" style="--fw-d:.55s">
         <div class="fw-3d" id="fw3d">
           <img src="assets/device-front.png" alt="FINEWAVE 장비 정면 — 듀얼 핸드피스와 터치 스크린">
           <img class="fw-3d__reflect" src="assets/device-front.png" alt="" aria-hidden="true">
@@ -286,6 +326,7 @@ h2.fw-h2{font-size:clamp(30px,4.4vw,46px);font-weight:750;line-height:1.22;lette
       </div>
     </div>
   </div>
+  <div class="fw-scrollhint fw-load" style="--fw-d:1.4s">Scroll</div>
 </section>
 
 <!-- ══════════ 2.45GHz: 실카피 + 장비 확대 + 새 웨이브(T2) ══════════ -->
@@ -302,6 +343,7 @@ h2.fw-h2{font-size:clamp(30px,4.4vw,46px);font-weight:750;line-height:1.22;lette
     <div class="fw-split">
       <div>
         <div class="fw-reveal">
+          <div class="fw-secno">01 · Technology</div>
           <h2 class="fw-h2">2.45GHz<br>마이크로웨이브 기술</h2>
           <div class="fw-eyebrow" style="margin-top:16px">— Microwave Technology</div>
           <p class="fw-lead">파인웨이브는 피부 표면은 안전하게 보호하면서,<br>
@@ -330,6 +372,7 @@ h2.fw-h2{font-size:clamp(30px,4.4vw,46px);font-weight:750;line-height:1.22;lette
       </div>
       <div>
         <div class="fw-reveal">
+          <div class="fw-secno">02 · Cooling</div>
           <h2 class="fw-h2">FINECOOL™<br>이중 냉각시스템</h2>
           <div class="fw-eyebrow" style="margin-top:16px">— Cooling Technology</div>
           <p class="fw-lead">펠티어(Peltier)와 칠러(Chiller)를 결합한<br>
@@ -348,10 +391,19 @@ h2.fw-h2{font-size:clamp(30px,4.4vw,46px);font-weight:750;line-height:1.22;lette
   </div>
 </section>
 
+<!-- ══════════ 브랜드 스테이트먼트 (감성 카피 밴드 · 카피 예시) ══════════ -->
+<section class="fw-statement">
+  <div class="fw-wrap">
+    <p class="fw-reveal">피부 속 깊은 곳까지,<br><b>파도처럼 부드럽게 그리고 정확하게.</b></p>
+    <small class="fw-reveal">Fine Energy, Defined Result</small>
+  </div>
+</section>
+
 <!-- ══════════ FRCCS: 실카피 + 실카드, NO CONTACT 어둡게(T7) ══════════ -->
 <section class="fw-sec fw-frccs" id="frccs">
   <div class="fw-wrap">
     <div class="fw-reveal">
+      <div class="fw-secno" style="justify-content:center">03 · FRCCS</div>
       <h2 class="fw-frccs__title">Forward-Reverse<br>Contact Control System</h2>
       <div class="fw-eyebrow" style="margin-top:18px">Contact Control System</div>
       <p class="fw-lead" style="margin-left:auto;margin-right:auto;text-align:center">
@@ -374,8 +426,8 @@ h2.fw-h2{font-size:clamp(30px,4.4vw,46px);font-weight:750;line-height:1.22;lette
 <!-- ══════════ FAQ ══════════ -->
 <section class="fw-sec" id="faq" style="background:var(--bg-1)">
   <div class="fw-wrap">
-    <div class="fw-reveal" style="text-align:center;margin-bottom:44px">
-      <div class="fw-eyebrow">FAQ</div>
+    <div class="fw-reveal" style="text-align:center;margin-bottom:52px">
+      <div class="fw-secno" style="justify-content:center">04 · FAQ</div>
       <h2 class="fw-h2">자주 묻는 질문</h2>
     </div>
     <div class="fw-faq fw-reveal">
