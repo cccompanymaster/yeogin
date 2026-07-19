@@ -1,0 +1,70 @@
+/* ============================================================
+   T7 · NO CONTACT 카드 오버레이 (no-contact-overlay.css)
+   FRCCS 섹션 내 'NO CONTACT' 카드만 어둡게 처리.
+
+   [적용 위치] Elementor 사이트 설정 > 사용자 정의 CSS
+   [값 채우기] --fw-nocontact-target : site-audit §8의 NO CONTACT 카드 셀렉터
+              (또는 Elementor에서 해당 카드 위젯에 CSS 클래스 'fw-nocontact' 부여 → 그대로 사용)
+
+   [강도 3단계] 클라이언트 톤 컨펌용. 아래 3개 중 하나만 활성(주석 해제):
+        70% (--fw-dim-70) : 살짝 어둡게
+        60% (--fw-dim-60) : 중간
+        50% (--fw-dim-50) : 많이 어둡게
+     기본은 60%로 설정. 방식은 (1) 반투명 오버레이 + (2) filter:brightness 둘 다 제공.
+
+   [접근성] 텍스트 대비가 과하게 낮아지지 않도록, 카드 내 글자색은 밝게 유지 권장.
+   ============================================================ */
+
+:root {
+  /* 밝기 계수: 값이 낮을수록 더 어둡다 (brightness) */
+  --fw-dim-70: 0.70;
+  --fw-dim-60: 0.60;
+  --fw-dim-50: 0.50;
+  /* 현재 선택 강도 (여기만 바꾸면 전체 반영) */
+  --fw-nocontact-dim: var(--fw-dim-60);
+}
+
+/* 대상 지정:
+   - Elementor 위젯에 CSS 클래스 'fw-nocontact' 를 준 경우 → 아래 .fw-nocontact 사용
+   - 또는 site-audit §8 실측 셀렉터로 아래 셀렉터를 교체 */
+.fw-nocontact,
+#fw-nocontact-target {
+
+  /* ── 방식 1) filter:brightness (이미지 카드에 적합) ── */
+  filter: brightness(var(--fw-nocontact-dim));
+  transition: filter .3s ease;
+}
+
+/* ── 방식 2) 반투명 오버레이 (텍스트/아이콘 박스 카드에 적합) ──
+   카드가 position 컨텍스트를 갖도록 하고, 가상요소로 어둠막을 덮음.
+   방식 1과 병행 불필요 — 카드 성격에 맞는 한 가지만 사용. 아래 주석 해제해 사용. */
+/*
+.fw-nocontact,
+#fw-nocontact-target {
+  position: relative;
+  filter: none;               /* 오버레이 방식 쓸 땐 방식1 끄기 */
+  isolation: isolate;
+}
+.fw-nocontact::after,
+#fw-nocontact-target::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  border-radius: inherit;
+  /* 어둠 강도 = (1 - 밝기계수). 60% 밝기 ≈ 40% 검정 막 */
+  background: rgba(0, 0, 0, calc(1 - var(--fw-nocontact-dim)));
+  transition: background .3s ease;
+}
+*/
+
+/* 강도 프리셋 빠른 전환:
+   위 --fw-nocontact-dim 값을 --fw-dim-70 / --fw-dim-60 / --fw-dim-50 중 하나로 교체.
+   예) :root { --fw-nocontact-dim: var(--fw-dim-50); }  ← 가장 어둡게 */
+
+/* 접근성: 모션 최소화 시 트랜지션 제거 */
+@media (prefers-reduced-motion: reduce) {
+  .fw-nocontact,
+  #fw-nocontact-target { transition: none; }
+}

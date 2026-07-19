@@ -1,0 +1,153 @@
+<!-- ============================================================
+     T5 · 우측 플로팅 버튼 (문의사항 + TOP)
+     단일 파일(HTML+CSS+JS 인라인). Elementor HTML 위젯에 통째로 붙여넣기.
+
+     [구성] 위: 문의사항 버튼 / 아래: TOP(맨 위로) 버튼
+     [동작]
+        - TOP 버튼: 스크롤 300px 이후 페이드인, 클릭 시 최상단 smooth scroll
+        - 문의 버튼: 항상 표시, {{INQUIRY_URL}} 로 이동
+     [플레이스홀더] 아래 두 곳을 site-audit §6 값으로 교체:
+        1) {{INQUIRY_URL}}  → 실제 문의 페이지/폼 URL (예: /contact, #wpforms-XXX, tel:0000)
+        2) :root 변수(색/크기/위치) → 기존 '문의사항' 버튼 톤과 일치시키기
+     [톤] 기본값 = 다크 카드 + 흰 아이콘 (작업지시서 확정). 실측 색으로 덮어쓰면 완전 일치.
+     [충돌 회피] 모든 클래스 fw- 접두사.
+     [접근성] aria-label, prefers-reduced-motion 대응.
+     ============================================================ -->
+
+<div class="fw-float" role="complementary" aria-label="빠른 문의 및 상단 이동">
+  <!-- 문의사항 -->
+  <a class="fw-float__btn fw-float__inquiry" href="{{INQUIRY_URL}}"
+     aria-label="문의사항">
+    <svg class="fw-float__ico" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <path d="M21 11.5a8.38 8.38 0 0 1-8.5 8.5 8.5 8.5 0 0 1-3.8-.9L3 21l1.9-5.7A8.38 8.38 0 0 1 4 11.5 8.5 8.5 0 0 1 12.5 3 8.38 8.38 0 0 1 21 11.5z"
+            stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+    <span class="fw-float__label">문의사항</span>
+  </a>
+
+  <!-- TOP -->
+  <button type="button" class="fw-float__btn fw-float__top" aria-label="맨 위로 이동" hidden>
+    <svg class="fw-float__ico" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <path d="M12 19V5M5 12l7-7 7 7" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+    <span class="fw-float__label">TOP</span>
+  </button>
+</div>
+
+<style>
+/* ── 톤/위치 변수 (site-audit §6 실측값으로 교체) ────────────── */
+.fw-float {
+  --fw-btn-bg: #16233a;          /* 기존 문의버튼 배경색으로 교체 */
+  --fw-btn-bg-hover: #1f3350;
+  --fw-btn-fg: #ffffff;          /* 아이콘/글자색 */
+  --fw-btn-size: 56px;           /* 버튼 지름 */
+  --fw-btn-radius: 16px;         /* 모서리(원형=50%) */
+  --fw-btn-gap: 12px;            /* 두 버튼 간격 */
+  --fw-right: 24px;              /* 우측 여백 */
+  --fw-bottom: 24px;             /* 하단 여백 */
+  --fw-shadow: 0 6px 20px rgba(0,0,0,.28);
+  --fw-accent: #35c6e6;          /* 호버 시 은은한 시안 링(선택) */
+
+  position: fixed;
+  right: var(--fw-right);
+  bottom: var(--fw-bottom);
+  z-index: 9990;
+  display: flex;
+  flex-direction: column;
+  gap: var(--fw-btn-gap);
+  align-items: center;
+}
+
+.fw-float__btn {
+  width: var(--fw-btn-size);
+  height: var(--fw-btn-size);
+  border-radius: var(--fw-btn-radius);
+  background: var(--fw-btn-bg);
+  color: var(--fw-btn-fg);
+  border: none;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  box-shadow: var(--fw-shadow);
+  text-decoration: none;
+  transition: background .2s ease, transform .2s ease, opacity .35s ease, box-shadow .2s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+.fw-float__btn:hover {
+  background: var(--fw-btn-bg-hover);
+  transform: translateY(-2px);
+  box-shadow: 0 10px 26px rgba(0,0,0,.34), 0 0 0 2px color-mix(in srgb, var(--fw-accent) 40%, transparent);
+}
+.fw-float__btn:focus-visible {
+  outline: 2px solid var(--fw-accent);
+  outline-offset: 2px;
+}
+.fw-float__ico { width: 22px; height: 22px; }
+.fw-float__label { font-size: 10px; line-height: 1; letter-spacing: .02em; font-weight: 600; }
+
+/* TOP 버튼: 기본 숨김 → JS가 .is-visible 부여 시 페이드인 */
+.fw-float__top {
+  opacity: 0;
+  transform: translateY(8px);
+  pointer-events: none;
+}
+.fw-float__top.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+/* [hidden] 초기 상태 해제는 JS가 담당(노스크립트 대비) */
+.fw-float__top:not([hidden]) { display: flex; }
+
+/* 모바일(≤768px): 크기·간격·여백 축소 */
+@media (max-width: 768px) {
+  .fw-float {
+    --fw-btn-size: 48px;
+    --fw-btn-gap: 10px;
+    --fw-right: 14px;
+    --fw-bottom: 14px;
+  }
+  .fw-float__ico { width: 19px; height: 19px; }
+  .fw-float__label { font-size: 9px; }
+}
+
+/* 접근성: 모션 최소화 → 트랜지션 최소화 */
+@media (prefers-reduced-motion: reduce) {
+  .fw-float__btn { transition: opacity .2s ease; transform: none !important; }
+  .fw-float__top { transform: none; }
+}
+</style>
+
+<script>
+(function () {
+  var wrap = document.currentScript ? document.currentScript.previousElementSibling : null;
+  // 안전하게 문서에서 직접 조회(위젯 재삽입 대비)
+  var top = document.querySelector('.fw-float__top');
+  if (!top) return;
+  top.hidden = false;                 // 노스크립트 시 아예 숨김 유지, JS 있으면 노출 제어 시작
+
+  var THRESHOLD = 300;                // 스크롤 300px 이후 표시
+  var ticking = false;
+
+  function update() {
+    var y = window.pageYOffset || document.documentElement.scrollTop;
+    if (y > THRESHOLD) top.classList.add('is-visible');
+    else top.classList.remove('is-visible');
+    ticking = false;
+  }
+  function onScroll() {
+    if (!ticking) { window.requestAnimationFrame(update); ticking = true; }
+  }
+  window.addEventListener('scroll', onScroll, { passive: true });
+  update();
+
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  top.addEventListener('click', function () {
+    window.scrollTo({ top: 0, behavior: reduce ? 'auto' : 'smooth' });
+  });
+})();
+</script>

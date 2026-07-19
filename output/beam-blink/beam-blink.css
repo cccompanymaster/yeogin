@@ -1,0 +1,68 @@
+/* ============================================================
+   T3 · 빔 깜빡임 효과 (beam-blink.css)
+   두 프레임(off=원본, on=발광강화)을 같은 위치에 겹치고
+   위 프레임(on)의 opacity를 크로스페이드하여 "빔이 맥동"하는 효과.
+
+   [적용] Elementor Image 위젯 대신, HTML 위젯 또는 커스텀 CSS로:
+     <div class="fw-beam">
+       <img class="fw-beam__off" src="…/beam-off.png" alt="FINECOOL 핸드피스">
+       <img class="fw-beam__on"  src="…/beam-on.png"  alt="" aria-hidden="true">
+     </div>
+   (마크업 예시는 preview.html 참고. 이미지 URL은 미디어 업로드 후 교체.)
+
+   [주기] 2.5~3s, ease-in-out, 무한 반복.
+   [접근성] prefers-reduced-motion: reduce → 애니메이션 정지, 은은한 정지 프레임 유지.
+   [성능] opacity만 애니메이션 → GPU 합성. 레이아웃/페인트 유발 없음.
+   ============================================================ */
+
+.fw-beam {
+  position: relative;
+  display: inline-block;
+  line-height: 0;            /* img 하단 여백 제거 */
+  /* 크기는 부모(Elementor 컬럼)나 아래 max-width로 제어 */
+  max-width: 100%;
+}
+
+.fw-beam img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+/* on 프레임을 off 위에 정확히 겹침 */
+.fw-beam__on {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;                /* 기본 꺼짐 */
+  will-change: opacity;
+  pointer-events: none;
+  animation: fw-beam-pulse 2.8s ease-in-out infinite;
+}
+
+@keyframes fw-beam-pulse {
+  0%   { opacity: 0; }
+  45%  { opacity: 0.15; }
+  50%  { opacity: 1; }       /* 순간 발광(깜빡) */
+  55%  { opacity: 0.15; }
+  100% { opacity: 0; }
+}
+
+/* 변형: 부드러운 맥동(깜빡임보다 은은) — 원하면 __on에 이 클래스 추가 */
+.fw-beam__on.fw-beam--soft {
+  animation-name: fw-beam-breathe;
+  animation-duration: 3s;
+}
+@keyframes fw-beam-breathe {
+  0%, 100% { opacity: 0.1; }
+  50%      { opacity: 0.85; }
+}
+
+/* 접근성: 모션 최소화 사용자 → 정지, 은은한 발광 프레임 유지 */
+@media (prefers-reduced-motion: reduce) {
+  .fw-beam__on {
+    animation: none !important;
+    opacity: 0.35;           /* 정지 상태에서도 빔이 "켜져 있음"을 표현 */
+  }
+}

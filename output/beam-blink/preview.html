@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FINEWAVE · 빔 깜빡임 시안 미리보기 (T3)</title>
+<link rel="stylesheet" href="beam-blink.css">
+<style>
+  :root { --fw-navy:#0a1526; }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; min-height: 100vh;
+    background: radial-gradient(1200px 700px at 50% 30%, #10203a 0%, var(--fw-navy) 70%);
+    color: #e8eef7; font-family: system-ui, "Noto Sans KR", sans-serif;
+    display: flex; flex-direction: column; align-items: center;
+    padding: 40px 20px 80px;
+  }
+  h1 { font-size: 20px; font-weight: 600; letter-spacing: .02em; opacity:.9; }
+  p.note { max-width: 620px; text-align:center; font-size: 13px; line-height:1.7; color:#9fb0c8; }
+  .stage {
+    margin-top: 24px;
+    display: flex; gap: 48px; flex-wrap: wrap; justify-content: center; align-items: flex-end;
+  }
+  .card {
+    background: rgba(255,255,255,.03);
+    border: 1px solid rgba(255,255,255,.08);
+    border-radius: 16px; padding: 18px; text-align: center;
+  }
+  .card h2 { font-size: 13px; font-weight: 500; margin: 0 0 12px; color:#9fb0c8; letter-spacing:.03em; }
+  .fw-beam { width: 300px; }
+  .controls { margin-top: 32px; display:flex; gap:12px; flex-wrap:wrap; justify-content:center; }
+  .controls button {
+    background:#182740; color:#e8eef7; border:1px solid rgba(255,255,255,.12);
+    border-radius:10px; padding:9px 16px; font-size:13px; cursor:pointer;
+  }
+  .controls button:hover { background:#22344f; }
+  .frames { display:flex; gap:24px; margin-top:10px; }
+  .frames figure { margin:0; }
+  .frames img { width:150px; height:auto; border-radius:10px; border:1px solid rgba(255,255,255,.08); }
+  .frames figcaption { font-size:11px; color:#7d8da5; margin-top:6px; }
+  footer { margin-top:40px; font-size:11px; color:#6b7c95; }
+</style>
+</head>
+<body>
+  <h1>FINEWAVE · 빔 깜빡임 시안 (T3)</h1>
+  <p class="note">
+    두 프레임(off = 원본, on = 발광 강화본)을 겹치고 <code>opacity</code>만 크로스페이드합니다.
+    아래는 <b>합성 데모 프레임</b>입니다. 실측 이미지 준비 시
+    <code>beam-off.png</code> 교체 후 <code>python3 scripts/gen_beam.py --from …/beam-off.png</code> 로
+    <code>beam-on.png</code>을 재생성하면 동일 CSS로 동작합니다.
+  </p>
+
+  <div class="stage">
+    <div class="card">
+      <h2>기본(깜빡) · 2.8s</h2>
+      <div class="fw-beam">
+        <img class="fw-beam__off" src="beam-off.png" alt="FINECOOL 핸드피스">
+        <img class="fw-beam__on"  src="beam-on.png"  alt="" aria-hidden="true">
+      </div>
+    </div>
+    <div class="card">
+      <h2>부드러운 맥동 · 3s (--soft)</h2>
+      <div class="fw-beam">
+        <img class="fw-beam__off" src="beam-off.png" alt="FINECOOL 핸드피스">
+        <img class="fw-beam__on fw-beam--soft" src="beam-on.png" alt="" aria-hidden="true">
+      </div>
+    </div>
+  </div>
+
+  <div class="frames">
+    <figure><img src="beam-off.png" alt="off frame"><figcaption>OFF 프레임(원본)</figcaption></figure>
+    <figure><img src="beam-on.png" alt="on frame"><figcaption>ON 프레임(발광 강화)</figcaption></figure>
+  </div>
+
+  <div class="controls">
+    <button id="speed">속도 토글 (2.8s ↔ 1.6s ↔ 4s)</button>
+    <button id="reduce">prefers-reduced-motion 시뮬레이트</button>
+  </div>
+
+  <footer>© FINEWAVE 시안 · 사이트 무접촉 제작 · 색/이미지는 컨펌 후 실측본으로 교체</footer>
+
+<script>
+  // 시안 확인용 컨트롤 (실제 사이트엔 불필요)
+  const ons = document.querySelectorAll('.fw-beam__on');
+  const speeds = ['2.8s','1.6s','4s']; let si = 0;
+  document.getElementById('speed').onclick = () => {
+    si = (si+1) % speeds.length;
+    ons.forEach(o => o.style.animationDuration = speeds[si]);
+  };
+  let reduced = false;
+  document.getElementById('reduce').onclick = (e) => {
+    reduced = !reduced;
+    ons.forEach(o => {
+      if (reduced) { o.style.animation = 'none'; o.style.opacity = '0.35'; }
+      else { o.style.animation = ''; o.style.opacity = ''; }
+    });
+    e.target.textContent = reduced ? '모션 복원' : 'prefers-reduced-motion 시뮬레이트';
+  };
+</script>
+</body>
+</html>

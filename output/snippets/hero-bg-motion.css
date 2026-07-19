@@ -1,0 +1,130 @@
+/* ============================================================
+   T6 · 히어로 배경 모션 (hero-bg-motion.css)
+   목표: xerf.kr 처럼 "장비는 고정, 배경만 미세하게 움직이는" 효과.
+
+   두 케이스를 A/B로 제공. site-audit §5 결과로 선택:
+     ▸ 케이스 A : 배경/장비가 분리 레이어 (또는 운영자가 PSD 누끼로 배경·장비 2장 확보)
+                 → 배경 레이어만 느린 드리프트 + 그라디언트 시프트. (권장/이상적)
+     ▸ 케이스 B : 히어로가 단일 합성 이미지 (누끼 분리 불가)
+                 → 합성 이미지 위에 웨이브 라인 SVG 오버레이가 흐름.
+
+   [적용 위치] Elementor 사이트 설정 > 사용자 정의 CSS
+   [성능] transform/opacity만 사용(GPU 합성). 20~30s 초저속 루프 → CPU 부담 미미.
+   [접근성] prefers-reduced-motion: reduce → 모든 모션 정지.
+   [주의] 하나만 선택해 사용. 둘 다 켜지 않도록.
+   ============================================================ */
+
+
+/* ═══════════════════════════════════════════════════════════
+   케이스 A · 배경/장비 분리 레이어
+   ── 전제 마크업 (운영자가 Elementor에서 구성) ──
+   히어로 섹션 안에 배경 레이어와 장비 이미지를 겹쳐 배치:
+
+     <div class="fw-hero">
+       <div class="fw-hero__bg"></div>          ← 배경 이미지(장비 없는 판)
+       <img class="fw-hero__device" src="장비누끼.png" alt="FINEWAVE 장비">
+     </div>
+
+   Elementor 구현 팁:
+     - 히어로 섹션에 CSS 클래스 'fw-hero'
+     - 배경: 그 섹션의 배경 이미지, 또는 내부 빈 위젯에 'fw-hero__bg'
+     - 장비: 이미지 위젯에 'fw-hero__device'
+   ═══════════════════════════════════════════════════════════ */
+
+.fw-hero {
+  position: relative;
+  overflow: hidden;            /* 드리프트로 배경이 밀려도 밖으로 안 삐져나오게 */
+  isolation: isolate;
+}
+
+.fw-hero__bg {
+  position: absolute;
+  inset: -4% -4% -4% -4%;      /* 이동 여유분(잘림 방지)로 살짝 크게 */
+  z-index: 0;
+  background-image: var(--fw-hero-bg, none);   /* 배경 이미지 URL 지정 */
+  background-size: cover;
+  background-position: center;
+  will-change: transform;
+  animation: fw-hero-drift 26s ease-in-out infinite alternate;
+}
+
+/* 배경 위 은은한 그라디언트 시프트(빛이 흐르는 느낌) — 선택 */
+.fw-hero__bg::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(120deg,
+     transparent 0%,
+     rgba(53,198,230,.06) 40%,
+     transparent 70%);
+  background-size: 200% 200%;
+  animation: fw-hero-gradient 22s linear infinite;
+}
+
+.fw-hero__device {
+  position: relative;
+  z-index: 1;                  /* 장비는 배경 위, 고정(모션 없음) */
+}
+
+@keyframes fw-hero-drift {
+  0%   { transform: translate3d(0, 0, 0) scale(1.03); }
+  50%  { transform: translate3d(1.5%, -1%, 0) scale(1.05); }
+  100% { transform: translate3d(-1%, 0.8%, 0) scale(1.03); }
+}
+@keyframes fw-hero-gradient {
+  0%   { background-position: 0% 0%; }
+  100% { background-position: 200% 200%; }
+}
+
+
+/* ═══════════════════════════════════════════════════════════
+   케이스 B · 단일 합성 이미지 + 웨이브 SVG 오버레이 흐름
+   ── 전제 마크업 ──
+   히어로 섹션(합성 이미지가 배경)에 클래스 'fw-hero-solid' 부여.
+   오버레이는 가상요소로 자동 생성(추가 마크업 불필요).
+
+     <section class="fw-hero-solid"> …기존 히어로… </section>
+
+   웨이브 이미지는 T2 산출물(wave-c-cyanglow.svg 등)을 미디어 업로드 후
+   아래 --fw-wave-url 에 지정. 배경 위를 가로로 천천히 흐름.
+   ═══════════════════════════════════════════════════════════ */
+
+.fw-hero-solid {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.fw-hero-solid::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background-image: var(--fw-wave-url, none);
+  background-repeat: repeat-x;
+  background-size: auto 100%;
+  opacity: .5;                 /* 가독성 위해 은은하게 */
+  will-change: transform;
+  animation: fw-wave-flow 30s linear infinite;
+}
+
+/* 히어로 내부 콘텐츠(텍스트/장비)는 오버레이 위로 */
+.fw-hero-solid > * { position: relative; z-index: 1; }
+
+@keyframes fw-wave-flow {
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(-25%); }   /* repeat-x 타일이라 이음새 없이 무한 */
+}
+
+
+/* ═══════════════════════════════════════════════════════════
+   공통 · 접근성
+   ═══════════════════════════════════════════════════════════ */
+@media (prefers-reduced-motion: reduce) {
+  .fw-hero__bg,
+  .fw-hero__bg::after,
+  .fw-hero-solid::before {
+    animation: none !important;
+  }
+}

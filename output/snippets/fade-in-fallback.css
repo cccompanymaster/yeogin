@@ -1,0 +1,73 @@
+/* ============================================================
+   T8 · 페이드인 보조 CSS (fade-in-fallback.css)
+
+   ⚠️ 1순위는 Elementor 기본 "등장 애니메이션(Entrance Animation)" 사용.
+      (apply-guide T8 항목의 설정 경로 참고: 위젯 > 고급 > 모션 효과 > 진입 애니메이션)
+      이 파일은 Elementor 모션이 부자연스럽거나, 초기 로드(첫 화면) 요소에
+      순차 페이드가 필요한 구간용 "보조"입니다.
+
+   [특징]
+     - IntersectionObserver/JS 불필요. 순수 CSS 초기 로드 페이드.
+     - 페이지 로드 즉시 아래→위로 부드럽게 등장 (0.8~1.2s).
+     - 순차 지연(stagger)을 --fw-fade-delay 또는 nth-child로 제어.
+   [적용 위치] Elementor 사이트 설정 > 사용자 정의 CSS
+   [사용법] 등장시킬 요소(위젯)에 CSS 클래스 'fw-fade' 부여.
+            순차 등장: 같은 그룹 요소들에 fw-fade 부여 → nth-child 자동 지연,
+            또는 개별 위젯 고급>CSS에 style로 --fw-fade-delay 지정.
+   [접근성] prefers-reduced-motion: reduce → 애니메이션 없이 즉시 표시(깜빡임 방지).
+   [성능] transform/opacity만. 초기 1회 재생(무한 반복 아님).
+   ============================================================ */
+
+:root {
+  --fw-fade-dur: 1s;          /* 0.8~1.2s 권장 */
+  --fw-fade-ease: cubic-bezier(.22, .61, .36, 1);
+  --fw-fade-shift: 16px;      /* 시작 시 아래로 내려가 있는 거리 */
+  --fw-fade-step: 0.12s;      /* 순차 지연 간격 */
+}
+
+.fw-fade {
+  opacity: 0;
+  transform: translateY(var(--fw-fade-shift));
+  animation: fw-fade-in var(--fw-fade-dur) var(--fw-fade-ease) forwards;
+  animation-delay: var(--fw-fade-delay, 0s);
+  will-change: opacity, transform;
+}
+
+@keyframes fw-fade-in {
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* 순차 등장(stagger): 형제 요소들에 fw-fade가 여러 개일 때 자동 계단식 지연.
+   같은 부모 안에서 최대 8개까지 지연 부여(그 이상은 동일 타이밍). */
+.fw-fade:nth-child(1) { animation-delay: calc(var(--fw-fade-step) * 0); }
+.fw-fade:nth-child(2) { animation-delay: calc(var(--fw-fade-step) * 1); }
+.fw-fade:nth-child(3) { animation-delay: calc(var(--fw-fade-step) * 2); }
+.fw-fade:nth-child(4) { animation-delay: calc(var(--fw-fade-step) * 3); }
+.fw-fade:nth-child(5) { animation-delay: calc(var(--fw-fade-step) * 4); }
+.fw-fade:nth-child(6) { animation-delay: calc(var(--fw-fade-step) * 5); }
+.fw-fade:nth-child(7) { animation-delay: calc(var(--fw-fade-step) * 6); }
+.fw-fade:nth-child(n+8) { animation-delay: calc(var(--fw-fade-step) * 7); }
+
+/* 방향 변형(원하는 요소에 함께 부여) */
+.fw-fade--left  { transform: translateX(calc(var(--fw-fade-shift) * -1)); }
+.fw-fade--right { transform: translateX(var(--fw-fade-shift)); }
+.fw-fade--up    { transform: translateY(var(--fw-fade-shift)); }
+.fw-fade--none  { transform: none; }   /* 이동 없이 불투명도만 */
+
+@keyframes fw-fade-in-x {
+  to { opacity: 1; transform: translateX(0); }
+}
+.fw-fade--left,
+.fw-fade--right { animation-name: fw-fade-in-x; }
+
+/* 접근성: 모션 최소화 → 즉시 표시(FOUC/깜빡임 방지 위해 최종 상태로 고정) */
+@media (prefers-reduced-motion: reduce) {
+  .fw-fade,
+  .fw-fade--left,
+  .fw-fade--right,
+  .fw-fade--up {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+}
