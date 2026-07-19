@@ -78,11 +78,18 @@ h2.fw-h2{font-size:clamp(30px,4.4vw,46px);font-weight:690;line-height:1.24;lette
 .fw-nav .fw-ig:hover{opacity:1}
 .fw-burger{display:none;background:none;border:none;color:var(--ink);cursor:pointer;padding:8px}
 
-/* ═══════ 히어로(INTRO): 장비 고정 + 배경 웨이브만 드리프트 ═══════ */
+/* ═══════ 히어로(INTRO): 시네마틱 리빌 — 암전 → 라이트 스윕 → 에너지 플로우 ═══════
+   레퍼런스 학습: "어두운 공간에서 제품이 천천히 드러나고, 정밀한 에너지가 흐르는" 오프닝.
+   실사 영상(video-brief.md 프롬프트로 제작) 완성 시 .fw-hero__film 슬롯에 교체 삽입. */
 .fw-hero{min-height:100vh;display:flex;align-items:center;overflow:hidden;isolation:isolate;
-  background:radial-gradient(1300px 700px at 62% 30%,#0e1f38 0%,var(--bg-1) 55%,var(--bg-0) 100%)}
+  background:radial-gradient(1300px 700px at 62% 30%,#0a1626 0%,#050810 55%,#030509 100%)}
+/* 시네마 암전 베일: 최초 1.3s 완전 블랙 → 서서히 걷힘 */
+.fw-hero__veil{position:absolute;inset:0;z-index:3;background:#050505;pointer-events:none;
+  animation:fw-veil 2.2s cubic-bezier(.4,0,.2,1) .15s forwards}
+@keyframes fw-veil{to{opacity:0}}
 .fw-hero__waves{position:absolute;inset:-6%;z-index:0;will-change:transform;
-  animation:fw-drift 28s ease-in-out infinite alternate;opacity:.85}
+  animation:fw-drift 28s ease-in-out infinite alternate,fw-waves-in 2.4s ease 1.3s backwards;opacity:.85}
+@keyframes fw-waves-in{from{opacity:0}}
 @keyframes fw-drift{0%{transform:translate3d(0,0,0) scale(1.02)}50%{transform:translate3d(1.4%,-1%,0) scale(1.045)}100%{transform:translate3d(-1%,.8%,0) scale(1.02)}}
 .fw-hero__grid{position:relative;z-index:1;display:grid;grid-template-columns:1.05fr .95fr;gap:30px;align-items:center;width:100%;padding-top:var(--header-h)}
 /* 실사이트 로고타입/태그라인 재현 */
@@ -109,6 +116,37 @@ h2.fw-h2{font-size:clamp(30px,4.4vw,46px);font-weight:690;line-height:1.24;lette
   -webkit-mask:radial-gradient(72% 78% at 50% 50%,#000 46%,transparent 86%);
   mask:radial-gradient(72% 78% at 50% 50%,#000 46%,transparent 86%);
   filter:drop-shadow(0 34px 50px rgba(0,0,0,.55))}
+/* 장비 시네마 리빌: 실루엣(거의 암흑) → 서서히 드러남 */
+.fw-3d > img:first-child{animation:fw-devreveal 3.2s cubic-bezier(.3,0,.2,1) .5s backwards}
+@keyframes fw-devreveal{
+  0%{filter:brightness(.05) saturate(.4) drop-shadow(0 34px 50px rgba(0,0,0,.55))}
+  55%{filter:brightness(.5) saturate(.8) drop-shadow(0 34px 50px rgba(0,0,0,.55))}
+  100%{filter:brightness(1) saturate(1) drop-shadow(0 34px 50px rgba(0,0,0,.55))}}
+/* 라이트 스윕: 사선 하이라이트 밴드가 장비를 훑고 지나감 */
+.fw-sweep{position:absolute;inset:0;z-index:2;overflow:hidden;border-radius:18px;pointer-events:none;
+  -webkit-mask:radial-gradient(72% 78% at 50% 50%,#000 46%,transparent 86%);
+  mask:radial-gradient(72% 78% at 50% 50%,#000 46%,transparent 86%)}
+.fw-sweep::before{content:"";position:absolute;top:-20%;bottom:-20%;left:0;width:46%;
+  background:linear-gradient(100deg,transparent 8%,rgba(190,230,255,.20) 45%,rgba(120,215,235,.10) 55%,transparent 92%);
+  transform:translateX(-130%) skewX(-12deg);mix-blend-mode:screen;
+  animation:fw-sweep-run 1.7s cubic-bezier(.5,.05,.3,1) 1.5s forwards}
+@keyframes fw-sweep-run{to{transform:translateX(340%) skewX(-12deg)}}
+/* 에너지 펄스: 얇은 빛 입자가 장비 주변을 정밀하게 흐름 (offset-path) */
+.fw-pulse{position:absolute;width:5px;height:5px;border-radius:50%;z-index:2;pointer-events:none;
+  background:radial-gradient(circle,#d8f6ff 0%,var(--cyan) 55%,transparent 75%);
+  box-shadow:0 0 10px 2px rgba(37,211,230,.55);opacity:0;
+  offset-rotate:0deg;animation:fw-pulse-run 4.6s cubic-bezier(.45,.1,.5,.9) infinite}
+.fw-pulse--1{offset-path:path("M 40 380 C 20 250 70 120 180 70");animation-delay:2.6s}
+.fw-pulse--2{offset-path:path("M 400 400 C 430 270 380 140 265 75");animation-delay:3.4s}
+.fw-pulse--3{offset-path:path("M 90 430 C 190 470 300 465 380 420");animation-delay:4.2s}
+@keyframes fw-pulse-run{
+  0%{offset-distance:0%;opacity:0}
+  12%{opacity:.95}
+  55%{opacity:.65}
+  70%{offset-distance:100%;opacity:0}
+  100%{offset-distance:100%;opacity:0}}
+@supports not (offset-path:path("M 0 0 L 1 1")){.fw-pulse{display:none}}
+@media (max-width:900px){.fw-pulse{display:none}}
 /* 바닥 리플렉션 */
 .fw-3d img.fw-3d__reflect{   /* .fw-3d img 의 radial 마스크보다 높은 특이도로 오버라이드 */
   position:absolute;top:99%;left:0;width:100%;transform:scaleY(-1);
@@ -258,7 +296,8 @@ h2.fw-h2{font-size:clamp(30px,4.4vw,46px);font-weight:690;line-height:1.24;lette
 @media (prefers-reduced-motion: reduce){
   html{scroll-behavior:auto}
   .fw-hero__waves,.fw-secwaves,.fw-beam__on,.fw-3d,.fw-hero__device::after,
-  .fw-load,.fw-scrollhint::after{animation:none!important}
+  .fw-load,.fw-scrollhint::after,.fw-3d>img:first-child,.fw-sweep::before,.fw-pulse{animation:none!important}
+  .fw-hero__veil{display:none}
   .fw-beam__on{opacity:.35}
   .fw-reveal,.fw-load{opacity:1;transform:none;transition:none}
   .fw-reveal img{transform:none;transition:none}
@@ -291,6 +330,12 @@ h2.fw-h2{font-size:clamp(30px,4.4vw,46px);font-weight:690;line-height:1.24;lette
 
 <!-- ══════════ INTRO 히어로: 실카피 + 실장비, 배경만 모션 ══════════ -->
 <section class="fw-hero">
+  <!-- 시네마 암전 베일 -->
+  <div class="fw-hero__veil" aria-hidden="true"></div>
+  <!-- 실사 시네마틱 영상(8~10s) 완성 시 이 자리에 삽입 (video-brief.md 참조):
+       <video class="fw-hero__film" autoplay muted playsinline
+              poster="assets/device-front.png" src="assets/hero-film.mp4"></video>
+       영상 사용 시 .fw-hero__veil/.fw-sweep/.fw-pulse 는 제거 -->
   <svg class="fw-hero__waves" viewBox="0 0 1440 900" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
     <g fill="none" stroke="#3d5f95">
       <path d="M-40 260 Q 300 190 640 260 T 1480 260" stroke-opacity=".20"/>
@@ -309,24 +354,28 @@ h2.fw-h2{font-size:clamp(30px,4.4vw,46px);font-weight:690;line-height:1.24;lette
   <div class="fw-wrap">
     <div class="fw-hero__grid">
       <div>
-        <div class="fw-hero__logo fw-load" style="--fw-d:.15s">FINE<span style="color:var(--cyan)">WAVE</span></div>
-        <div class="fw-hero__tag fw-load" style="--fw-d:.4s">Go Fine. Get Defined.</div>
-        <p class="fw-hero__copy fw-load" style="--fw-d:.65s">Rubbing의 한계를 넘어서다.
+        <div class="fw-hero__logo fw-load" style="--fw-d:2.3s">FINE<span style="color:var(--cyan)">WAVE</span></div>
+        <div class="fw-hero__tag fw-load" style="--fw-d:2.55s">Go Fine. Get Defined.</div>
+        <p class="fw-hero__copy fw-load" style="--fw-d:2.8s">Rubbing의 한계를 넘어서다.
           <small>방식을 바꾸면 결과가 달라집니다.</small></p>
-        <div class="fw-hero__cta fw-load" style="--fw-d:.9s">
+        <div class="fw-hero__cta fw-load" style="--fw-d:3.05s">
           <a class="fw-btn fw-btn--primary" href="#contact">도입 문의하기</a>
           <a class="fw-btn fw-btn--ghost" href="#tech">기술 살펴보기</a>
         </div>
       </div>
-      <div class="fw-hero__device fw-load" style="--fw-d:.55s">
+      <div class="fw-hero__device fw-load" style="--fw-d:.25s">
         <div class="fw-3d" id="fw3d">
           <img src="assets/device-front.png" alt="FINEWAVE 장비 정면 — 듀얼 핸드피스와 터치 스크린">
           <img class="fw-3d__reflect" src="assets/device-front.png" alt="" aria-hidden="true">
+          <div class="fw-sweep" aria-hidden="true"></div>
+          <i class="fw-pulse fw-pulse--1" aria-hidden="true"></i>
+          <i class="fw-pulse fw-pulse--2" aria-hidden="true"></i>
+          <i class="fw-pulse fw-pulse--3" aria-hidden="true"></i>
         </div>
       </div>
     </div>
   </div>
-  <div class="fw-scrollhint fw-load" style="--fw-d:1.4s">Scroll</div>
+  <div class="fw-scrollhint fw-load" style="--fw-d:3.6s">Scroll</div>
 </section>
 
 <!-- ══════════ 2.45GHz: 실카피 + 장비 확대 + 새 웨이브(T2) ══════════ -->
