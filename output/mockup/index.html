@@ -30,8 +30,10 @@
   --ink:#f2f6fc;
   --muted:#aebdd4;
   --line:rgba(255,255,255,.10);
-  --cyan:#25d3e6;          /* 실사이트 시안 어센트 근사 */
-  --beam:#ff8a2b;
+  /* Blue Energy + Orange Heat + Cyan Cooling (기존 아이덴티티 유지·확장) */
+  --blue:#3b8dff;          /* 마이크로웨이브 = 일렉트릭 블루 */
+  --cyan:#25d3e6;          /* 냉각 = 시안·아이스 블루 */
+  --beam:#ff8a2b;          /* 열 에너지 = 오렌지·앰버 */
   --radius:14px;
   --header-h:72px;
   --maxw:1200px;
@@ -137,7 +139,10 @@ h2.fw-h2{font-size:clamp(30px,4.4vw,46px);font-weight:690;line-height:1.24;lette
   box-shadow:0 0 10px 2px rgba(37,211,230,.55);opacity:0;
   offset-rotate:0deg;animation:fw-pulse-run 4.6s cubic-bezier(.45,.1,.5,.9) infinite}
 .fw-pulse--1{offset-path:path("M 40 380 C 20 250 70 120 180 70");animation-delay:2.6s}
-.fw-pulse--2{offset-path:path("M 400 400 C 430 270 380 140 265 75");animation-delay:3.4s}
+/* 열 에너지(오렌지) 펄스 — 핸드피스 방향 */
+.fw-pulse--2{offset-path:path("M 400 400 C 430 270 380 140 265 75");animation-delay:3.4s;
+  background:radial-gradient(circle,#ffe4bd 0%,var(--beam) 55%,transparent 75%);
+  box-shadow:0 0 10px 2px rgba(255,138,43,.5)}
 .fw-pulse--3{offset-path:path("M 90 430 C 190 470 300 465 380 420");animation-delay:4.2s}
 @keyframes fw-pulse-run{
   0%{offset-distance:0%;opacity:0}
@@ -278,6 +283,90 @@ h2.fw-h2{font-size:clamp(30px,4.4vw,46px);font-weight:690;line-height:1.24;lette
 .fw-statement b{font-weight:650;color:#fff}
 .fw-statement small{display:block;margin-top:26px;color:var(--cyan);font-size:12px;letter-spacing:.3em;text-transform:uppercase;font-weight:600}
 
+/* ═══════ 핵심 가치 스트립 (고객 관점 재구성) ═══════ */
+.fw-values{padding:clamp(64px,8vw,96px) 0;background:var(--bg-1);border-top:1px solid var(--line)}
+.fw-values__lead{text-align:center;font-size:clamp(18px,2.2vw,24px);font-weight:420;color:#d9e4f2;max-width:720px;margin:0 auto 44px;line-height:1.7}
+.fw-values__grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;max-width:980px;margin:0 auto}
+.fw-value{text-align:center;padding:26px 14px;border:1px solid var(--line);border-radius:var(--radius);background:rgba(255,255,255,.02)}
+.fw-value b{display:block;font-size:15px;letter-spacing:.06em;color:#fff;margin-bottom:8px}
+.fw-value span{font-size:13.5px;color:var(--muted)}
+.fw-value i{display:grid;place-items:center;width:40px;height:40px;margin:0 auto 14px;border-radius:11px;font-style:normal}
+.fw-value--energy i{background:rgba(59,141,255,.14);color:var(--blue)}
+.fw-value--shield i{background:rgba(37,211,230,.12);color:var(--cyan)}
+.fw-value--temp i{background:rgba(255,138,43,.12);color:var(--beam)}
+.fw-value--comfort i{background:rgba(255,255,255,.08);color:#dbe6f4}
+
+/* ═══════ 피부 단면 다이어그램 (2.45GHz) ═══════ */
+.fw-skin{border:1px solid var(--line);border-radius:18px;overflow:hidden;background:#0a1120}
+.fw-skin svg{display:block;width:100%;height:auto}
+.fw-skin .beamflow{animation:fw-skinbeam 3s ease-in-out infinite}
+@keyframes fw-skinbeam{0%,100%{opacity:.35}50%{opacity:1}}
+.fw-skin .coolshield{animation:fw-skincool 3s ease-in-out infinite .6s}
+@keyframes fw-skincool{0%,100%{opacity:.9}50%{opacity:.45}}
+.fw-skin__caption{padding:14px 20px;font-size:13.5px;color:var(--muted);border-top:1px solid var(--line);display:flex;gap:18px;flex-wrap:wrap}
+.fw-skin__caption b{font-weight:600}
+.fw-skin__caption .k-beam{color:var(--beam)}
+.fw-skin__caption .k-cool{color:var(--cyan)}
+.fw-skin__caption .k-blue{color:var(--blue)}
+
+/* ═══════ FRCCS 5단계 프로세스 ═══════ */
+.fw-steps{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;max-width:1040px;margin:44px auto 0;counter-reset:fwstep}
+.fw-step{position:relative;padding:22px 14px 18px;border:1px solid var(--line);border-radius:12px;background:var(--bg-2);text-align:left}
+.fw-step::before{counter-increment:fwstep;content:"0" counter(fwstep);
+  display:block;font-size:12px;font-weight:700;letter-spacing:.18em;color:var(--cyan);margin-bottom:10px}
+.fw-step b{display:block;font-size:14.5px;color:#fff;margin-bottom:6px;font-weight:650}
+.fw-step span{font-size:12.5px;color:var(--muted);line-height:1.6}
+.fw-step--active{border-color:rgba(37,211,230,.5);background:linear-gradient(160deg,rgba(37,211,230,.08),var(--bg-2))}
+
+/* ═══════ HANDPIECE 카드 ═══════ */
+.fw-hp{display:grid;grid-template-columns:1fr 1fr;gap:22px;max-width:960px;margin:0 auto}
+.fw-hpcard{border:1px solid var(--line);border-radius:18px;overflow:hidden;background:var(--bg-2);
+  transition:transform .3s ease,border-color .3s ease}
+.fw-hpcard:hover{transform:translateY(-6px);border-color:rgba(37,211,230,.45)}
+.fw-hpcard__visual{aspect-ratio:16/9;overflow:hidden;position:relative;background:#0a1120}
+.fw-hpcard__visual img{width:100%;height:100%;object-fit:cover;transition:transform .5s ease}
+.fw-hpcard:hover .fw-hpcard__visual img{transform:scale(1.05)}
+.fw-hpcard__body{padding:24px 26px 28px}
+.fw-hpcard__tag{font-size:11.5px;font-weight:700;letter-spacing:.2em;color:var(--cyan);text-transform:uppercase}
+.fw-hpcard h3{font-size:20px;font-weight:700;margin:8px 0 10px}
+.fw-hpcard p{font-size:14.5px;color:var(--muted);line-height:1.7}
+.fw-hpcard ul{margin-top:14px;display:flex;gap:8px;flex-wrap:wrap;padding:0}
+.fw-hpcard li{list-style:none;font-size:12.5px;color:#cfe0f2;border:1px solid var(--line);
+  border-radius:999px;padding:5px 12px}
+
+/* ═══════ WHY FINEWAVE (심의 안전 표현) ═══════ */
+.fw-why{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+.fw-whycard{padding:30px 24px;border:1px solid var(--line);border-radius:var(--radius);background:rgba(255,255,255,.02);
+  transition:border-color .3s}
+.fw-whycard:hover{border-color:rgba(59,141,255,.4)}
+.fw-whycard i{display:grid;place-items:center;width:42px;height:42px;border-radius:12px;
+  background:rgba(59,141,255,.12);color:var(--blue);margin-bottom:16px;font-style:normal}
+.fw-whycard b{display:block;font-size:16px;font-weight:650;margin-bottom:8px;line-height:1.4}
+.fw-whycard span{font-size:13.5px;color:var(--muted);line-height:1.65}
+
+/* ═══════ 의료진·도입 (FOR CLINICS) ═══════ */
+.fw-clinic{background:linear-gradient(180deg,var(--bg-0),#081120);border-top:1px solid var(--line)}
+.fw-clinic__grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:8px}
+.fw-clinicitem{display:flex;gap:14px;align-items:flex-start;padding:20px;border:1px solid var(--line);
+  border-radius:12px;background:rgba(255,255,255,.02)}
+.fw-clinicitem svg{flex:0 0 auto;color:var(--cyan);margin-top:2px}
+.fw-clinicitem b{display:block;font-size:15px;font-weight:650;margin-bottom:4px}
+.fw-clinicitem span{font-size:13px;color:var(--muted);line-height:1.6}
+
+/* ═══════ 문의 폼 (PRODUCT INQUIRY) ═══════ */
+.fw-form{max-width:760px;margin:40px auto 0;text-align:left;
+  display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.fw-form label{display:flex;flex-direction:column;gap:7px;font-size:13px;color:#cfe0f2;font-weight:600}
+.fw-form input,.fw-form select,.fw-form textarea{
+  background:rgba(255,255,255,.04);border:1px solid var(--line);border-radius:10px;
+  padding:13px 15px;color:var(--ink);font-family:var(--font);font-size:14.5px;outline:none;
+  transition:border-color .2s}
+.fw-form input:focus,.fw-form select:focus,.fw-form textarea:focus{border-color:rgba(37,211,230,.6)}
+.fw-form .fw-form__full{grid-column:1/-1}
+.fw-form textarea{min-height:110px;resize:vertical}
+.fw-form__submit{grid-column:1/-1;justify-self:center;margin-top:10px;border:none;cursor:pointer}
+.fw-form__note{grid-column:1/-1;font-size:12px;color:#7a90b0;text-align:center}
+
 /* ═══════ 반응형 ═══════ */
 @media (max-width:900px){
   .fw-hero__grid{grid-template-columns:1fr;text-align:center}
@@ -288,6 +377,12 @@ h2.fw-h2{font-size:clamp(30px,4.4vw,46px);font-weight:690;line-height:1.24;lette
   .fw-chips{margin-left:auto;margin-right:auto}
   .fw-nav{display:none}
   .fw-burger{display:block}
+  .fw-values__grid{grid-template-columns:1fr 1fr}
+  .fw-steps{grid-template-columns:1fr 1fr}
+  .fw-hp{grid-template-columns:1fr}
+  .fw-why{grid-template-columns:1fr 1fr}
+  .fw-clinic__grid{grid-template-columns:1fr}
+  .fw-form{grid-template-columns:1fr}
 }
 @media (max-width:768px){
   .fw-float{right:14px;bottom:14px}
@@ -317,6 +412,8 @@ h2.fw-h2{font-size:clamp(30px,4.4vw,46px);font-weight:690;line-height:1.24;lette
       <a href="#tech">2.45GHz</a>
       <a href="#finecool">FINECOOL™</a>
       <a href="#frccs">FRCCS</a>
+      <a href="#handpiece">HANDPIECE</a>
+      <a href="#why">WHY</a>
       <a href="#faq">FAQ</a>
       <a class="fw-ig" href="#" aria-label="인스타그램">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><rect x="2.5" y="2.5" width="19" height="19" rx="5" stroke="currentColor" stroke-width="1.8"/><circle cx="12" cy="12" r="4.2" stroke="currentColor" stroke-width="1.8"/><circle cx="17.4" cy="6.6" r="1.3" fill="currentColor"/></svg>
@@ -356,8 +453,8 @@ h2.fw-h2{font-size:clamp(30px,4.4vw,46px);font-weight:690;line-height:1.24;lette
       <div>
         <div class="fw-hero__logo fw-load" style="--fw-d:2.3s">FINE<span style="color:var(--cyan)">WAVE</span></div>
         <div class="fw-hero__tag fw-load" style="--fw-d:2.55s">Go Fine. Get Defined.</div>
-        <p class="fw-hero__copy fw-load" style="--fw-d:2.8s">Rubbing의 한계를 넘어서다.
-          <small>방식을 바꾸면 결과가 달라집니다.</small></p>
+        <p class="fw-hero__copy fw-load" style="--fw-d:2.8s">2.45GHz, 정밀함을 정의하다.
+          <small>Power Beneath. Comfort Above. — 피부 표면은 편안하게, 목표층에는 정밀하게.</small></p>
         <div class="fw-hero__cta fw-load" style="--fw-d:3.05s">
           <a class="fw-btn fw-btn--primary" href="#contact">도입 문의하기</a>
           <a class="fw-btn fw-btn--ghost" href="#tech">기술 살펴보기</a>
@@ -376,6 +473,31 @@ h2.fw-h2{font-size:clamp(30px,4.4vw,46px);font-weight:690;line-height:1.24;lette
     </div>
   </div>
   <div class="fw-scrollhint fw-load" style="--fw-d:3.6s">Scroll</div>
+</section>
+
+<!-- ══════════ 핵심 가치 (고객 관점 재구성 · 스토리 1단계) ══════════ -->
+<section class="fw-values">
+  <div class="fw-wrap">
+    <p class="fw-values__lead fw-reveal">피부 표면은 안전하게 보호하고,<br><b>필요한 깊이에는 정밀하게</b> 에너지를 전달합니다.</p>
+    <div class="fw-values__grid">
+      <div class="fw-value fw-value--energy fw-reveal">
+        <i><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M13 2L4 14h6l-1 8 9-12h-6l1-8z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></svg></i>
+        <b>Targeted Energy</b><span>목표층 집중 전달</span>
+      </div>
+      <div class="fw-value fw-value--shield fw-reveal">
+        <i><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M12 2l8 4v6c0 5-3.5 8-8 10-4.5-2-8-5-8-10V6l8-4z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></svg></i>
+        <b>Surface Protection</b><span>표면 보호 설계</span>
+      </div>
+      <div class="fw-value fw-value--temp fw-reveal">
+        <i><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M12 3v10m0 0a4 4 0 104 4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg></i>
+        <b>Controlled Temperature</b><span>온도 제어 시스템</span>
+      </div>
+      <div class="fw-value fw-value--comfort fw-reveal">
+        <i><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M20 6L9 17l-5-5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></i>
+        <b>Comfortable Treatment</b><span>편안한 시술 환경</span>
+      </div>
+    </div>
+  </div>
 </section>
 
 <!-- ══════════ 2.45GHz: 실카피 + 장비 확대 + 새 웨이브(T2) ══════════ -->
@@ -408,6 +530,49 @@ h2.fw-h2{font-size:clamp(30px,4.4vw,46px);font-weight:690;line-height:1.24;lette
         <img src="assets/device-angled.png" alt="FINEWAVE 장비 — 2.45GHz 마이크로웨이브">
       </div>
     </div>
+
+    <!-- 피부 단면 다이어그램: 에너지 도달 과정 시각화 (표현은 인허가 범위 검수 대상) -->
+    <div class="fw-skin fw-reveal" style="margin-top:56px" role="img"
+         aria-label="피부 단면 다이어그램 — 표면은 냉각으로 보호되고 2.45GHz 에너지가 목표층에 도달">
+      <svg viewBox="0 0 1100 360" fill="none">
+        <!-- 핸드피스 -->
+        <rect x="480" y="18" width="140" height="52" rx="16" fill="#1b2740" stroke="#3a4c6e"/>
+        <rect x="516" y="70" width="68" height="14" rx="7" fill="#2c3d5e"/>
+        <text x="550" y="50" fill="#9db0cc" font-size="15" font-family="inherit" text-anchor="middle">HANDPIECE</text>
+        <!-- 냉각 실드 (표면) -->
+        <g class="coolshield">
+          <rect x="80" y="96" width="940" height="10" rx="5" fill="#25d3e6" fill-opacity=".55"/>
+          <text x="86" y="88" fill="#25d3e6" font-size="14" font-family="inherit">FINECOOL™ 표면 냉각</text>
+        </g>
+        <!-- 피부 레이어 -->
+        <rect x="80" y="106" width="940" height="52" fill="#3d2f3a" fill-opacity=".65"/>
+        <text x="96" y="138" fill="#cfafb8" fill-opacity=".9" font-size="14" font-family="inherit">표피 — 보호 영역</text>
+        <rect x="80" y="158" width="940" height="74" fill="#54303c" fill-opacity=".6"/>
+        <text x="96" y="200" fill="#d8aab4" font-size="14" font-family="inherit">진피 — 콜라겐 층</text>
+        <rect x="80" y="232" width="940" height="92" fill="#5e3a34" fill-opacity=".55"/>
+        <text x="96" y="282" fill="#e0b3a6" font-size="14" font-family="inherit">목표층 — 에너지 집중 영역</text>
+        <!-- 에너지 빔 (오렌지, 목표층 도달) -->
+        <g class="beamflow">
+          <path d="M 540 86 L 505 232 L 595 232 L 560 86 Z" fill="url(#beamgrad)"/>
+          <ellipse cx="550" cy="272" rx="120" ry="34" fill="#ff8a2b" fill-opacity=".28"/>
+          <ellipse cx="550" cy="272" rx="64" ry="20" fill="#ff8a2b" fill-opacity=".45"/>
+        </g>
+        <!-- 웨이브 라인 (일렉트릭 블루, 마이크로웨이브 상징) -->
+        <path d="M 100 330 Q 200 314 300 330 T 500 330 T 700 330 T 900 330 T 1100 330" stroke="#3b8dff" stroke-opacity=".4" stroke-width="1.6"/>
+        <defs>
+          <linearGradient id="beamgrad" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="#ffd9a8" stop-opacity=".9"/>
+            <stop offset="1" stop-color="#ff8a2b" stop-opacity=".5"/>
+          </linearGradient>
+        </defs>
+      </svg>
+      <div class="fw-skin__caption">
+        <span><b class="k-beam">■ 오렌지</b> 2.45GHz 열 에너지 — 목표층 집중</span>
+        <span><b class="k-cool">■ 시안</b> FINECOOL™ 냉각 — 표면 보호</span>
+        <span><b class="k-blue">■ 블루</b> 마이크로웨이브 — 에너지의 깊이와 방향 제어</span>
+        <span style="margin-left:auto;color:#7a90b0">※ 개념 시각화 — 문구·표현은 인허가 범위 검수 후 확정</span>
+      </div>
+    </div>
   </div>
 </section>
 
@@ -423,11 +588,10 @@ h2.fw-h2{font-size:clamp(30px,4.4vw,46px);font-weight:690;line-height:1.24;lette
         <div class="fw-reveal">
           <div class="fw-secno">02 · Cooling</div>
           <h2 class="fw-h2">FINECOOL™<br>이중 냉각시스템</h2>
-          <div class="fw-eyebrow" style="margin-top:16px">— Cooling Technology</div>
-          <p class="fw-lead">펠티어(Peltier)와 칠러(Chiller)를 결합한<br>
-          FINECOOL 이중 냉각시스템은<br>
-          장시간 고출력 시술에서도 보다 안정적이고<br>
-          편안한 시술 환경을 제공합니다.</p>
+          <div class="fw-eyebrow" style="margin-top:16px">Heat where it matters. Cool where it matters.</div>
+          <p class="fw-lead">열 에너지는 정밀하게, 표면은 편안하게.<br>
+          펠티어(Peltier)와 칠러(Chiller)를 결합한 FINECOOL 이중 냉각시스템은<br>
+          장시간 고출력 시술에서도 보다 안정적이고 편안한 시술 환경을 제공합니다.</p>
         </div>
         <div class="fw-chips fw-reveal">
           <div class="fw-chip">적은 통증</div>
@@ -456,8 +620,16 @@ h2.fw-h2{font-size:clamp(30px,4.4vw,46px);font-weight:690;line-height:1.24;lette
       <h2 class="fw-frccs__title">Forward-Reverse<br>Contact Control System</h2>
       <div class="fw-eyebrow" style="margin-top:18px">Contact Control System</div>
       <p class="fw-lead" style="margin-left:auto;margin-right:auto;text-align:center">
-        피부 접촉 시에만 전달되는 마이크로웨이브 에너지<br>
-        실시간 피드백 시스템으로 안정적이고 정밀한 출력 제어</p>
+        <b style="color:#fff;font-weight:650">피부에 닿았을 때만 작동하는 지능형 접촉 제어 시스템.</b><br>
+        피부 접촉 시에만 전달되는 마이크로웨이브 에너지,<br>
+        실시간 피드백 시스템으로 안정적이고 정밀한 출력 제어.</p>
+    </div>
+    <div class="fw-steps fw-reveal">
+      <div class="fw-step"><b>비접촉 상태</b><span>핸드피스가 피부에 닿지 않음</span></div>
+      <div class="fw-step"><b>에너지 차단</b><span>접촉 전에는 출력이 나가지 않음</span></div>
+      <div class="fw-step fw-step--active"><b>접촉 감지</b><span>피부 접촉을 실시간 감지</span></div>
+      <div class="fw-step fw-step--active"><b>에너지 전달</b><span>접촉 시에만 정밀 전달</span></div>
+      <div class="fw-step fw-step--active"><b>실시간 피드백</b><span>접촉 상태 기반 출력 제어</span></div>
     </div>
     <div class="fw-frccs__cards fw-reveal">
       <figure class="fw-fcard fw-fcard--nocontact">
@@ -472,11 +644,95 @@ h2.fw-h2{font-size:clamp(30px,4.4vw,46px);font-weight:690;line-height:1.24;lette
   </div>
 </section>
 
+<!-- ══════════ HANDPIECE (신설 · 스토리 4단계: 시술 구성 이해) ══════════ -->
+<section class="fw-sec" id="handpiece" style="background:var(--bg-1)">
+  <div class="fw-wrap">
+    <div class="fw-reveal" style="text-align:center;margin-bottom:52px">
+      <div class="fw-secno" style="justify-content:center">04 · Handpiece</div>
+      <h2 class="fw-h2">부위별로 선택하는 듀얼 핸드피스</h2>
+      <p class="fw-lead" style="margin-left:auto;margin-right:auto;text-align:center">
+        시술 부위와 목적에 따라 대·소 핸드피스를 선택합니다.<br>두 핸드피스 모두 FINECOOL™ 냉각과 FRCCS 접촉 제어를 지원합니다.</p>
+    </div>
+    <div class="fw-hp">
+      <div class="fw-hpcard fw-reveal">
+        <div class="fw-hpcard__visual"><img src="assets/handpiece-beam.png" alt="소형 핸드피스"></div>
+        <div class="fw-hpcard__body">
+          <div class="fw-hpcard__tag">Small Handpiece</div>
+          <h3>정밀 케어 — 얼굴·턱라인</h3>
+          <p>좁고 섬세한 부위를 위한 소형 핸드피스. 얼굴 윤곽과 턱라인을 정밀하게 케어합니다.</p>
+          <ul><li>얼굴</li><li>턱라인</li><li>Shot Mode</li><li>FINECOOL™</li><li>FRCCS</li></ul>
+        </div>
+      </div>
+      <div class="fw-hpcard fw-reveal">
+        <div class="fw-hpcard__visual"><img src="assets/device-front.png" alt="대형 핸드피스" style="object-position:center 30%"></div>
+        <div class="fw-hpcard__body">
+          <div class="fw-hpcard__tag">Large Handpiece</div>
+          <h3>볼륨 케어 — 넓은 부위</h3>
+          <p>넓은 부위를 위한 대형 핸드피스. Rubbing 모드로 균일하고 효율적인 케어를 지원합니다.</p>
+          <ul><li>넓은 부위</li><li>Rubbing Mode</li><li>FINECOOL™</li><li>FRCCS</li></ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ WHY FINEWAVE (신설 · 심의 안전 표현) ══════════ -->
+<section class="fw-sec fw-sec--alt" id="why">
+  <div class="fw-wrap">
+    <div class="fw-reveal" style="margin-bottom:48px">
+      <div class="fw-secno">05 · Why FINEWAVE</div>
+      <h2 class="fw-h2">정밀함과 편안함을 함께 설계했습니다</h2>
+    </div>
+    <div class="fw-why">
+      <div class="fw-whycard fw-reveal">
+        <i><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M12 2l8 4v6c0 5-3.5 8-8 10-4.5-2-8-5-8-10V6l8-4z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></svg></i>
+        <b>시술 부담을 줄이는 설계</b>
+        <span>표면 보호와 접촉 제어를 통해 불필요한 에너지 전달을 방지합니다.</span>
+      </div>
+      <div class="fw-whycard fw-reveal">
+        <i><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M4 12a8 8 0 0116 0M8 12a4 4 0 018 0" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><circle cx="12" cy="12" r="1.5" fill="currentColor"/></svg></i>
+        <b>편안한 시술 환경을 고려한 시스템</b>
+        <span>FINECOOL™ 이중 냉각이 장시간 시술에서도 안정적인 환경을 만듭니다.</span>
+      </div>
+      <div class="fw-whycard fw-reveal">
+        <i><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M12 8v4l3 3M21 12a9 9 0 11-18 0 9 9 0 0118 0z" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg></i>
+        <b>일상 복귀를 고려한 기술</b>
+        <span>비침습 방식으로 시술 후 일상 복귀 부담을 줄이는 것을 목표로 설계했습니다.</span>
+      </div>
+      <div class="fw-whycard fw-reveal">
+        <i><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M5 21V9m7 12V3m7 18v-8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></i>
+        <b>안정적인 장시간 사용 구조</b>
+        <span>고출력 운용을 견디는 냉각·출력 제어 구조로 내구성을 확보했습니다.</span>
+      </div>
+    </div>
+    <p class="fw-reveal" style="margin-top:22px;font-size:12px;color:#7a90b0">※ 모든 표현은 의료광고 심의·인허가 범위 검수 후 확정 (단정적 효능 표현 배제한 안전 문구로 구성)</p>
+  </div>
+</section>
+
+<!-- ══════════ FOR CLINICS (신설 · 도입 담당자 관점) ══════════ -->
+<section class="fw-sec fw-clinic">
+  <div class="fw-wrap">
+    <div class="fw-reveal" style="margin-bottom:44px">
+      <div class="fw-secno">06 · For Clinics</div>
+      <h2 class="fw-h2">병·의원 도입을 위한 준비</h2>
+      <p class="fw-lead">시술자와 운영 관점에서 필요한 것들을 함께 제공합니다.</p>
+    </div>
+    <div class="fw-clinic__grid">
+      <div class="fw-clinicitem fw-reveal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M20 6L9 17l-5-5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><div><b>조작 편의성</b><span>터치 스크린 기반 직관 UI, 모드·출력 간편 제어</span></div></div>
+      <div class="fw-clinicitem fw-reveal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M20 6L9 17l-5-5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><div><b>정밀 출력 제어</b><span>FRCCS 접촉 기반 출력 제어와 실시간 피드백</span></div></div>
+      <div class="fw-clinicitem fw-reveal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M20 6L9 17l-5-5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><div><b>장시간 사용 안정성</b><span>이중 냉각 기반 고출력 연속 운용 구조</span></div></div>
+      <div class="fw-clinicitem fw-reveal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M20 6L9 17l-5-5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><div><b>유지관리</b><span>핸드피스·소모품 관리 및 정기 점검 안내</span></div></div>
+      <div class="fw-clinicitem fw-reveal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M20 6L9 17l-5-5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><div><b>교육·기술 지원</b><span>도입 시 제품 교육과 시술 프로토콜 지원</span></div></div>
+      <div class="fw-clinicitem fw-reveal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M20 6L9 17l-5-5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><div><b>데모·상담</b><span>장비 데모 및 병·의원 도입 상담 연결</span></div></div>
+    </div>
+  </div>
+</section>
+
 <!-- ══════════ FAQ ══════════ -->
 <section class="fw-sec" id="faq" style="background:var(--bg-1)">
   <div class="fw-wrap">
     <div class="fw-reveal" style="text-align:center;margin-bottom:52px">
-      <div class="fw-secno" style="justify-content:center">04 · FAQ</div>
+      <div class="fw-secno" style="justify-content:center">07 · FAQ</div>
       <h2 class="fw-h2">자주 묻는 질문</h2>
     </div>
     <div class="fw-faq fw-reveal">
@@ -487,12 +743,30 @@ h2.fw-h2{font-size:clamp(30px,4.4vw,46px);font-weight:690;line-height:1.24;lette
   </div>
 </section>
 
-<!-- ══════════ 문의 CTA ══════════ -->
+<!-- ══════════ PRODUCT INQUIRY (문의 폼 확장 · 전환 구조) ══════════ -->
 <section class="fw-sec fw-cta" id="contact">
   <div class="fw-wrap">
+    <div class="fw-secno fw-reveal" style="justify-content:center">08 · Product Inquiry</div>
     <h2 class="fw-reveal">FINEWAVE 도입을 고민 중이신가요?</h2>
-    <p class="fw-reveal">장비 데모, 견적, 임상 자료 등 궁금한 점을 남겨주시면 담당자가 안내해 드립니다.</p>
-    <a class="fw-btn fw-btn--primary fw-reveal" href="#" style="padding:17px 36px;font-size:17px">문의 남기기</a>
+    <p class="fw-reveal">장비 데모, 견적, 자료 요청 등 궁금한 점을 남겨주시면 담당자가 안내해 드립니다.</p>
+    <form class="fw-form fw-reveal" onsubmit="return false" aria-label="제품 문의 폼(시안)">
+      <label>병원명 <input type="text" placeholder="예) 파인클리닉" name="hospital"></label>
+      <label>담당자명 <input type="text" placeholder="성함" name="name"></label>
+      <label>연락처 <input type="tel" placeholder="010-0000-0000" name="phone"></label>
+      <label>이메일 <input type="email" placeholder="name@clinic.co.kr" name="email"></label>
+      <label class="fw-form__full">상담 유형
+        <select name="type">
+          <option>제품 도입 상담</option>
+          <option>장비 데모 신청</option>
+          <option>브로슈어·자료 요청</option>
+          <option>유지보수·기술 지원</option>
+          <option>기타 문의</option>
+        </select>
+      </label>
+      <label class="fw-form__full">문의 내용 <textarea placeholder="문의하실 내용을 입력해 주세요." name="message"></textarea></label>
+      <button type="submit" class="fw-btn fw-btn--primary fw-form__submit" style="padding:15px 44px">문의 보내기</button>
+      <span class="fw-form__note">시안 데모 폼 — 실제 접수는 WPForms 연동으로 동작 (개인정보 수집·이용 동의 문구 추가 예정)</span>
+    </form>
   </div>
 </section>
 

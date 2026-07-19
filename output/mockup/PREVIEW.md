@@ -1,4 +1,21 @@
-# FINEWAVE 홈페이지 리뉴얼 — 시안 v5 미리보기 (DRAFT)
+# FINEWAVE 홈페이지 리뉴얼 — 시안 v6 미리보기 (DRAFT)
+
+> **v6 변경점 (스토리텔링 확장 — 기존 정체성 유지 지침 반영)**
+> "제품을 보여준다 → 기술을 이해시킨다 → 안전성을 증명한다 → 시술 경험을 상상하게 한다 → 문의로 연결한다" 흐름으로 확장:
+>
+> | 항목 | 내용 |
+> |---|---|
+> | 컬러 시스템 | **Blue Energy(#3b8dff) + Orange Heat(#ff8a2b) + Cyan Cooling(#25d3e6)** — 네이비·블랙 유지, 쉬리안 퍼플 미채택 |
+> | 히어로 카피 | "2.45GHz, 정밀함을 정의하다." + "Power Beneath. Comfort Above." (후보 카피, 컨펌 대상) · 에너지 펄스 오렌지(열)+시안(냉각) 이원화 |
+> | 핵심 가치 (신설) | Targeted Energy · Surface Protection · Controlled Temperature · Comfortable Treatment 4키워드 스트립 |
+> | 2.45GHz | **피부 단면 다이어그램** 신설 — 표피/진피/목표층 + 오렌지 에너지 도달 + 시안 표면 냉각 시각화 |
+> | FINECOOL™ | "Heat where it matters. Cool where it matters." 카피 적용 |
+> | FRCCS | **5단계 프로세스**(비접촉→차단→감지→전달→피드백) + "지능형 접촉 제어 시스템" 리드 카피 |
+> | HANDPIECE (신설) | 대·소 핸드피스 카드 2종 (부위·모드·기능 태그) |
+> | WHY FINEWAVE (신설) | 심의 안전 표현 4카드 ("부작용 적음" 등 단정 표현 배제) |
+> | FOR CLINICS (신설) | 병·의원 도입 관점 6항목 (조작성·출력제어·유지관리·교육지원 등) |
+> | PRODUCT INQUIRY | 문의 폼 확장 — 병원명/담당자/연락처/이메일/상담유형/내용 |
+> | 메뉴 | INTRO · 2.45GHz · FINECOOL™ · FRCCS · **HANDPIECE · WHY** · FAQ · 문의하기 |
 
 > **v5 변경점 (레퍼런스 오프닝 영상 학습 반영 — 시네마틱 히어로 리빌)**
 > "어두운 공간에서 제품이 천천히 드러나고, 에너지가 정밀하게 흐르는" 오프닝을 CSS/JS로 재현:
@@ -66,8 +83,14 @@
 ### 1-b) 3D 마우스 틸트 (커서 따라 장비가 입체 회전)
 ![hero-3d](preview-images/02-hero-3d-tilt.png)
 
+### 1-c) 핵심 가치 스트립 (신설)
+![values](preview-images/sec-values.png)
+
 ### 2) 2.45GHz — 실카피 + 장비 확대 + 새 웨이브 배경
 ![tech](preview-images/sec-tech.png)
+
+### 2-b) 피부 단면 다이어그램 (신설 · 에너지 도달 시각화)
+![skin](preview-images/sec-skin.png)
 
 ### 3) FINECOOL™ — **실사이트 빔 이미지** 깜빡임(정지컷은 off 프레임)
 ![finecool](preview-images/sec-finecool.png)
@@ -78,10 +101,22 @@
 ### 4) FRCCS — 실카드, **NO CONTACT만 어둡게**
 ![frccs](preview-images/sec-frccs.png)
 
-### 5) FAQ
+### 4-b) FRCCS 5단계 프로세스 (신설)
+![steps](preview-images/sec-frccs-steps.png)
+
+### 5) HANDPIECE (신설)
+![handpiece](preview-images/sec-handpiece.png)
+
+### 6) WHY FINEWAVE (신설 · 심의 안전 표현)
+![why](preview-images/sec-why.png)
+
+### 7) FOR CLINICS (신설 · 도입 담당자 관점)
+![clinic](preview-images/sec-clinic.png)
+
+### 8) FAQ
 ![faq](preview-images/sec-faq.png)
 
-### 6) 문의 CTA
+### 9) PRODUCT INQUIRY — 확장 문의 폼
 ![contact](preview-images/sec-contact.png)
 
 ---
