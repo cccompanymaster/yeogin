@@ -49,7 +49,7 @@
 | 항목 | 내용 |
 |---|---|
 | 적용 위치 | 빔 이미지가 있는 페이지/섹션 > **HTML 위젯**(기존 이미지 위젯 대체) + `beam-blink.css`는 [전역 CSS] |
-| 절차 | ① `site-audit §4` 원본 빔 이미지를 `beam-off.png`로 저장 → ② `python3 scripts/gen_beam.py --from output/beam-blink/beam-off.png` 로 `beam-on.png` 생성 → ③ 두 PNG 미디어 업로드 → ④ `beam-blink.css` 내용을 [전역 CSS]에 붙여넣기 → ⑤ 이미지 위치에 HTML 위젯 추가 후 아래 마크업(preview.html 참고) 삽입, `src` 를 업로드 URL로 교체 |
+| 절차 | ① ~~원본 저장~~ **완료** — 현재 `beam-off/on.png`는 클라이언트 PPTX 캡처의 실사이트 핸드피스 이미지 기반(고해상도 원본 URL 확보 시 `python3 scripts/gen_beam.py --from 원본.png` 으로 재생성 권장) → ② 두 PNG 미디어 업로드 → ③ `beam-blink.css` 내용을 [전역 CSS]에 붙여넣기 → ④ 이미지 위치에 HTML 위젯 추가 후 아래 마크업(preview.html 참고) 삽입, `src` 를 업로드 URL로 교체 |
 | 마크업 | `<div class="fw-beam"><img class="fw-beam__off" src="…off.png" alt="FINECOOL 핸드피스"><img class="fw-beam__on" src="…on.png" alt="" aria-hidden="true"></div>` |
 | 선행 조건 | 빔 이미지 URL 확보, **시안 컨펌**(preview.html 발송), 빔 보정 승인(이미 승인됨) |
 | QA | 빔이 2.8s 주기로 자연스럽게 맥동, 두 프레임 위치 정확히 겹침, reduced-motion 시 정지 |
