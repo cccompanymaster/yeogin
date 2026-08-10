@@ -45,24 +45,27 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "유효한 숫자를 입력해주세요." }, { status: 400 });
   }
 
-  const now = new Date();
+  // 수동 입력은 자가 신고이므로 인증(verifiedAt)을 부여하지 않는다.
+  // ✓ 인증 배지는 관리자가 인증샷을 승인(/api/admin/sns/[id])하거나
+  // 유튜브 API로 외부 검증된 경우에만 부여된다.
+  // 값을 직접 수정하면 기존 인증 수치와 달라지므로 인증도 함께 해제한다.
   const data: Record<string, unknown> = {};
   if (channel === "blog") {
     data.blogUrl = url || null;
     data.blogVisitors = metric;
-    data.blogVerifiedAt = metric != null ? now : null;
+    data.blogVerifiedAt = null;
   } else if (channel === "insta") {
     data.instaUrl = url || null;
     data.instaFollowers = metric;
-    data.instaVerifiedAt = metric != null ? now : null;
+    data.instaVerifiedAt = null;
   } else if (channel === "youtube") {
     data.youtubeUrl = url || null;
     data.youtubeSubscribers = metric;
-    data.youtubeVerifiedAt = metric != null ? now : null;
+    data.youtubeVerifiedAt = null;
   } else if (channel === "tiktok") {
     data.tiktokUrl = url || null;
     data.tiktokFollowers = metric;
-    data.tiktokVerifiedAt = metric != null ? now : null;
+    data.tiktokVerifiedAt = null;
   }
 
   await db.user.update({ where: { id: session.id }, data });

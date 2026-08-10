@@ -51,6 +51,18 @@ async function main() {
   await db.user.deleteMany();
   await db.advertiser.deleteMany();
 
+  // 관리자 계정 (.env의 ADMIN_EMAILS 기본값과 동일해야 /admin 접근 가능)
+  await db.user.create({
+    data: {
+      email: "admin@yeogin.kr",
+      passwordHash: await bcrypt.hash("admin1234", 10),
+      nickname: "관리자",
+      region: "서울 중구",
+      trustGrade: "PLATINUM",
+      referralCode: "YEOGIN-ADMIN",
+    },
+  });
+
   // 데모 사용자
   const demoUser = await db.user.create({
     data: {
