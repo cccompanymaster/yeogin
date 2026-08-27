@@ -309,6 +309,24 @@ h2.fw-h2{font-size:clamp(30px,4.4vw,46px);font-weight:690;line-height:1.24;lette
 .fw-skin__caption .k-cool{color:var(--cyan)}
 .fw-skin__caption .k-blue{color:var(--blue)}
 
+/* ═══════ DUAL MODE (Fine / Rubbing) ═══════ */
+.fw-modes{display:grid;grid-template-columns:1fr 1fr;gap:22px;max-width:960px;margin:0 auto}
+.fw-mode{position:relative;border-radius:18px;padding:40px 34px;border:1px solid var(--line);
+  overflow:hidden;transition:transform .3s ease,border-color .3s ease}
+.fw-mode:hover{transform:translateY(-6px)}
+.fw-mode--fine{background:linear-gradient(155deg,rgba(59,141,255,.14),var(--bg-2))}
+.fw-mode--fine:hover{border-color:rgba(59,141,255,.5)}
+.fw-mode--rub{background:linear-gradient(155deg,rgba(255,138,43,.12),var(--bg-2))}
+.fw-mode--rub:hover{border-color:rgba(255,138,43,.5)}
+.fw-mode__tag{font-size:12px;font-weight:800;letter-spacing:.22em;text-transform:uppercase}
+.fw-mode--fine .fw-mode__tag{color:var(--blue)}
+.fw-mode--rub .fw-mode__tag{color:var(--beam)}
+.fw-mode h3{font-size:23px;font-weight:720;letter-spacing:-.02em;margin:12px 0 6px}
+.fw-mode__en{font-size:13px;color:#9db0cc;letter-spacing:.08em;margin-bottom:16px}
+.fw-mode p{color:var(--muted);font-size:15px;line-height:1.75}
+/* 모드별 에너지 파형 아이콘 */
+.fw-mode__wave{position:absolute;right:26px;top:34px;opacity:.75}
+
 /* ═══════ FRCCS 5단계 프로세스 ═══════ */
 .fw-steps{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;max-width:1040px;margin:44px auto 0;counter-reset:fwstep}
 .fw-step{position:relative;padding:22px 14px 18px;border:1px solid var(--line);border-radius:12px;background:var(--bg-2);text-align:left}
@@ -378,6 +396,7 @@ h2.fw-h2{font-size:clamp(30px,4.4vw,46px);font-weight:690;line-height:1.24;lette
   .fw-nav{display:none}
   .fw-burger{display:block}
   .fw-values__grid{grid-template-columns:1fr 1fr}
+  .fw-modes{grid-template-columns:1fr}
   .fw-steps{grid-template-columns:1fr 1fr}
   .fw-hp{grid-template-columns:1fr}
   .fw-why{grid-template-columns:1fr 1fr}
@@ -410,6 +429,7 @@ h2.fw-h2{font-size:clamp(30px,4.4vw,46px);font-weight:690;line-height:1.24;lette
     <nav class="fw-nav" aria-label="주요 메뉴">
       <a href="#top">INTRO</a>
       <a href="#tech">2.45GHz</a>
+      <a href="#dualmode">DUAL MODE</a>
       <a href="#finecool">FINECOOL™</a>
       <a href="#frccs">FRCCS</a>
       <a href="#handpiece">HANDPIECE</a>
@@ -453,8 +473,8 @@ h2.fw-h2{font-size:clamp(30px,4.4vw,46px);font-weight:690;line-height:1.24;lette
       <div>
         <div class="fw-hero__logo fw-load" style="--fw-d:2.3s">FINE<span style="color:var(--cyan)">WAVE</span></div>
         <div class="fw-hero__tag fw-load" style="--fw-d:2.55s">Go Fine. Get Defined.</div>
-        <p class="fw-hero__copy fw-load" style="--fw-d:2.8s">2.45GHz, 정밀함을 정의하다.
-          <small>Power Beneath. Comfort Above. — 피부 표면은 편안하게, 목표층에는 정밀하게.</small></p>
+        <p class="fw-hero__copy fw-load" style="--fw-d:2.8s">Dual Performance Microwave
+          <small>방식을 바꾸면 결과가 달라집니다.</small></p>
         <div class="fw-hero__cta fw-load" style="--fw-d:3.05s">
           <a class="fw-btn fw-btn--primary" href="#contact">도입 문의하기</a>
           <a class="fw-btn fw-btn--ghost" href="#tech">기술 살펴보기</a>
@@ -576,6 +596,39 @@ h2.fw-h2{font-size:clamp(30px,4.4vw,46px);font-weight:690;line-height:1.24;lette
   </div>
 </section>
 
+<!-- ══════════ DUAL MODE (신설 · 클라이언트 2차 요청: 2.45GHz와 FINECOOL 사이) ══════════ -->
+<section class="fw-sec" id="dualmode" style="background:var(--bg-1)">
+  <div class="fw-wrap">
+    <div class="fw-reveal" style="text-align:center;margin-bottom:52px">
+      <div class="fw-secno" style="justify-content:center">02 · Dual Mode</div>
+      <h2 class="fw-h2">Finewave's Dual Performance</h2>
+      <p class="fw-lead" style="margin-left:auto;margin-right:auto;text-align:center">
+        Finewave의 두 가지 모드는 목적 부위의 깊이와 면적에 따라<br>
+        최적화된 에너지를 전달하는 효과적인 솔루션입니다.</p>
+    </div>
+    <div class="fw-modes">
+      <div class="fw-mode fw-mode--fine fw-reveal">
+        <svg class="fw-mode__wave" width="64" height="28" viewBox="0 0 64 28" fill="none" aria-hidden="true">
+          <path d="M2 26h14l5-22 6 22h12l5-14 4 14h14" stroke="#3b8dff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <div class="fw-mode__tag">Fine Mode</div>
+        <h3>Targeted High-Peak Delivery</h3>
+        <div class="fw-mode__en">고집중 · 선택 전달</div>
+        <p>짧은 시간 동안 높은 에너지를 집중 조사하여, 타겟 부위에 필요 에너지를 선택적으로 전달하도록 설계된 모드입니다.</p>
+      </div>
+      <div class="fw-mode fw-mode--rub fw-reveal">
+        <svg class="fw-mode__wave" width="64" height="28" viewBox="0 0 64 28" fill="none" aria-hidden="true">
+          <path d="M2 20 Q 10 8 18 20 T 34 20 T 50 20 T 66 20" stroke="#ff8a2b" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+        <div class="fw-mode__tag">Rubbing Mode</div>
+        <h3>Gradual Heating</h3>
+        <div class="fw-mode__en">점진 · 균일 전달</div>
+        <p>부드러운 러빙을 통해 시술 부위 전반에<br>열에너지를 점진적이고 균일하게 전달합니다.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
 <!-- ══════════ FINECOOL™: 실카피 + 실이미지 빔 깜빡임(T3) ══════════ -->
 <section class="fw-sec fw-cool" id="finecool">
   <div class="fw-wrap">
@@ -586,7 +639,7 @@ h2.fw-h2{font-size:clamp(30px,4.4vw,46px);font-weight:690;line-height:1.24;lette
       </div>
       <div>
         <div class="fw-reveal">
-          <div class="fw-secno">02 · Cooling</div>
+          <div class="fw-secno">03 · Cooling</div>
           <h2 class="fw-h2">FINECOOL™<br>이중 냉각시스템</h2>
           <div class="fw-eyebrow" style="margin-top:16px">Heat where it matters. Cool where it matters.</div>
           <p class="fw-lead">열 에너지는 정밀하게, 표면은 편안하게.<br>
@@ -616,7 +669,7 @@ h2.fw-h2{font-size:clamp(30px,4.4vw,46px);font-weight:690;line-height:1.24;lette
 <section class="fw-sec fw-frccs" id="frccs">
   <div class="fw-wrap">
     <div class="fw-reveal">
-      <div class="fw-secno" style="justify-content:center">03 · FRCCS</div>
+      <div class="fw-secno" style="justify-content:center">04 · FRCCS</div>
       <h2 class="fw-frccs__title">Forward-Reverse<br>Contact Control System</h2>
       <div class="fw-eyebrow" style="margin-top:18px">Contact Control System</div>
       <p class="fw-lead" style="margin-left:auto;margin-right:auto;text-align:center">
@@ -648,7 +701,7 @@ h2.fw-h2{font-size:clamp(30px,4.4vw,46px);font-weight:690;line-height:1.24;lette
 <section class="fw-sec" id="handpiece" style="background:var(--bg-1)">
   <div class="fw-wrap">
     <div class="fw-reveal" style="text-align:center;margin-bottom:52px">
-      <div class="fw-secno" style="justify-content:center">04 · Handpiece</div>
+      <div class="fw-secno" style="justify-content:center">05 · Handpiece</div>
       <h2 class="fw-h2">부위별로 선택하는 듀얼 핸드피스</h2>
       <p class="fw-lead" style="margin-left:auto;margin-right:auto;text-align:center">
         시술 부위와 목적에 따라 대·소 핸드피스를 선택합니다.<br>두 핸드피스 모두 FINECOOL™ 냉각과 FRCCS 접촉 제어를 지원합니다.</p>
@@ -660,7 +713,7 @@ h2.fw-h2{font-size:clamp(30px,4.4vw,46px);font-weight:690;line-height:1.24;lette
           <div class="fw-hpcard__tag">Small Handpiece</div>
           <h3>정밀 케어 — 얼굴·턱라인</h3>
           <p>좁고 섬세한 부위를 위한 소형 핸드피스. 얼굴 윤곽과 턱라인을 정밀하게 케어합니다.</p>
-          <ul><li>얼굴</li><li>턱라인</li><li>Shot Mode</li><li>FINECOOL™</li><li>FRCCS</li></ul>
+          <ul><li>얼굴</li><li>턱라인</li><li>Fine Mode</li><li>FINECOOL™</li><li>FRCCS</li></ul>
         </div>
       </div>
       <div class="fw-hpcard fw-reveal">
@@ -680,7 +733,7 @@ h2.fw-h2{font-size:clamp(30px,4.4vw,46px);font-weight:690;line-height:1.24;lette
 <section class="fw-sec fw-sec--alt" id="why">
   <div class="fw-wrap">
     <div class="fw-reveal" style="margin-bottom:48px">
-      <div class="fw-secno">05 · Why FINEWAVE</div>
+      <div class="fw-secno">06 · Why FINEWAVE</div>
       <h2 class="fw-h2">정밀함과 편안함을 함께 설계했습니다</h2>
     </div>
     <div class="fw-why">
@@ -713,7 +766,7 @@ h2.fw-h2{font-size:clamp(30px,4.4vw,46px);font-weight:690;line-height:1.24;lette
 <section class="fw-sec fw-clinic">
   <div class="fw-wrap">
     <div class="fw-reveal" style="margin-bottom:44px">
-      <div class="fw-secno">06 · For Clinics</div>
+      <div class="fw-secno">07 · For Clinics</div>
       <h2 class="fw-h2">병·의원 도입을 위한 준비</h2>
       <p class="fw-lead">시술자와 운영 관점에서 필요한 것들을 함께 제공합니다.</p>
     </div>
@@ -732,7 +785,7 @@ h2.fw-h2{font-size:clamp(30px,4.4vw,46px);font-weight:690;line-height:1.24;lette
 <section class="fw-sec" id="faq" style="background:var(--bg-1)">
   <div class="fw-wrap">
     <div class="fw-reveal" style="text-align:center;margin-bottom:52px">
-      <div class="fw-secno" style="justify-content:center">07 · FAQ</div>
+      <div class="fw-secno" style="justify-content:center">08 · FAQ</div>
       <h2 class="fw-h2">자주 묻는 질문</h2>
     </div>
     <div class="fw-faq fw-reveal">
@@ -746,7 +799,7 @@ h2.fw-h2{font-size:clamp(30px,4.4vw,46px);font-weight:690;line-height:1.24;lette
 <!-- ══════════ PRODUCT INQUIRY (문의 폼 확장 · 전환 구조) ══════════ -->
 <section class="fw-sec fw-cta" id="contact">
   <div class="fw-wrap">
-    <div class="fw-secno fw-reveal" style="justify-content:center">08 · Product Inquiry</div>
+    <div class="fw-secno fw-reveal" style="justify-content:center">09 · Product Inquiry</div>
     <h2 class="fw-reveal">FINEWAVE 도입을 고민 중이신가요?</h2>
     <p class="fw-reveal">장비 데모, 견적, 자료 요청 등 궁금한 점을 남겨주시면 담당자가 안내해 드립니다.</p>
     <form class="fw-form fw-reveal" onsubmit="return false" aria-label="제품 문의 폼(시안)">

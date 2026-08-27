@@ -1,4 +1,12 @@
-# FINEWAVE 홈페이지 리뉴얼 — 시안 v6 미리보기 (DRAFT)
+# FINEWAVE 홈페이지 리뉴얼 — 시안 v7 미리보기 (DRAFT)
+
+> **v7 변경점 (클라이언트 2차 수정요청 PPTX + 공식 브로슈어 반영)**
+> 1. **히어로 하단 문구 변경**: "Rubbing의 한계를 넘어서다" → **"Dual Performance Microwave"** (요청 반영, 브로슈어 공식 포지셔닝)
+> 2. **DUAL MODE 섹션 신설**: 2.45GHz와 FINECOOL™ 사이 + 상단 메뉴 추가 (요청 반영)
+>    - FINE MODE — Targeted High-Peak Delivery: "짧은 시간 동안 높은 에너지를 집중 조사하여, 타겟 부위에 필요 에너지를 선택적으로 전달하도록 설계된 모드"
+>    - RUBBING MODE — Gradual Heating: "부드러운 러빙을 통해 시술 부위 전반에 열에너지를 점진적이고 균일하게 전달"
+> 3. **모드 명칭 교정**: 기존 "Shot Mode" 표기 → 공식 명칭 **"Fine Mode"** (브로슈어 기준)
+> 4. 섹션 넘버 재정렬 (01 Technology ~ 09 Product Inquiry)
 
 > **v6 변경점 (스토리텔링 확장 — 기존 정체성 유지 지침 반영)**
 > "제품을 보여준다 → 기술을 이해시킨다 → 안전성을 증명한다 → 시술 경험을 상상하게 한다 → 문의로 연결한다" 흐름으로 확장:
@@ -91,6 +99,9 @@
 
 ### 2-b) 피부 단면 다이어그램 (신설 · 에너지 도달 시각화)
 ![skin](preview-images/sec-skin.png)
+
+### 2-c) DUAL MODE (신설 · v7) — Fine Mode / Rubbing Mode
+![dualmode](preview-images/sec-dualmode.png)
 
 ### 3) FINECOOL™ — **실사이트 빔 이미지** 깜빡임(정지컷은 off 프레임)
 ![finecool](preview-images/sec-finecool.png)
