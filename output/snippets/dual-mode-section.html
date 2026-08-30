@@ -1,0 +1,82 @@
+<!-- ============================================================
+     v7 · DUAL MODE 섹션 (dual-mode-section.html)
+     클라이언트 2차 요청: "2.45GHz와 FINECOOL 사이에 Dual Mode 섹션 추가"
+
+     [적용] Elementor로 2.45GHz 섹션 바로 아래에 새 섹션 추가 →
+            HTML 위젯 하나 넣고 이 파일 전체를 붙여넣기.
+            (스타일 인라인 자체완결 · fw- 접두사 · 외부 의존 0)
+     [메뉴] WP 관리자 > 외모 > 메뉴 > 커스텀 링크 추가:
+            URL: /#fw-dualmode  (메인 페이지 내 앵커) · 라벨: DUAL MODE
+            → 2.45GHz와 FINECOOL™ 메뉴 사이로 드래그 배치
+     [앵커] 래퍼에 id="fw-dualmode" + scroll-margin-top 내장(고정 헤더 대응).
+            헤더 높이가 다르면 아래 --fw-header-h 값만 수정 (site-audit §2 실측값).
+     ============================================================ -->
+
+<section id="fw-dualmode" class="fw-dm" aria-label="Dual Mode — Fine Mode와 Rubbing Mode 소개">
+  <div class="fw-dm__head">
+    <div class="fw-dm__no">DUAL MODE</div>
+    <h2 class="fw-dm__title">Finewave's Dual Performance</h2>
+    <p class="fw-dm__lead">Finewave의 두 가지 모드는 목적 부위의 깊이와 면적에 따라<br>
+    최적화된 에너지를 전달하는 효과적인 솔루션입니다.</p>
+  </div>
+  <div class="fw-dm__grid">
+    <div class="fw-dm__card fw-dm__card--fine">
+      <svg class="fw-dm__wave" width="64" height="28" viewBox="0 0 64 28" fill="none" aria-hidden="true">
+        <path d="M2 26h14l5-22 6 22h12l5-14 4 14h14" stroke="#3b8dff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      <div class="fw-dm__tag fw-dm__tag--fine">Fine Mode</div>
+      <h3>Targeted High-Peak Delivery</h3>
+      <p>짧은 시간 동안 높은 에너지를 집중 조사하여, 타겟 부위에 필요 에너지를 선택적으로 전달하도록 설계된 모드입니다.</p>
+    </div>
+    <div class="fw-dm__card fw-dm__card--rub">
+      <svg class="fw-dm__wave" width="64" height="28" viewBox="0 0 64 28" fill="none" aria-hidden="true">
+        <path d="M2 20 Q 10 8 18 20 T 34 20 T 50 20 T 66 20" stroke="#ff8a2b" stroke-width="2" stroke-linecap="round"/>
+      </svg>
+      <div class="fw-dm__tag fw-dm__tag--rub">Rubbing Mode</div>
+      <h3>Gradual Heating</h3>
+      <p>부드러운 러빙을 통해 시술 부위 전반에 열에너지를 점진적이고 균일하게 전달합니다.</p>
+    </div>
+  </div>
+</section>
+
+<style>
+#fw-dualmode{
+  /* site-audit §2 실측 헤더 높이 + 16px 로 교체 가능 */
+  --fw-header-h: 90px;
+  scroll-margin-top: calc(var(--fw-header-h) + 16px);
+}
+.fw-dm{
+  /* 색은 현행 사이트 톤(다크 네이비·시안)과 동일 계열 — 필요시 배경만 페이지 배경색에 맞춰 조정 */
+  background:#070c16;
+  color:#f2f6fc;
+  padding:96px 24px;
+  font-family:inherit;             /* 사이트 전역 폰트 상속(폰트 통일 방침) */
+}
+.fw-dm__head{max-width:760px;margin:0 auto 48px;text-align:center}
+.fw-dm__no{color:#25d3e6;font-size:12px;font-weight:600;letter-spacing:.28em;text-transform:uppercase;margin-bottom:14px}
+.fw-dm__title{font-size:clamp(28px,4vw,42px);font-weight:700;line-height:1.25;letter-spacing:-.02em;margin:0 0 16px;color:#fff}
+.fw-dm__lead{color:#aebdd4;font-size:clamp(15px,1.7vw,18px);line-height:1.8;margin:0}
+.fw-dm__grid{display:grid;grid-template-columns:1fr 1fr;gap:22px;max-width:960px;margin:0 auto}
+.fw-dm__card{
+  position:relative;border-radius:18px;padding:40px 34px;
+  border:1px solid rgba(255,255,255,.1);overflow:hidden;
+  transition:transform .3s ease,border-color .3s ease;
+}
+.fw-dm__card--fine{background:linear-gradient(155deg,rgba(59,141,255,.14),#0c1524)}
+.fw-dm__card--fine:hover{border-color:rgba(59,141,255,.5);transform:translateY(-6px)}
+.fw-dm__card--rub{background:linear-gradient(155deg,rgba(255,138,43,.12),#0c1524)}
+.fw-dm__card--rub:hover{border-color:rgba(255,138,43,.5);transform:translateY(-6px)}
+.fw-dm__tag{font-size:12px;font-weight:800;letter-spacing:.22em;text-transform:uppercase}
+.fw-dm__tag--fine{color:#3b8dff}
+.fw-dm__tag--rub{color:#ff8a2b}
+.fw-dm__card h3{font-size:22px;font-weight:700;letter-spacing:-.01em;margin:12px 0 14px;color:#fff}
+.fw-dm__card p{color:#aebdd4;font-size:15px;line-height:1.75;margin:0}
+.fw-dm__wave{position:absolute;right:26px;top:34px;opacity:.75}
+@media (max-width:900px){
+  .fw-dm{padding:64px 18px}
+  .fw-dm__grid{grid-template-columns:1fr}
+}
+@media (prefers-reduced-motion: reduce){
+  .fw-dm__card{transition:none}
+}
+</style>
