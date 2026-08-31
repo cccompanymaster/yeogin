@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="720" viewBox="0 0 960 720">
+<defs>
+  <radialGradient id="bgg" cx="50%" cy="30%" r="90%">
+    <stop offset="0" stop-color="#0b1423"/><stop offset="1" stop-color="#040d19"/>
+  </radialGradient>
+  <radialGradient id="hotspot" cx="50%" cy="50%" r="50%">
+    <stop offset="0" stop-color="#ffd9a8" stop-opacity=".95"/>
+    <stop offset=".35" stop-color="#ff8a2b" stop-opacity=".8"/>
+    <stop offset="1" stop-color="#ff8a2b" stop-opacity="0"/>
+  </radialGradient>
+  <radialGradient id="volume" cx="50%" cy="42%" r="60%">
+    <stop offset="0" stop-color="#ff8a2b" stop-opacity=".55"/>
+    <stop offset=".55" stop-color="#ff8a2b" stop-opacity=".28"/>
+    <stop offset="1" stop-color="#ff8a2b" stop-opacity="0"/>
+  </radialGradient>
+  <linearGradient id="beamN" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0" stop-color="#ffd9a8" stop-opacity=".85"/>
+    <stop offset="1" stop-color="#ff8a2b" stop-opacity=".25"/>
+  </linearGradient>
+  <linearGradient id="beamW" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0" stop-color="#ff8a2b" stop-opacity=".5"/>
+    <stop offset="1" stop-color="#ff8a2b" stop-opacity=".12"/>
+  </linearGradient>
+</defs>
+  <rect width="960" height="720" fill="url(#bgg)"/>
+  <!-- 피부 레이어 헤어라인 -->
+  <line x1="70" y1="300" x2="890" y2="300" stroke="#ffffff" stroke-opacity=".10"/>
+  <line x1="70" y1="420" x2="890" y2="420" stroke="#ffffff" stroke-opacity=".08"/>
+  <line x1="70" y1="560" x2="890" y2="560" stroke="#ffffff" stroke-opacity=".06"/>
+  <rect x="70" y="300" width="820" height="120" fill="#ffffff" fill-opacity=".015"/>
+  <rect x="70" y="420" width="820" height="140" fill="#ffffff" fill-opacity=".03"/>
+  <!-- 핸드피스 팁 -->
+  <rect x="420.0" y="180" width="120" height="66" rx="18" fill="#e9eef4"/>
+  <rect x="428.0" y="226" width="104" height="22" rx="10" fill="#8b9099"/>
+  <!-- FINECOOL 표면 냉각 라인 -->
+  <rect x="90" y="292" width="780" height="7" rx="3.5" fill="#53efff" fill-opacity=".45"/>
+
+  <!-- 좁은 집중 빔 -->
+  <path d="M 454.0 248 L 506.0 248 L 493.0 470 L 467.0 470 Z" fill="url(#beamN)"/>
+  <!-- 핀포인트 핫스팟 (진피-심부 경계 국소) -->
+  <ellipse cx="480.0" cy="480" rx="86" ry="52" fill="url(#hotspot)"/>
+  <ellipse cx="480.0" cy="480" rx="30" ry="19" fill="#ffd9a8" fill-opacity=".9"/>
+  <!-- 타이트 동심원(정밀 조준) -->
+  <ellipse cx="480.0" cy="480" rx="120" ry="70" fill="none" stroke="#ff8a2b" stroke-opacity=".45" stroke-width="1.6"/>
+  <ellipse cx="480.0" cy="480" rx="170" ry="98" fill="none" stroke="#ff8a2b" stroke-opacity=".22" stroke-width="1.2"/>
+  <!-- 조준 크로스헤어 -->
+  <line x1="270.0" y1="480" x2="340.0" y2="480" stroke="#53efff" stroke-opacity=".5" stroke-width="1.4"/>
+  <line x1="620.0" y1="480" x2="690.0" y2="480" stroke="#53efff" stroke-opacity=".5" stroke-width="1.4"/>
+</svg>
